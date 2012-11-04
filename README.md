@@ -1,6 +1,6 @@
 #Leaflet.Locate
 
-A control to geolocate the user with many otions.
+A useful control to geolocate the user with many options.
 
 Tested with Leaflet 0.4.5 on Firefox and Webkit.
 
