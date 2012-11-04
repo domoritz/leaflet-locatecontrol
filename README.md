@@ -4,6 +4,10 @@ A control to geolocate the user with many otions.
 
 Tested with Leaflet 0.4.5 on Firefox and Webkit.
 
+##Demo
+
+Check out the demo at http://domoritz.github.com/leaflet-locatecontrol/demo/
+
 ## Usage
 
 ### Minimal set up:
