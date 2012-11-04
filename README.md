@@ -1,6 +1,6 @@
 #Leaflet.Locate
 
-A control to geolocate the user.
+A control to geolocate the user with many otions.
 
 Tested with Leaflet 0.4.5 on Firefox and Webkit.
 
@@ -30,6 +30,10 @@ L.control.locate({
     locateOptions: {} // locate options, see http://leafletjs.com/reference.html#map-locate-options
 }).addTo(map);
 ```
+
+## Screenshot
+
+![screenshot](https://raw.github.com/domoritz/leaflet-locatecontrol/master/screenshot.png "Screenshot showing the locate control")
 
 ## Devlopers
 
