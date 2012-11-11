@@ -2,8 +2,9 @@ L.Control.Locate = L.Control.extend({
     options: {
         position: 'topleft',
         drawCircle: true,
-        autoLocate: false,
-        follow: false,
+        autoLocate: false,  // locate at start up
+        follow: false,  // follow with zoom and pan the user's location
+        // range circle
         circleStyle: {
                 color: '#136AEC',
                 fillColor: '#136AEC',
@@ -11,6 +12,7 @@ L.Control.Locate = L.Control.extend({
                 weight: 2,
                 opacity: 0.5
             },
+        // inner marker
         markerStyle: {
                 color: '#136AEC',
                 fillColor: '#2A93EE',
@@ -20,9 +22,9 @@ L.Control.Locate = L.Control.extend({
                 radius: 4
             },
         locateOptions: {
-            setView: true,
+            setView: true,  // pan and zoom to the user's initial location
             maxZoom: 16,
-            watch: true
+            watch: true  // the circle follows the location
         }
     },
 
@@ -41,6 +43,13 @@ L.Control.Locate = L.Control.extend({
         var link = L.DomUtil.create('a', className, wrapper);
         link.href = '#';
         link.title = 'Show me where I am';
+
+        var stopLocate = function() {
+            map.stopLocate();
+            self._following = false;
+            self._container.className = classNames;
+        };
+
         L.DomEvent
             .on(link, 'click', L.DomEvent.stopPropagation)
             .on(link, 'click', L.DomEvent.preventDefault)
@@ -48,9 +57,7 @@ L.Control.Locate = L.Control.extend({
                 if (!self._following) {
                     map.locate(self.options.locateOptions);
                 } else {
-                    map.stopLocate();
-                    self._following = false;
-                    self._container.className = classNames;
+                    stopLocate();
                 }
             })
             .on(link, 'dblclick', L.DomEvent.stopPropagation);
@@ -83,12 +90,19 @@ L.Control.Locate = L.Control.extend({
             }
         };
 
-        var onLocationError = function (e) {
-            alert(e.message);
+        var onLocationError = function (err) {
+            // ignore timeout error if the location is watched
+            if (err.code==3 && this.options.locateOptions.watch) {
+                return;
+            }
+
+            stopLocate();
+
+            alert(err.message);
         };
 
-        map.on('locationfound', onLocationFound);
-        map.on('locationerror', onLocationError);
+        map.on('locationfound', onLocationFound, self);
+        map.on('locationerror', onLocationError, self);
 
         if (this.options.autoLocate) {
             map.locate(self.options.locateOptions);
