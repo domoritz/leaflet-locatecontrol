@@ -13,5 +13,6 @@ var map = new L.Map('map', {
 	zoomControl: true
 });
 
-
-L.control.locate().addTo(map);
+// add location control to global namespace for testing only
+// on a production site, omit the "lc = "!
+lc = L.control.locate().addTo(map);

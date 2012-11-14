@@ -72,11 +72,13 @@ L.Control.Locate = L.Control.extend({
 
             self._layer.clearLayers();
 
+            // curcle with the radius of the location's accuracy
             if (self.options.drawCircle) {
                 L.circle(e.latlng, radius, self.options.circleStyle)
                     .addTo(self._layer);
             }
 
+            // small inner marker
             L.circleMarker(e.latlng, self.options.markerStyle)
                 .bindPopup("You are within " + radius.toFixed(0) + " meters from this point")
                 .addTo(self._layer);
@@ -106,6 +108,7 @@ L.Control.Locate = L.Control.extend({
             alert(err.message);
         };
 
+        // event hooks
         map.on('locationfound', onLocationFound, self);
         map.on('locationerror', onLocationError, self);
 
