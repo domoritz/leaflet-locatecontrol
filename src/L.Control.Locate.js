@@ -2,8 +2,9 @@ L.Control.Locate = L.Control.extend({
     options: {
         position: 'topleft',
         drawCircle: true,
-        autoLocate: false,  // locate at start up
+        initLocate: false,  // locate at start up
         follow: false,  // follow with zoom and pan the user's location
+        autoRemoveCircle: false,  // remove curcle if not locating anymore
         // range circle
         circleStyle: {
                 color: '#136AEC',
@@ -48,6 +49,10 @@ L.Control.Locate = L.Control.extend({
             map.stopLocate();
             self._following = false;
             self._container.className = classNames;
+
+            if (self.options.autoRemoveCircle) {
+                self._layer.clearLayers();
+            }
         };
 
         L.DomEvent
@@ -78,7 +83,7 @@ L.Control.Locate = L.Control.extend({
 
             if (self.options.locateOptions.watch) {
                 if (!self.options.follow && !self._following) {
-                    var options = jQuery.extend({},self.options.locateOptions);
+                    var options = jQuery.extend({}, self.options.locateOptions);
                     options['setView'] = false;
                     self._following = true;
                     _map.locate(options);
