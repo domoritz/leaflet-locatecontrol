@@ -56,6 +56,7 @@ L.Control.Locate = L.Control.extend({
             .on(link, 'click', L.DomEvent.stopPropagation)
             .on(link, 'click', L.DomEvent.preventDefault)
             .on(link, 'click', function() {
+                _log('at location: ' + self._atLocation);
                 if (self._atLocation && self._active) {
                     removeVisualization();
                 } else {
@@ -73,13 +74,21 @@ L.Control.Locate = L.Control.extend({
         var onLocationFound = function (e) {
             _log('onLocationFound');
 
-            self._event = e;
-            if (self.options.follow) {
-                self._locateOnNextLocationFound = true;
+            if (self._event &&
+                (self._event.latlng.lat != e.latlng.lat ||
+                 self._event.latlng.lon != e.latlng.lon)) {
+                _log('location has changed');
+                self._atLocation = false;
             }
+
+            self._event = e;
 
             if (!self._active) {
                 return;
+            }
+
+            if (self.options.follow) {
+                self._locateOnNextLocationFound = true;
             }
 
             visualizeLocation();
@@ -134,7 +143,7 @@ L.Control.Locate = L.Control.extend({
             alert(err.message);
         };
 
-        map.on('move', function() {
+        map.on('movestart', function() {
             self._atLocation = false;
         });
 
