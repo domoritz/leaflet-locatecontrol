@@ -2,9 +2,7 @@ L.Control.Locate = L.Control.extend({
     options: {
         position: 'topleft',
         drawCircle: true,
-        initLocate: false,  // locate at start up
         follow: false,  // follow with zoom and pan the user's location
-        autoRemoveCircle: false,  // remove curcle if not locating anymore
         // range circle
         circleStyle: {
                 color: '#136AEC',
@@ -15,18 +13,14 @@ L.Control.Locate = L.Control.extend({
             },
         // inner marker
         markerStyle: {
-                color: '#136AEC',
-                fillColor: '#2A93EE',
-                fillOpacity: 0.7,
-                weight: 2,
-                opacity: 0.9,
-                radius: 4
-            },
-        locateOptions: {
-            setView: true,  // pan and zoom to the user's initial location
-            maxZoom: 16,
-            watch: true  // the circle follows the location
-        }
+            color: '#136AEC',
+            fillColor: '#2A93EE',
+            fillOpacity: 0.7,
+            weight: 2,
+            opacity: 0.9,
+            radius: 4
+        },
+        debug: false
     },
 
     onAdd: function (map) {
@@ -38,82 +32,118 @@ L.Control.Locate = L.Control.extend({
         var _map = map;
         this._layer = new L.LayerGroup();
         this._layer.addTo(_map);
-        this._following = false;
+        this._event = undefined;
+        this._locateOptions = {
+            'setView': false,
+            'watch': true
+        };
+        this._locateOnNextLocationFound = true;
+        this._atLocation = false;
+        this._active = false;
 
         var wrapper = L.DomUtil.create('div', className + "-wrap", container);
         var link = L.DomUtil.create('a', className, wrapper);
         link.href = '#';
         link.title = 'Show me where I am';
 
-        var stopLocate = function() {
-            map.stopLocate();
-            self._following = false;
-            self._container.className = classNames;
-
-            if (self.options.autoRemoveCircle) {
-                self._layer.clearLayers();
+        var _log = function(data) {
+            if (self.options.debug) {
+                console.log(data);
             }
         };
 
         L.DomEvent
             .on(link, 'click', L.DomEvent.stopPropagation)
             .on(link, 'click', L.DomEvent.preventDefault)
-            .on(link, 'click', function(){
-                if (!self._following) {
-                    map.locate(self.options.locateOptions);
+            .on(link, 'click', function() {
+                if (self._atLocation && self._active) {
+                    removeVisualization();
                 } else {
-                    stopLocate();
+                    self._active = true;
+                    self._locateOnNextLocationFound = true;
+                    if (!self._event) {
+                        map.locate(self._locateOptions);
+                    } else {
+                        visualizeLocation();
+                    }
                 }
             })
             .on(link, 'dblclick', L.DomEvent.stopPropagation);
 
         var onLocationFound = function (e) {
-            var radius = e.accuracy / 2;
+            _log('onLocationFound');
+
+            self._event = e;
+            if (self.options.follow) {
+                self._locateOnNextLocationFound = true;
+            }
+
+            if (!self._active) {
+                return;
+            }
+
+            visualizeLocation();
+        };
+
+        var visualizeLocation = function() {
+            _log('visualizeLocation,' + 'setView:' + self._locateOnNextLocationFound);
+
+            var radius = self._event.accuracy / 2;
+
+            if (self._locateOnNextLocationFound) {
+                self._map.fitBounds(self._event.bounds);
+                self._atLocation = true;
+                self._locateOnNextLocationFound = false;
+            }
 
             self._layer.clearLayers();
 
             // curcle with the radius of the location's accuracy
             if (self.options.drawCircle) {
-                L.circle(e.latlng, radius, self.options.circleStyle)
+                L.circle(self._event.latlng, radius, self.options.circleStyle)
                     .addTo(self._layer);
             }
 
             // small inner marker
-            L.circleMarker(e.latlng, self.options.markerStyle)
+            L.circleMarker(self._event.latlng, self.options.markerStyle)
                 .bindPopup("You are within " + radius.toFixed(0) + " meters from this point")
                 .addTo(self._layer);
 
-            if (self.options.locateOptions.watch) {
-                if (!self.options.follow && !self._following) {
-                    var options = jQuery.extend({}, self.options.locateOptions);
-                    options['setView'] = false;
-                    self._following = true;
-                    _map.locate(options);
-                }
-                self._following = true;
-                if (!self._container)
-                    return;
-                self._container.className = classNames + " active";
-            }
+            if (!self._container)
+                return;
+            self._container.className = classNames + " active";
+        };
+
+        var removeVisualization = function() {
+            self._container.className = classNames;
+            self._active = false;
+
+            self._layer.clearLayers();
         };
 
         var onLocationError = function (err) {
+            _log('onLocationError');
+
             // ignore timeout error if the location is watched
             if (err.code==3 && this.options.locateOptions.watch) {
                 return;
             }
 
-            stopLocate();
-
+            map.stopLocate();
+            removeVisualization();
             alert(err.message);
         };
+
+        map.on('move', function() {
+            self._atLocation = false;
+        });
 
         // event hooks
         map.on('locationfound', onLocationFound, self);
         map.on('locationerror', onLocationError, self);
 
         if (this.options.autoLocate) {
-            map.locate(self.options.locateOptions);
+            map.locate(self._locateOptions);
         }
 
         return container;

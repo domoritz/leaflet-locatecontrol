@@ -4,7 +4,7 @@ var base_layer = new L.tileLayer(
         maxZoom: 18,
         subdomains: 'abc'
     }
-)
+);
 
 var map = new L.Map('map', {
     layers: [base_layer],
