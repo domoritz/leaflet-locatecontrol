@@ -25,14 +25,11 @@ The locate controls inherits options from [Leaflet Controls](http://leafletjs.co
 
 ```javascript
 L.control.locate({
+	position: 'topleft',  // set the location of the control
     drawCircle: true,  // controls whether a circle is drawn that shows the uncertainty about the location
-    initLocate: false,  // locate the user on init
-    indicateActive: true,  // change the style of the control if geolocation is active
-    follow: true,  // follow the location if `watch` and `setView` are set to true in locateOptions
-    autoRemoveCircle: false  // remove the circle around the users location if not locating anymore
+    follow: false,  // follow the location if `watch` and `setView` are set to true in locateOptions
     circleStyle: {},  // change the style of the circle around the user's location
-    markerStyle: {},
-    locateOptions: {} // locate options, see http://leafletjs.com/reference.html#map-locate-options
+    markerStyle: {}
 }).addTo(map);
 ```
 
