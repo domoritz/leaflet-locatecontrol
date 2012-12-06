@@ -34,3 +34,8 @@
 .leaflet-control-locate.active a {
     background-image: url(images/locate_active.png);
 }
+
+.leaflet-touch .leaflet-control-locate a {
+    width: 27px;
+    height: 27px;
+}
