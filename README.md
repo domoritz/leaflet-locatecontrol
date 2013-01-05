@@ -36,7 +36,7 @@ L.control.locate({
 
 ## Screenshot
 
-![screenshot](https://raw.github.com/domoritz/leaflet-locatecontrol/master/screenshot.png "Screenshot showing the locate control")
+![screenshot](https://raw.github.com/domoritz/leaflet-locatecontrol/gh-pages/screenshot.png "Screenshot showing the locate control")
 
 ## Devlopers
 
