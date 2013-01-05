@@ -29,7 +29,8 @@ L.control.locate({
     drawCircle: true,  // controls whether a circle is drawn that shows the uncertainty about the location
     follow: false,  // follow the location if `watch` and `setView` are set to true in locateOptions
     circleStyle: {},  // change the style of the circle around the user's location
-    markerStyle: {}
+    markerStyle: {},
+    metric: true  // use metric or imperial units
 }).addTo(map);
 ```
 

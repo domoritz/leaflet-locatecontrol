@@ -20,6 +20,7 @@ L.Control.Locate = L.Control.extend({
             opacity: 0.9,
             radius: 4
         },
+        metric: true,
         debug: false
     },
 
@@ -113,9 +114,18 @@ L.Control.Locate = L.Control.extend({
                     .addTo(self._layer);
             }
 
+            var distance, unit;
+            if (self.options.metric) {
+                distance = radius.toFixed(0);
+                unit = "meters";
+            } else {
+                distance = (radius * 3.2808399).toFixed(0);
+                unit = "feet";
+            }
+
             // small inner marker
             L.circleMarker(self._event.latlng, self.options.markerStyle)
-                .bindPopup("You are within " + radius.toFixed(0) + " meters from this point")
+                .bindPopup("You are within " + distance + " "+ unit + " from this point")
                 .addTo(self._layer);
 
             if (!self._container)
