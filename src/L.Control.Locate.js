@@ -164,10 +164,6 @@ L.Control.Locate = L.Control.extend({
         map.on('locationfound', onLocationFound, self);
         map.on('locationerror', onLocationError, self);
 
-        if (this.options.autoLocate) {
-            map.locate(self._locateOptions);
-        }
-
         return container;
     }
 });
