@@ -9,9 +9,11 @@
 }
 .leaflet-control-locate > div {
     padding: 5px;
-    background: rgba(0, 0, 0, 0.25);
+    background-color: lightgray;
+    background-color: rgba(0, 0, 0, 0.25);
 }
 .leaflet-control-locate a {
+    background-color: white;
     background-color: rgba(255, 255, 255, 0.75);
 }
 .leaflet-control-locate a{
@@ -29,6 +31,10 @@
 }
 .leaflet-control-locate a:hover {
     background-color: #fff;
+}
+
+.leaflet-control-locate.requesting a {
+    background-image: url(images/spinner.gif);
 }
 
 .leaflet-control-locate.active a {

@@ -64,6 +64,7 @@ L.Control.Locate = L.Control.extend({
                     self._active = true;
                     self._locateOnNextLocationFound = true;
                     if (!self._event) {
+                        self._container.className = classNames + " requesting";
                         map.locate(self._locateOptions);
                     } else {
                         visualizeLocation();
@@ -147,6 +148,8 @@ L.Control.Locate = L.Control.extend({
             if (err.code==3 && this.options.locateOptions.watch) {
                 return;
             }
+
+            self._container.className = classNames;
 
             map.stopLocate();
             removeVisualization();
