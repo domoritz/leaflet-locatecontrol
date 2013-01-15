@@ -78,7 +78,7 @@ L.Control.Locate = L.Control.extend({
 
             if (self._event &&
                 (self._event.latlng.lat != e.latlng.lat ||
-                 self._event.latlng.lon != e.latlng.lon)) {
+                 self._event.latlng.lng != e.latlng.lng)) {
                 _log('location has changed');
                 self._atLocation = false;
             }
