@@ -21,7 +21,10 @@ L.Control.Locate = L.Control.extend({
             radius: 4
         },
         metric: true,
-        debug: false
+        debug: false,
+        onLocationError: function(err) {
+            alert(err.message);
+        }
     },
 
     onAdd: function (map) {
@@ -153,7 +156,7 @@ L.Control.Locate = L.Control.extend({
 
             map.stopLocate();
             removeVisualization();
-            alert(err.message);
+            self.options.onLocationError(err);
         };
 
         map.on('movestart', function() {
