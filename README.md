@@ -30,7 +30,8 @@ L.control.locate({
     follow: false,  // follow the location if `watch` and `setView` are set to true in locateOptions
     circleStyle: {},  // change the style of the circle around the user's location
     markerStyle: {},
-    metric: true  // use metric or imperial units
+    metric: true,  // use metric or imperial units
+    onLocationError: function(err) {alert(err.message)}  // define an error callback function
 }).addTo(map);
 ```
 
