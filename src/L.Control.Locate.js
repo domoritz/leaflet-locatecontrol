@@ -29,8 +29,8 @@ L.Control.Locate = L.Control.extend({
 
     onAdd: function (map) {
         var className = 'leaflet-control-locate',
-            classNames = className + " leaflet-control",
-            container = L.DomUtil.create('div', className);
+            classNames = className + ' leaflet-bar leaflet-control',
+            container = L.DomUtil.create('div', classNames);
 
         var self = this;
         var _map = map;
@@ -45,8 +45,7 @@ L.Control.Locate = L.Control.extend({
         this._atLocation = false;
         this._active = false;
 
-        var wrapper = L.DomUtil.create('div', className + "-wrap", container);
-        var link = L.DomUtil.create('a', className, wrapper);
+        var link = L.DomUtil.create('a', 'leaflet-bar-part', container);
         link.href = '#';
         link.title = 'Show me where I am';
 

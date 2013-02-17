@@ -2,7 +2,7 @@
 
 A useful control to geolocate the user with many options.
 
-Tested with Leaflet 0.4.5 on Firefox and Webkit.
+Tested with Leaflet 0.5 on Firefox and Webkit.
 
 ##Demo
 

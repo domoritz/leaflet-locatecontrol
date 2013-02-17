@@ -1,10 +1,12 @@
-
-.leaflet-control-locate > div {
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#3F000000',EndColorStr='#3F000000');
+/* Conditional stylesheet for IE. */
+.leaflet-control-locate {
+	border: 3px solid #999;
 }
+
 .leaflet-control-locate a {
 	background-color: #eee;
 }
+
 .leaflet-control-locate a:hover {
-    background-color: #fff;
+	background-color: #fff;
 }
