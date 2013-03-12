@@ -5,12 +5,12 @@ L.Control.Locate = L.Control.extend({
         follow: false,  // follow with zoom and pan the user's location
         // range circle
         circleStyle: {
-                color: '#136AEC',
-                fillColor: '#136AEC',
-                fillOpacity: 0.15,
-                weight: 2,
-                opacity: 0.5
-            },
+            color: '#136AEC',
+            fillColor: '#136AEC',
+            fillOpacity: 0.15,
+            weight: 2,
+            opacity: 0.5
+        },
         // inner marker
         markerStyle: {
             color: '#136AEC',
@@ -27,10 +27,22 @@ L.Control.Locate = L.Control.extend({
         }
     },
 
+    initialize: function (options) {
+        this._config = {};
+        L.Util.extend(this.options, options);
+        this.setConfig(options);
+    },
+
+    setConfig: function (options) {
+        this._config = {
+            'title' : options.title || 'Show me where I am'
+        };
+    },
+
     onAdd: function (map) {
         var className = 'leaflet-control-locate',
-            classNames = className + ' leaflet-bar leaflet-control',
-            container = L.DomUtil.create('div', classNames);
+        classNames = className + ' leaflet-bar leaflet-control',
+        container = L.DomUtil.create('div', classNames);
 
         var self = this;
         var _map = map;
@@ -47,7 +59,7 @@ L.Control.Locate = L.Control.extend({
 
         var link = L.DomUtil.create('a', 'leaflet-bar-part', container);
         link.href = '#';
-        link.title = 'Show me where I am';
+        link.title = this._config.title;
 
         var _log = function(data) {
             if (self.options.debug) {
@@ -56,31 +68,31 @@ L.Control.Locate = L.Control.extend({
         };
 
         L.DomEvent
-            .on(link, 'click', L.DomEvent.stopPropagation)
-            .on(link, 'click', L.DomEvent.preventDefault)
-            .on(link, 'click', function() {
-                _log('at location: ' + self._atLocation);
-                if (self._atLocation && self._active) {
-                    removeVisualization();
+        .on(link, 'click', L.DomEvent.stopPropagation)
+        .on(link, 'click', L.DomEvent.preventDefault)
+        .on(link, 'click', function() {
+            _log('at location: ' + self._atLocation);
+            if (self._atLocation && self._active) {
+                removeVisualization();
+            } else {
+                self._active = true;
+                self._locateOnNextLocationFound = true;
+                if (!self._event) {
+                    self._container.className = classNames + " requesting";
+                    map.locate(self._locateOptions);
                 } else {
-                    self._active = true;
-                    self._locateOnNextLocationFound = true;
-                    if (!self._event) {
-                        self._container.className = classNames + " requesting";
-                        map.locate(self._locateOptions);
-                    } else {
-                        visualizeLocation();
-                    }
+                    visualizeLocation();
                 }
-            })
-            .on(link, 'dblclick', L.DomEvent.stopPropagation);
+            }
+        })
+        .on(link, 'dblclick', L.DomEvent.stopPropagation);
 
         var onLocationFound = function (e) {
             _log('onLocationFound');
 
             if (self._event &&
                 (self._event.latlng.lat != e.latlng.lat ||
-                 self._event.latlng.lng != e.latlng.lng)) {
+                    self._event.latlng.lng != e.latlng.lng)) {
                 _log('location has changed');
                 self._atLocation = false;
             }
@@ -114,7 +126,7 @@ L.Control.Locate = L.Control.extend({
             // curcle with the radius of the location's accuracy
             if (self.options.drawCircle) {
                 L.circle(self._event.latlng, radius, self.options.circleStyle)
-                    .addTo(self._layer);
+                .addTo(self._layer);
             }
 
             var distance, unit;
@@ -128,8 +140,8 @@ L.Control.Locate = L.Control.extend({
 
             // small inner marker
             L.circleMarker(self._event.latlng, self.options.markerStyle)
-                .bindPopup("You are within " + distance + " "+ unit + " from this point")
-                .addTo(self._layer);
+            .bindPopup("You are within " + distance + " "+ unit + " from this point")
+            .addTo(self._layer);
 
             if (!self._container)
                 return;
