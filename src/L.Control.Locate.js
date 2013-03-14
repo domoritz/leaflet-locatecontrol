@@ -27,6 +27,18 @@ L.Control.Locate = L.Control.extend({
         }
     },
 
+    initialize: function (options) {
+        this._config = {};
+        L.Util.extend(this.options, options);
+        this.setConfig(options);
+    },
+    
+    setConfig: function (options) {
+        this._config = {
+            'title' : options.title || 'Show me where I am'
+        };
+    },
+    
     onAdd: function (map) {
         var className = 'leaflet-control-locate',
             classNames = className + ' leaflet-bar leaflet-control',
@@ -47,7 +59,7 @@ L.Control.Locate = L.Control.extend({
 
         var link = L.DomUtil.create('a', 'leaflet-bar-part', container);
         link.href = '#';
-        link.title = 'Show me where I am';
+        link.title = this._config.title;
 
         var _log = function(data) {
             if (self.options.debug) {
