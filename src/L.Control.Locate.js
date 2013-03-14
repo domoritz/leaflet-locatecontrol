@@ -24,7 +24,9 @@ L.Control.Locate = L.Control.extend({
         debug: false,
         onLocationError: function(err) {
             alert(err.message);
-        }
+        },
+        title: "Show me where I am",
+        popupText: ["You are within ", " from this point"]
     },
 
     onAdd: function (map) {
@@ -47,7 +49,7 @@ L.Control.Locate = L.Control.extend({
 
         var link = L.DomUtil.create('a', 'leaflet-bar-part', container);
         link.href = '#';
-        link.title = 'Show me where I am';
+        link.title = this.options.title;
 
         var _log = function(data) {
             if (self.options.debug) {
@@ -127,8 +129,9 @@ L.Control.Locate = L.Control.extend({
             }
 
             // small inner marker
+            var t = self.options.popupText;
             L.circleMarker(self._event.latlng, self.options.markerStyle)
-                .bindPopup("You are within " + distance + " "+ unit + " from this point")
+                .bindPopup(t[0] + distance + " " + unit  + t[1])
                 .addTo(self._layer);
 
             if (!self._container)

@@ -31,7 +31,9 @@ L.control.locate({
     circleStyle: {},  // change the style of the circle around the user's location
     markerStyle: {},
     metric: true,  // use metric or imperial units
-    onLocationError: function(err) {alert(err.message)}  // define an error callback function
+    onLocationError: function(err) {alert(err.message)},  // define an error callback function
+    title: "Show me where I am",  // title of the locat control
+    popupText: ["You are within ", " from this point"]  // text to appear if user clicks on circle
 }).addTo(map);
 ```
 
