@@ -63,13 +63,16 @@ L.Control.Locate = L.Control.extend({
             .on(link, 'click', function() {
                 _log('at location: ' + self._atLocation);
                 if (self._atLocation && self._active) {
+                    map.stopLocate();
                     removeVisualization();
                 } else {
+                    if(!self._active) {
+                        map.locate(self._locateOptions);
+                    }
                     self._active = true;
                     self._locateOnNextLocationFound = true;
                     if (!self._event) {
                         self._container.className = classNames + " requesting";
-                        map.locate(self._locateOptions);
                     } else {
                         visualizeLocation();
                     }
