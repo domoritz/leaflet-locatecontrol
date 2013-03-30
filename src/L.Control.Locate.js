@@ -36,16 +36,14 @@ L.Control.Locate = L.Control.extend({
             container = L.DomUtil.create('div', classNames);
 
         var self = this;
-        var _map = map;
         this._layer = new L.LayerGroup();
-        this._layer.addTo(_map);
+        this._layer.addTo(map);
         this._event = undefined;
         this._locateOptions = L.extend({
             'setView': false,
             'watch': true
         }, this.options.locateOptions);
         this._locateOnNextLocationFound = true;
-        this._atLocation = false;
         this._active = false;
 
         var link = L.DomUtil.create('a', 'leaflet-bar-part', container);
@@ -62,10 +60,8 @@ L.Control.Locate = L.Control.extend({
             .on(link, 'click', L.DomEvent.stopPropagation)
             .on(link, 'click', L.DomEvent.preventDefault)
             .on(link, 'click', function() {
-                _log('at location: ' + self._atLocation);
-                if (self._atLocation && self._active) {
-                    map.stopLocate();
-                    removeVisualization();
+                if (self._active && map.getBounds().contains(self._event.latlng)) {
+                    stopLocate();
                 } else {
                     if(!self._active) {
                         map.locate(self._locateOptions);
@@ -88,7 +84,6 @@ L.Control.Locate = L.Control.extend({
                 (self._event.latlng.lat != e.latlng.lat ||
                  self._event.latlng.lng != e.latlng.lng)) {
                 _log('location has changed');
-                self._atLocation = false;
             }
 
             self._event = e;
@@ -110,14 +105,13 @@ L.Control.Locate = L.Control.extend({
             var radius = self._event.accuracy / 2;
 
             if (self._locateOnNextLocationFound) {
-                self._map.fitBounds(self._event.bounds);
-                self._atLocation = true;
+                map.fitBounds(self._event.bounds);
                 self._locateOnNextLocationFound = false;
             }
 
             self._layer.clearLayers();
 
-            // curcle with the radius of the location's accuracy
+            // circle with the radius of the location's accuracy
             if (self.options.drawCircle) {
                 L.circle(self._event.latlng, radius, self.options.circleStyle)
                     .addTo(self._layer);
@@ -143,7 +137,9 @@ L.Control.Locate = L.Control.extend({
             self._container.className = classNames + " active";
         };
 
-        var removeVisualization = function() {
+        var stopLocate = function() {
+            map.stopLocate();
+
             self._container.className = classNames;
             self._active = false;
 
@@ -160,14 +156,9 @@ L.Control.Locate = L.Control.extend({
 
             self._container.className = classNames;
 
-            map.stopLocate();
-            removeVisualization();
+            stopLocate();
             self.options.onLocationError(err);
         };
-
-        map.on('movestart', function() {
-            self._atLocation = false;
-        });
 
         // event hooks
         map.on('locationfound', onLocationFound, self);
