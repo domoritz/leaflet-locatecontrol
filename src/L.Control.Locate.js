@@ -26,7 +26,8 @@ L.Control.Locate = L.Control.extend({
             alert(err.message);
         },
         title: "Show me where I am",
-        popupText: ["You are within ", " from this point"]
+        popupText: ["You are within ", " from this point"],
+        locateOptions: {}
     },
 
     onAdd: function (map) {
@@ -39,10 +40,10 @@ L.Control.Locate = L.Control.extend({
         this._layer = new L.LayerGroup();
         this._layer.addTo(_map);
         this._event = undefined;
-        this._locateOptions = {
+        this._locateOptions = L.extend({
             'setView': false,
             'watch': true
-        };
+        }, this.options.locateOptions);
         this._locateOnNextLocationFound = true;
         this._atLocation = false;
         this._active = false;
