@@ -27,6 +27,7 @@ L.Control.Locate = L.Control.extend({
         },
         title: "Show me where I am",
         popupText: ["You are within ", " from this point"],
+        setView: true, // automatically sets the map view to the user's location
         locateOptions: {}
     },
 
@@ -39,11 +40,15 @@ L.Control.Locate = L.Control.extend({
         this._layer = new L.LayerGroup();
         this._layer.addTo(map);
         this._event = undefined;
-        this._locateOptions = L.extend({
-            'setView': false,
-            'watch': true
-        }, this.options.locateOptions);
-        this._locateOnNextLocationFound = true;
+        // nested extend so that the first can overwrite the second
+        // and the second can overwrite the third
+        this._locateOptions = L.extend(L.extend({
+            'setView': false // have to set this to false because we have to
+                             // do setView manually
+        }, this.options.locateOptions), {
+            'watch': true  // if you overwrite this, visualization cannot be updated
+        });
+        this._locateOnNextLocationFound = false;
         this._active = false;
 
         var link = L.DomUtil.create('a', 'leaflet-bar-part', container);
@@ -60,14 +65,16 @@ L.Control.Locate = L.Control.extend({
             .on(link, 'click', L.DomEvent.stopPropagation)
             .on(link, 'click', L.DomEvent.preventDefault)
             .on(link, 'click', function() {
-                if (self._active && map.getBounds().contains(self._event.latlng)) {
+                if (self._active && (map.getBounds().contains(self._event.latlng) || !self.options.setView)) {
                     stopLocate();
                 } else {
+                    if (self.options.setView) {
+                        self._locateOnNextLocationFound = true;
+                    }
                     if(!self._active) {
                         map.locate(self._locateOptions);
                     }
                     self._active = true;
-                    self._locateOnNextLocationFound = true;
                     if (!self._event) {
                         self._container.className = classNames + " requesting";
                     } else {

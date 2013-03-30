@@ -34,6 +34,7 @@ L.control.locate({
     onLocationError: function(err) {alert(err.message)},  // define an error callback function
     title: "Show me where I am",  // title of the locat control
     popupText: ["You are within ", " from this point"],  // text to appear if user clicks on circle
+    setView: true, // automatically sets the map view to the user's location
     locateOptions: {}  // define location options e.g enableHighAccuracy: true
 }).addTo(map);
 ```
