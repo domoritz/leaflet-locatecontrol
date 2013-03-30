@@ -154,7 +154,7 @@ L.Control.Locate = L.Control.extend({
             _log('onLocationError');
 
             // ignore timeout error if the location is watched
-            if (err.code==3 && this.options.locateOptions.watch) {
+            if (err.code==3 && this._locateOptions.watch) {
                 return;
             }
 
