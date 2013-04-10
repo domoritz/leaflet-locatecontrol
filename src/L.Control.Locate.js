@@ -51,7 +51,7 @@ L.Control.Locate = L.Control.extend({
         this._locateOnNextLocationFound = false;
         this._active = false;
 
-        var link = L.DomUtil.create('a', 'leaflet-bar-part', container);
+        var link = L.DomUtil.create('a', 'leaflet-control-locate-button', container);
         link.href = '#';
         link.title = this.options.title;
 

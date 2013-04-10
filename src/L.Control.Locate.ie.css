@@ -3,10 +3,10 @@
 	border: 3px solid #999;
 }
 
-.leaflet-control-locate a {
+.leaflet-control-locate {
 	background-color: #eee;
 }
 
-.leaflet-control-locate a:hover {
+.leaflet-control-locate:hover {
 	background-color: #fff;
 }
