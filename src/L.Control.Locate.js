@@ -33,7 +33,7 @@ L.Control.Locate = L.Control.extend({
 
     onAdd: function (map) {
         var className = 'leaflet-control-locate',
-            classNames = className + ' leaflet-bar leaflet-control',
+            classNames = className + ' leaflet-control-zoom leaflet-bar leaflet-control',
             container = L.DomUtil.create('div', classNames);
 
         var self = this;
@@ -51,7 +51,7 @@ L.Control.Locate = L.Control.extend({
         this._locateOnNextLocationFound = false;
         this._active = false;
 
-        var link = L.DomUtil.create('a', 'leaflet-bar-part', container);
+        var link = L.DomUtil.create('a', 'leaflet-bar-part leaflet-bar-part-single', container);
         link.href = '#';
         link.title = this.options.title;
 
