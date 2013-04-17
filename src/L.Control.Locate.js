@@ -49,7 +49,7 @@ L.Control.Locate = L.Control.extend({
             'watch': true  // if you overwrite this, visualization cannot be updated
         });
 
-        var link = L.DomUtil.create('a', 'leaflet-bar-part', container);
+        var link = L.DomUtil.create('a', 'leaflet-control-locate-button', container);
         link.href = '#';
         link.title = this.options.title;
 
