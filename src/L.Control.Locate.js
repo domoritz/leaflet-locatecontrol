@@ -85,6 +85,8 @@ L.Control.Locate = L.Control.extend({
         var onLocationFound = function (e) {
             _log('onLocationFound');
 
+            self._active = true;
+
             if (self._event &&
                 (self._event.latlng.lat != e.latlng.lat ||
                  self._event.latlng.lng != e.latlng.lng)) {
@@ -138,22 +140,22 @@ L.Control.Locate = L.Control.extend({
             self._container.className = classNames + " active";
         };
 
-        var stopLocate = function() {
-            _log('stopLocate');
-            map.stopLocate();
-
-            self._container.className = classNames;
-            self.resetVariables();
-
-            self._layer.clearLayers();
-        };
-
         var resetVariables = function() {
             self._active = false;
             self._locateOnNextLocationFound = true;
         };
 
         resetVariables();
+
+        var stopLocate = function() {
+            _log('stopLocate');
+            map.stopLocate();
+
+            self._container.className = classNames;
+            resetVariables();
+
+            self._layer.clearLayers();
+        };
 
 
         var onLocationError = function (err) {
