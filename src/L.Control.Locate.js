@@ -166,8 +166,6 @@ L.Control.Locate = L.Control.extend({
                 return;
             }
 
-            self._container.className = classNames;
-
             stopLocate();
             self.options.onLocationError(err);
         };
