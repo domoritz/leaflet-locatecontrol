@@ -1,27 +1,13 @@
-.leaflet-container .leaflet-control-locate {
-    margin-left: 13px;
-    margin-top: 12px;
+.leaflet-bar-part-single {
+	-webkit-border-radius: 4px 4px 4px 4px;
+	        border-radius: 4px 4px 4px 4px;
+	border-bottom: none;
 }
-
-.leaflet-control-locate a {
-    background-position: 50% 50%;
-    background-repeat: no-repeat;
-    display: block;
-    width: 22px;
-    height: 22px;
-
-    -moz-border-radius: 4px 4px 4px 4px;
-    -webkit-border-radius: 4px 4px 4px 4px;
-            border-radius: 4px 4px 4px 4px;
-}
-
-.leaflet-control-locate a:hover {
-    background-color: #fff;
-}
-
-.leaflet-touch .leaflet-control-locate a {
-    width: 27px;
-    height: 27px;
+	
+.leaflet-touch .leaflet-bar-part-single {
+	-webkit-border-radius: 7px 7px 7px 7px;
+	        border-radius: 7px 7px 7px 7px;
+	border-bottom: none;
 }
 
 .leaflet-touch .leaflet-control-locate {
