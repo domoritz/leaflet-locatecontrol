@@ -2,7 +2,7 @@
 
 A useful control to geolocate the user with many options.
 
-Tested with Leaflet 0.5 on Firefox and Webkit.
+Tested with Leaflet 0.5.1 in Firefox, Webkit and mobile Webkit.
 
 ##Demo
 
@@ -46,3 +46,7 @@ L.control.locate({
 ## Developers
 
 Run the demo locally with `python -m SimpleHTTPServer` and then open http://0.0.0.0:8000/demo.
+
+## License
+
+[AGPL](https://www.gnu.org/licenses/agpl.html)
