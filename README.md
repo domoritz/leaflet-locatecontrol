@@ -4,11 +4,14 @@ A useful control to geolocate the user with many options.
 
 Tested with Leaflet 0.5.1 in Firefox, Webkit and mobile Webkit.
 
+
 ##Demo
 
 Check out the demo at http://domoritz.github.com/leaflet-locatecontrol/demo/
 
+
 ## Usage
+
 
 ### Minimal set up:
 
@@ -18,6 +21,7 @@ Check out the demo at http://domoritz.github.com/leaflet-locatecontrol/demo/
 ```javascript
 L.control.locate().addTo(map);
 ```
+
 
 ### Possible options
 
@@ -39,13 +43,25 @@ L.control.locate({
 }).addTo(map);
 ```
 
+
 ## Screenshot
 
 ![screenshot](https://raw.github.com/domoritz/leaflet-locatecontrol/gh-pages/screenshot.png "Screenshot showing the locate control")
 
+
+## Users
+
+Sites that use this locate control:
+
+* [wheelmap.org](http://wheelmap.org/map)
+* [OpenMensa](http://openmensa.org/)
+* ...
+
+
 ## Developers
 
 Run the demo locally with `python -m SimpleHTTPServer` and then open http://0.0.0.0:8000/demo.
+
 
 ## License
 
