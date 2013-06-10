@@ -175,6 +175,10 @@ L.Control.Locate = L.Control.extend({
         map.on('locationerror', onLocationError, self);
 
         return container;
+    },
+
+    getContainer: function () {
+        return this._container;
     }
 });
 
