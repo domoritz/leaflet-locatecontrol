@@ -3,6 +3,7 @@ L.Control.Locate = L.Control.extend({
         position: 'topleft',
         drawCircle: true,
         follow: false,  // follow with zoom and pan the user's location
+        cancelFollow: false, // if follow is true, cancel follow when map is dragged
         // range circle
         circleStyle: {
                 color: '#136AEC',
@@ -96,7 +97,13 @@ L.Control.Locate = L.Control.extend({
             self._event = e;
 
             if (self.options.follow) {
-                self._locateOnNextLocationFound = true;
+                if (!(self.options.cancelFollow && self._mapDragged)) {
+                    self._locateOnNextLocationFound = true;
+                }
+
+                map.on('dragstart', function () {
+                    self._mapDragged = true;
+                })
             }
 
             visualizeLocation();
@@ -143,6 +150,7 @@ L.Control.Locate = L.Control.extend({
         var resetVariables = function() {
             self._active = false;
             self._locateOnNextLocationFound = true;
+            self._mapDragged = false;
         };
 
         resetVariables();
