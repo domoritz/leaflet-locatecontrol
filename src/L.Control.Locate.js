@@ -33,8 +33,10 @@ L.Control.Locate = L.Control.extend({
         onLocationError: function(err) {
             alert(err.message);
         },
-        title: "Show me where I am",
-        popupText: ["You are within ", " from this point"],
+        strings: {
+            title: "Show me where I am",
+            popup: "You are within {value} {unit} from this point"
+        },
         setView: true, // automatically sets the map view to the user's location
         locateOptions: {}
     },
@@ -67,7 +69,7 @@ L.Control.Locate = L.Control.extend({
 
         var link = L.DomUtil.create('a', 'leaflet-bar-part leaflet-bar-part-single', container);
         link.href = '#';
-        link.title = this.options.title;
+        link.title = this.options.strings.title;
 
         var _log = function(data) {
             if (self.options.debug) {
@@ -172,8 +174,6 @@ L.Control.Locate = L.Control.extend({
             }
 
             // small inner marker
-            var t = self.options.popupText;
-
             var m;
             if (self._following) {
                 m = self.options.followMarkerStyle;
@@ -181,8 +181,9 @@ L.Control.Locate = L.Control.extend({
                 m = self.options.markerStyle;
             }
 
+            var t = self.options.strings.popup;
             L.circleMarker(self._event.latlng, m)
-                .bindPopup(t[0] + distance + " " + unit  + t[1])
+                .bindPopup(L.Util.template(t, {value: distance, unit: unit}))
                 .addTo(self._layer);
 
             if (!self._container)
