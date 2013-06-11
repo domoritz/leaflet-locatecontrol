@@ -33,11 +33,11 @@ L.Control.Locate = L.Control.extend({
         onLocationError: function(err) {
             alert(err.message);
         },
+        setView: true, // automatically sets the map view to the user's location
         strings: {
             title: "Show me where I am",
-            popup: "You are within {value} {unit} from this point"
+            popup: "You are within {distance} {unit} from this point"
         },
-        setView: true, // automatically sets the map view to the user's location
         locateOptions: {}
     },
 
@@ -183,7 +183,7 @@ L.Control.Locate = L.Control.extend({
 
             var t = self.options.strings.popup;
             L.circleMarker(self._event.latlng, m)
-                .bindPopup(L.Util.template(t, {value: distance, unit: unit}))
+                .bindPopup(L.Util.template(t, {distance: distance, unit: unit}))
                 .addTo(self._layer);
 
             if (!self._container)
