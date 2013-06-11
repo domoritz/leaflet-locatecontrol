@@ -35,6 +35,8 @@ L.control.locate({
     stopFollowingOnDrag: false, // stop following when the map is dragged if `follow` is set to true
     circleStyle: {},  // change the style of the circle around the user's location
     markerStyle: {},
+    followCircleStyle: {},  // change the style of the circle around the user's location while following
+    followMarkerStyle: {},
     metric: true,  // use metric or imperial units
     onLocationError: function(err) {alert(err.message)},  // define an error callback function
     title: "Show me where I am",  // title of the locat control
