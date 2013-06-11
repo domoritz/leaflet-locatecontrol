@@ -21,22 +21,12 @@ L.Control.Locate = L.Control.extend({
             opacity: 0.9,
             radius: 4
         },
-        // range circle while following
-        followCircleStyle: {
-            color: '#FFA500',
-            fillColor: '#FFB000',
-            fillOpacity: 0.15,
-            weight: 2,
-            opacity: 0.5
-        },
-        // inner marker while following
+        // changes to range circle while following
+        followCircleStyle: {},
+        // changes to inner marker while following
         followMarkerStyle: {
             color: '#FFA500',
-            fillColor: '#FFB000',
-            fillOpacity: 0.7,
-            weight: 2,
-            opacity: 0.9,
-            radius: 4
+            fillColor: '#FFB000'
         },
         metric: true,
         debug: false,
@@ -66,6 +56,14 @@ L.Control.Locate = L.Control.extend({
         }, this.options.locateOptions), {
             'watch': true  // if you overwrite this, visualization cannot be updated
         });
+
+        // extend the follow marker style and circle from the normal style
+        var tmp = {};
+        L.extend(tmp, this.options.markerStyle, this.options.followMarkerStyle);
+        this.options.followMarkerStyle = tmp;
+        tmp = {};
+        L.extend(tmp, this.options.circleStyle, this.options.followCircleStyle);
+        this.options.followCircleStyle = tmp;
 
         var link = L.DomUtil.create('a', 'leaflet-bar-part leaflet-bar-part-single', container);
         link.href = '#';
@@ -152,6 +150,7 @@ L.Control.Locate = L.Control.extend({
             self._layer.clearLayers();
 
             // circle with the radius of the location's accuracy
+            var c;
             if (self.options.drawCircle) {
                 if (self._following) {
                     c = self.options.followCircleStyle;
@@ -175,6 +174,7 @@ L.Control.Locate = L.Control.extend({
             // small inner marker
             var t = self.options.popupText;
 
+            var m;
             if (self._following) {
                 m = self.options.followMarkerStyle;
             } else {
@@ -188,9 +188,9 @@ L.Control.Locate = L.Control.extend({
             if (!self._container)
                 return;
             if (self._following) {
-            	self._container.className = classNames + " active following";
+                self._container.className = classNames + " active following";
             } else {
-            	self._container.className = classNames + " active";
+                self._container.className = classNames + " active";
             }
         };
 
