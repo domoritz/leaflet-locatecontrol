@@ -14,4 +14,7 @@ var map = new L.Map('map', {
 
 // add location control to global namespace for testing only
 // on a production site, omit the "lc = "!
-lc = L.control.locate().addTo(map);
+lc = L.control.locate({
+	'follow': true,
+	stopFollowingOnDrag: true
+}).addTo(map);
