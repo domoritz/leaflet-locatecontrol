@@ -6,16 +6,33 @@ L.Control.Locate = L.Control.extend({
         stopFollowingOnDrag: false, // if follow is true, stop following when map is dragged
         // range circle
         circleStyle: {
-                color: '#136AEC',
-                fillColor: '#136AEC',
-                fillOpacity: 0.15,
-                weight: 2,
-                opacity: 0.5
-            },
+            color: '#136AEC',
+            fillColor: '#136AEC',
+            fillOpacity: 0.15,
+            weight: 2,
+            opacity: 0.5
+        },
         // inner marker
         markerStyle: {
             color: '#136AEC',
             fillColor: '#2A93EE',
+            fillOpacity: 0.7,
+            weight: 2,
+            opacity: 0.9,
+            radius: 4
+        },
+        // range circle while following
+        followCircleStyle: {
+            color: '#FFA500',
+            fillColor: '#FFB000',
+            fillOpacity: 0.15,
+            weight: 2,
+            opacity: 0.5
+        },
+        // inner marker while following
+        followMarkerStyle: {
+            color: '#FFA500',
+            fillColor: '#FFB000',
             fillOpacity: 0.7,
             weight: 2,
             opacity: 0.9,
@@ -74,6 +91,9 @@ L.Control.Locate = L.Control.extend({
                         map.locate(self._locateOptions);
                     }
                     self._active = true;
+                    if (self.options.follow) {
+                        startFollowing();
+                    }
                     if (!self._event) {
                         self._container.className = classNames + " requesting";
                     } else {
@@ -96,16 +116,26 @@ L.Control.Locate = L.Control.extend({
 
             self._event = e;
 
-            if (self.options.follow) {
-                if (!(self.options.stopFollowingOnDrag && self._mapDragged)) {
-                    self._locateOnNextLocationFound = true;
-                }
-
-                map.on('dragstart', function () {
-                    self._mapDragged = true;
-                })
+            if (self.options.follow && self._following) {
+                self._locateOnNextLocationFound = true;
             }
 
+            visualizeLocation();
+        };
+
+        var startFollowing = function() {
+            self._following = true;
+            if (self.options.stopFollowingOnDrag) {
+                map.on('dragstart', stopFollowing);
+            }
+        };
+
+        var stopFollowing = function() {
+            self._following = false;
+            //self._container.className = classNames + " active";
+            if (self.options.stopFollowingOnDrag) {
+                map.off('dragstart', stopFollowing);
+            }
             visualizeLocation();
         };
 
@@ -123,7 +153,13 @@ L.Control.Locate = L.Control.extend({
 
             // circle with the radius of the location's accuracy
             if (self.options.drawCircle) {
-                L.circle(self._event.latlng, radius, self.options.circleStyle)
+                if (self._following) {
+                    c = self.options.followCircleStyle;
+                } else {
+                    c = self.options.circleStyle;
+                }
+
+                L.circle(self._event.latlng, radius, c)
                     .addTo(self._layer);
             }
 
@@ -138,19 +174,30 @@ L.Control.Locate = L.Control.extend({
 
             // small inner marker
             var t = self.options.popupText;
-            L.circleMarker(self._event.latlng, self.options.markerStyle)
+
+            if (self._following) {
+                m = self.options.followMarkerStyle;
+            } else {
+                m = self.options.markerStyle;
+            }
+
+            L.circleMarker(self._event.latlng, m)
                 .bindPopup(t[0] + distance + " " + unit  + t[1])
                 .addTo(self._layer);
 
             if (!self._container)
                 return;
-            self._container.className = classNames + " active";
+            if (self._following) {
+            	self._container.className = classNames + " active following";
+            } else {
+            	self._container.className = classNames + " active";
+            }
         };
 
         var resetVariables = function() {
             self._active = false;
             self._locateOnNextLocationFound = true;
-            self._mapDragged = false;
+            self._following = false;
         };
 
         resetVariables();
@@ -158,6 +205,7 @@ L.Control.Locate = L.Control.extend({
         var stopLocate = function() {
             _log('stopLocate');
             map.stopLocate();
+            map.off('dragstart', stopFollowing);
 
             self._container.className = classNames;
             resetVariables();

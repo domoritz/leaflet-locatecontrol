@@ -21,3 +21,7 @@
 .leaflet-control-locate.active a {
     background-image: url(images/locate_active.png);
 }
+
+.leaflet-control-locate.active.following a {
+	background-image: url(images/locate_following.png);
+}
