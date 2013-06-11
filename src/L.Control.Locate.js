@@ -3,7 +3,7 @@ L.Control.Locate = L.Control.extend({
         position: 'topleft',
         drawCircle: true,
         follow: false,  // follow with zoom and pan the user's location
-        cancelFollow: false, // if follow is true, cancel follow when map is dragged
+        stopFollowingOnDrag: false, // if follow is true, stop following when map is dragged
         // range circle
         circleStyle: {
                 color: '#136AEC',
@@ -97,7 +97,7 @@ L.Control.Locate = L.Control.extend({
             self._event = e;
 
             if (self.options.follow) {
-                if (!(self.options.cancelFollow && self._mapDragged)) {
+                if (!(self.options.stopFollowingOnDrag && self._mapDragged)) {
                     self._locateOnNextLocationFound = true;
                 }
 
