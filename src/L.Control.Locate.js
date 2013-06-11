@@ -21,9 +21,9 @@ L.Control.Locate = L.Control.extend({
             opacity: 0.9,
             radius: 4
         },
-        // changes to range circle while following
+        // changes to range circle and inner marker while following
+        // it is only necessary to provide the things that shoud change
         followCircleStyle: {},
-        // changes to inner marker while following
         followMarkerStyle: {
             //color: '#FFA500',
             //fillColor: '#FFB000'
