@@ -132,7 +132,6 @@ L.Control.Locate = L.Control.extend({
 
         var stopFollowing = function() {
             self._following = false;
-            //self._container.className = classNames + " active";
             if (self.options.stopFollowingOnDrag) {
                 map.off('dragstart', stopFollowing);
             }
