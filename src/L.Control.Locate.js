@@ -50,13 +50,14 @@ L.Control.Locate = L.Control.extend({
         this._layer = new L.LayerGroup();
         this._layer.addTo(map);
         this._event = undefined;
-        // nested extend so that the first can overwrite the second
-        // and the second can overwrite the third
-        this._locateOptions = L.extend(L.extend({
-            'setView': false // have to set this to false because we have to
-                             // do setView manually
-        }, this.options.locateOptions), {
-            'watch': true  // if you overwrite this, visualization cannot be updated
+
+        this._locateOptions = {
+            watch: true  // if you overwrite this, visualization cannot be updated
+        };
+        L.extend(this._locateOptions, this.options.locateOptions);
+        L.extend(this._locateOptions, {
+            setView: false // have to set this to false because we have to
+                           // do setView manually
         });
 
         // extend the follow marker style and circle from the normal style
@@ -197,7 +198,7 @@ L.Control.Locate = L.Control.extend({
 
         var resetVariables = function() {
             self._active = false;
-            self._locateOnNextLocationFound = true;
+            self._locateOnNextLocationFound = self.options.setView;
             self._following = false;
         };
 
