@@ -70,4 +70,4 @@ Run the demo locally with `python -m SimpleHTTPServer` and then open http://0.0.
 
 ## License
 
-[AGPL](https://www.gnu.org/licenses/agpl.html)
+MIT
