@@ -29,7 +29,6 @@ L.Control.Locate = L.Control.extend({
             //fillColor: '#FFB000'
         },
         metric: true,
-        debug: false,
         onLocationError: function(err) {
             alert(err.message);
         },
@@ -72,12 +71,6 @@ L.Control.Locate = L.Control.extend({
         link.href = '#';
         link.title = this.options.strings.title;
 
-        var _log = function(data) {
-            if (self.options.debug) {
-                console.log(data);
-            }
-        };
-
         L.DomEvent
             .on(link, 'click', L.DomEvent.stopPropagation)
             .on(link, 'click', L.DomEvent.preventDefault)
@@ -105,14 +98,11 @@ L.Control.Locate = L.Control.extend({
             .on(link, 'dblclick', L.DomEvent.stopPropagation);
 
         var onLocationFound = function (e) {
-            _log('onLocationFound');
-
             self._active = true;
 
             if (self._event &&
                 (self._event.latlng.lat != e.latlng.lat ||
                  self._event.latlng.lng != e.latlng.lng)) {
-                _log('location has changed');
             }
 
             self._event = e;
@@ -133,7 +123,6 @@ L.Control.Locate = L.Control.extend({
 
         var stopFollowing = function() {
             self._following = false;
-            //self._container.className = classNames + " active";
             if (self.options.stopFollowingOnDrag) {
                 map.off('dragstart', stopFollowing);
             }
@@ -141,8 +130,6 @@ L.Control.Locate = L.Control.extend({
         };
 
         var visualizeLocation = function() {
-            _log('visualizeLocation,' + 'setView:' + self._locateOnNextLocationFound);
-
             var radius = self._event.accuracy / 2;
 
             if (self._locateOnNextLocationFound) {
@@ -205,7 +192,6 @@ L.Control.Locate = L.Control.extend({
         resetVariables();
 
         var stopLocate = function() {
-            _log('stopLocate');
             map.stopLocate();
             map.off('dragstart', stopFollowing);
 
@@ -217,8 +203,6 @@ L.Control.Locate = L.Control.extend({
 
 
         var onLocationError = function (err) {
-            _log('onLocationError');
-
             // ignore timeout error if the location is watched
             if (err.code==3 && this._locateOptions.watch) {
                 return;
