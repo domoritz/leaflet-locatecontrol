@@ -32,10 +32,12 @@ L.Control.Locate = L.Control.extend({
         onLocationError: function(err) {
             alert(err.message);
         },
+        onLocationOutsideMapBounds: null,
         setView: true, // automatically sets the map view to the user's location
         strings: {
             title: "Show me where I am",
-            popup: "You are within {distance} {unit} from this point"
+            popup: "You are within {distance} {unit} from this point",
+            outsideMapBoundsMsg: "You seem located outside the boundaries of the map"
         },
         locateOptions: {}
     },
@@ -75,7 +77,8 @@ L.Control.Locate = L.Control.extend({
             .on(link, 'click', L.DomEvent.stopPropagation)
             .on(link, 'click', L.DomEvent.preventDefault)
             .on(link, 'click', function() {
-                if (self._active && (map.getBounds().contains(self._event.latlng) || !self.options.setView)) {
+                if (self._active && (map.getBounds().contains(self._event.latlng) || !self.options.setView ||
+                    (map.options.maxBounds && !map.options.maxBounds.contains(self._event.latlng)))) {
                     stopLocate();
                 } else {
                     if (self.options.setView) {
@@ -131,9 +134,15 @@ L.Control.Locate = L.Control.extend({
 
         var visualizeLocation = function() {
             var radius = self._event.accuracy / 2;
-
             if (self._locateOnNextLocationFound) {
-                map.fitBounds(self._event.bounds);
+                if (map.options.maxBounds &&
+                    !map.options.maxBounds.contains(self._event.latlng) &&
+                    !self.options.onLocationOutsideMapBounds(self._event)) {
+                    // outside map boundaries
+                    self._following = false;
+                } else {
+                    map.fitBounds(self._event.bounds);
+                }
                 self._locateOnNextLocationFound = false;
             }
 
@@ -201,6 +210,15 @@ L.Control.Locate = L.Control.extend({
             self._layer.clearLayers();
         };
 
+        var onLocationOutsideMapBounds = function(e) {
+            alert(self.options.strings.outsideMapBoundsMsg);
+            return false;
+        }
+
+        if (!this.options.onLocationOutsideMapBounds) {
+            // fall back to default if none provided
+            this.options.onLocationOutsideMapBounds = onLocationOutsideMapBounds;
+        }
 
         var onLocationError = function (err) {
             // ignore timeout error if the location is watched
