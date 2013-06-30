@@ -32,10 +32,14 @@ L.Control.Locate = L.Control.extend({
         onLocationError: function(err) {
             alert(err.message);
         },
+        onLocationOutsideMapBounds: function(context) {
+            alert(context.options.strings.outsideMapBoundsMsg);
+        },
         setView: true, // automatically sets the map view to the user's location
         strings: {
             title: "Show me where I am",
-            popup: "You are within {distance} {unit} from this point"
+            popup: "You are within {distance} {unit} from this point",
+            outsideMapBoundsMsg: "You seem located outside the boundaries of the map"
         },
         locateOptions: {}
     },
@@ -75,7 +79,8 @@ L.Control.Locate = L.Control.extend({
             .on(link, 'click', L.DomEvent.stopPropagation)
             .on(link, 'click', L.DomEvent.preventDefault)
             .on(link, 'click', function() {
-                if (self._active && (map.getBounds().contains(self._event.latlng) || !self.options.setView)) {
+                if (self._active && (map.getBounds().contains(self._event.latlng) || !self.options.setView ||
+                    isOutsideMapBounds() )) {
                     stopLocate();
                 } else {
                     if (self.options.setView) {
@@ -129,11 +134,20 @@ L.Control.Locate = L.Control.extend({
             visualizeLocation();
         };
 
+        var isOutsideMapBounds = function () {
+            return map.options.maxBounds &&
+                   !map.options.maxBounds.contains(self._event.latlng);
+        }
+
         var visualizeLocation = function() {
             var radius = self._event.accuracy / 2;
-
             if (self._locateOnNextLocationFound) {
-                map.fitBounds(self._event.bounds);
+                if (isOutsideMapBounds()) {
+                    self.options.onLocationOutsideMapBounds(self);
+                    self._following = false;
+                } else{
+                    map.fitBounds(self._event.bounds);
+                }
                 self._locateOnNextLocationFound = false;
             }
 
