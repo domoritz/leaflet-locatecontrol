@@ -32,8 +32,8 @@ L.Control.Locate = L.Control.extend({
         onLocationError: function(err) {
             alert(err.message);
         },
-        onLocationOutsideMapBounds: function(e, message) {
-            alert(message);
+        onLocationOutsideMapBounds: function(context) {
+            alert(context.options.strings.outsideMapBoundsMsg);
             return false;
         },
         setView: true, // automatically sets the map view to the user's location
@@ -81,7 +81,7 @@ L.Control.Locate = L.Control.extend({
             .on(link, 'click', L.DomEvent.preventDefault)
             .on(link, 'click', function() {
                 if (self._active && (map.getBounds().contains(self._event.latlng) || !self.options.setView ||
-                    (map.options.maxBounds && !map.options.maxBounds.contains(self._event.latlng)))) {
+                    isOutsideMapBounds() )) {
                     stopLocate();
                 } else {
                     if (self.options.setView) {
@@ -135,15 +135,16 @@ L.Control.Locate = L.Control.extend({
             visualizeLocation();
         };
 
+        var isOutsideMapBounds = function () {
+            return map.options.maxBounds &&
+                   !map.options.maxBounds.contains(self._event.latlng);
+        }
+
         var visualizeLocation = function() {
             var radius = self._event.accuracy / 2;
             if (self._locateOnNextLocationFound) {
-                if (map.options.maxBounds &&
-                    !map.options.maxBounds.contains(self._event.latlng) &&
-                    !self.options.onLocationOutsideMapBounds(self._event,
-                                            self.options.strings.outsideMapBoundsMsg)) {
-                    // outside map boundaries
-                    self._following = false;
+                if (isOutsideMapBounds()) {
+                    self._following = self._following && self.options.onLocationOutsideMapBounds(self);
                 } else {
                     map.fitBounds(self._event.bounds);
                 }
