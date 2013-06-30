@@ -32,7 +32,10 @@ L.Control.Locate = L.Control.extend({
         onLocationError: function(err) {
             alert(err.message);
         },
-        onLocationOutsideMapBounds: null,
+        onLocationOutsideMapBounds: function(e, message) {
+            alert(message);
+            return false;
+        },
         setView: true, // automatically sets the map view to the user's location
         strings: {
             title: "Show me where I am",
@@ -137,7 +140,8 @@ L.Control.Locate = L.Control.extend({
             if (self._locateOnNextLocationFound) {
                 if (map.options.maxBounds &&
                     !map.options.maxBounds.contains(self._event.latlng) &&
-                    !self.options.onLocationOutsideMapBounds(self._event)) {
+                    !self.options.onLocationOutsideMapBounds(self._event,
+                                            self.options.strings.outsideMapBoundsMsg)) {
                     // outside map boundaries
                     self._following = false;
                 } else {
@@ -209,16 +213,6 @@ L.Control.Locate = L.Control.extend({
 
             self._layer.clearLayers();
         };
-
-        var onLocationOutsideMapBounds = function(e) {
-            alert(self.options.strings.outsideMapBoundsMsg);
-            return false;
-        }
-
-        if (!this.options.onLocationOutsideMapBounds) {
-            // fall back to default if none provided
-            this.options.onLocationOutsideMapBounds = onLocationOutsideMapBounds;
-        }
 
         var onLocationError = function (err) {
             // ignore timeout error if the location is watched
