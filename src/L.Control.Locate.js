@@ -34,7 +34,6 @@ L.Control.Locate = L.Control.extend({
         },
         onLocationOutsideMapBounds: function(context) {
             alert(context.options.strings.outsideMapBoundsMsg);
-            return false;
         },
         setView: true, // automatically sets the map view to the user's location
         strings: {
@@ -143,14 +142,11 @@ L.Control.Locate = L.Control.extend({
         var visualizeLocation = function() {
             var radius = self._event.accuracy / 2;
             if (self._locateOnNextLocationFound) {
-                var jumpToLocation = true;
                 if (isOutsideMapBounds()) {
-                    jumpToLocation = self.options.onLocationOutsideMapBounds(self);
-                }
-                if (jumpToLocation) {
-                    map.fitBounds(self._event.bounds);
-                } else {
+                    self.options.onLocationOutsideMapBounds(self);
                     self._following = false;
+                } else{
+                    map.fitBounds(self._event.bounds);
                 }
                 self._locateOnNextLocationFound = false;
             }
@@ -218,6 +214,7 @@ L.Control.Locate = L.Control.extend({
 
             self._layer.clearLayers();
         };
+
 
         var onLocationError = function (err) {
             // ignore timeout error if the location is watched
