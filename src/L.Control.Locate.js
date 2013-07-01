@@ -143,10 +143,14 @@ L.Control.Locate = L.Control.extend({
         var visualizeLocation = function() {
             var radius = self._event.accuracy / 2;
             if (self._locateOnNextLocationFound) {
+                var jumpToLocation = true;
                 if (isOutsideMapBounds()) {
-                    self._following = self._following && self.options.onLocationOutsideMapBounds(self);
-                } else {
+                    jumpToLocation = self.options.onLocationOutsideMapBounds(self);
+                }
+                if (jumpToLocation) {
                     map.fitBounds(self._event.bounds);
+                } else {
+                    self._following = false;
                 }
                 self._locateOnNextLocationFound = false;
             }

@@ -39,7 +39,10 @@ L.control.locate({
     followMarkerStyle: {},
     metric: true,  // use metric or imperial units
     onLocationError: function(err) {alert(err.message)},  // define an error callback function
-    onLocationOutsideMapBounds: null, // function called when outside map boundaries. Abort if returns False (default)
+    onLocationOutsideMapBounds:  function(context) {
+            alert(context.options.strings.outsideMapBoundsMsg);
+            return false;
+    }, // function called when outside map boundaries. Abort if returns False (default)
     setView: true, // automatically sets the map view to the user's location
     strings: {
         title: "Show me where I am",  // title of the locat control
