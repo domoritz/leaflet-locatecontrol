@@ -68,6 +68,10 @@ Sites that use this locate control:
 Run the demo locally with `python -m SimpleHTTPServer` and then open http://0.0.0.0:8000/demo.
 
 
+## Thanks
+
+To all [contributors](https://github.com/domoritz/graphs/contributors) and issue reporters.
+
 ## License
 
 MIT
