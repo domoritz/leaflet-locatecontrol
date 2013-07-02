@@ -76,7 +76,7 @@ Run the demo locally with `python -m SimpleHTTPServer` and then open http://0.0.
 
 ## Thanks
 
-To all [contributors](https://github.com/domoritz/graphs/contributors) and issue reporters.
+To all [contributors](https://github.com/domoritz/leaflet-locatecontrol/contributors) and issue reporters.
 
 ## License
 
