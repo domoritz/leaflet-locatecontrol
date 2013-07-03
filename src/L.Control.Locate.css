@@ -16,12 +16,12 @@
 }
 
 .leaflet-control-locate.requesting a {
-    background-image: url(images/spinner.gif);
-    background-position: 50% 50%;
+	background-image: url(images/spinner.gif);
+	background-position: 50% 50%;
 }
 
 .leaflet-control-locate.active a {
-    background-position: -32px -2px;
+	background-position: -32px -2px;
 }
 
 .leaflet-control-locate.active.following a {
