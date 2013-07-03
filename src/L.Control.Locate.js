@@ -140,6 +140,8 @@ L.Control.Locate = L.Control.extend({
         }
 
         var visualizeLocation = function() {
+            if (self._event.accuracy === undefined)
+                self._event.accuracy = 0;
             var radius = self._event.accuracy / 2;
             if (self._locateOnNextLocationFound) {
                 if (isOutsideMapBounds()) {
