@@ -7,7 +7,7 @@ var base_layer = new L.tileLayer(
 
 var map = new L.Map('map', {
     layers: [base_layer],
-    center: new L.LatLng(51.505, -0.09),
+    center: [51.505, -0.09],
     zoom: 10,
 	zoomControl: true
 });
@@ -15,6 +15,6 @@ var map = new L.Map('map', {
 // add location control to global namespace for testing only
 // on a production site, omit the "lc = "!
 lc = L.control.locate({
-	'follow': true,
+	follow: true,
 	stopFollowingOnDrag: true
 }).addTo(map);
