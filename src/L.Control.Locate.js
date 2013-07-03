@@ -19,7 +19,7 @@ L.Control.Locate = L.Control.extend({
             fillOpacity: 0.7,
             weight: 2,
             opacity: 0.9,
-            radius: 4
+            radius: 5
         },
         // changes to range circle and inner marker while following
         // it is only necessary to provide the things that shoud change
