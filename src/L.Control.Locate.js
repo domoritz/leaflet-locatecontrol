@@ -22,7 +22,7 @@ L.Control.Locate = L.Control.extend({
             radius: 5
         },
         // changes to range circle and inner marker while following
-        // it is only necessary to provide the things that shoud change
+        // it is only necessary to provide the things that should change
         followCircleStyle: {},
         followMarkerStyle: {
             //color: '#FFA500',
@@ -30,9 +30,12 @@ L.Control.Locate = L.Control.extend({
         },
         metric: true,
         onLocationError: function(err) {
+            // this event is called in case of any location error
+            // that is not a time out error.
             alert(err.message);
         },
         onLocationOutsideMapBounds: function(context) {
+            // this event is repeatedly called when the location changes
             alert(context.options.strings.outsideMapBoundsMsg);
         },
         setView: true, // automatically sets the map view to the user's location
@@ -80,7 +83,7 @@ L.Control.Locate = L.Control.extend({
             .on(link, 'click', L.DomEvent.preventDefault)
             .on(link, 'click', function() {
                 if (self._active && (map.getBounds().contains(self._event.latlng) || !self.options.setView ||
-                    isOutsideMapBounds() )) {
+                    isOutsideMapBounds())) {
                     stopLocate();
                 } else {
                     if (self.options.setView) {
@@ -103,11 +106,11 @@ L.Control.Locate = L.Control.extend({
             .on(link, 'dblclick', L.DomEvent.stopPropagation);
 
         var onLocationFound = function (e) {
-            self._active = true;
-
+            // no need to do anything if the location has not changed
             if (self._event &&
-                (self._event.latlng.lat != e.latlng.lat ||
-                 self._event.latlng.lng != e.latlng.lng)) {
+                (self._event.latlng.lat == e.latlng.lat &&
+                 self._event.latlng.lng == e.latlng.lng)) {
+                return;
             }
 
             self._event = e;
@@ -135,36 +138,38 @@ L.Control.Locate = L.Control.extend({
         };
 
         var isOutsideMapBounds = function () {
+            if (self._event === undefined)
+                return false;
             return map.options.maxBounds &&
-                   !map.options.maxBounds.contains(self._event.latlng);
-        }
+                !map.options.maxBounds.contains(self._event.latlng);
+        };
 
         var visualizeLocation = function() {
             if (self._event.accuracy === undefined)
                 self._event.accuracy = 0;
+
+            self._layer.clearLayers();
+
             var radius = self._event.accuracy / 2;
             if (self._locateOnNextLocationFound) {
                 if (isOutsideMapBounds()) {
                     self.options.onLocationOutsideMapBounds(self);
-                    self._following = false;
-                } else{
+                } else {
                     map.fitBounds(self._event.bounds);
                 }
                 self._locateOnNextLocationFound = false;
             }
 
-            self._layer.clearLayers();
-
             // circle with the radius of the location's accuracy
-            var c;
+            var style;
             if (self.options.drawCircle) {
                 if (self._following) {
-                    c = self.options.followCircleStyle;
+                    style = self.options.followCircleStyle;
                 } else {
-                    c = self.options.circleStyle;
+                    style = self.options.circleStyle;
                 }
 
-                L.circle(self._event.latlng, radius, c)
+                L.circle(self._event.latlng, radius, style)
                     .addTo(self._layer);
             }
 
@@ -217,10 +222,9 @@ L.Control.Locate = L.Control.extend({
             self._layer.clearLayers();
         };
 
-
         var onLocationError = function (err) {
-            // ignore timeout error if the location is watched
-            if (err.code==3 && this._locateOptions.watch) {
+            // ignore time out error if the location is watched
+            if (err.code == 3 && this._locateOptions.watch) {
                 return;
             }
 
