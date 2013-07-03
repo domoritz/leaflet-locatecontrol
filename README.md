@@ -22,7 +22,7 @@ Check out the demo at http://domoritz.github.com/leaflet-locatecontrol/demo/
 L.control.locate().addTo(map);
 ```
 
-The CSS style is compatible with the latest Leaflet. If you cannot use the latest Leaflet, you can use the provided `L.Control.Locate-0.5.css` style for Leaflet 0.5.1 and below.
+The CSS style is compatible with the latest Leaflet. If you cannot use the latest Leaflet, you can use the provided `L.Control.Locate.0.5.css` style for Leaflet 0.5.1 and below.
 
 
 ### Possible options
