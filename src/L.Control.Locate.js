@@ -49,7 +49,7 @@ L.Control.Locate = L.Control.extend({
 
     onAdd: function (map) {
         var className = 'leaflet-control-locate',
-            classNames = className + ' leaflet-control-zoom leaflet-bar leaflet-control',
+            classNames = className + ' leaflet-bar leaflet-control',
             container = L.DomUtil.create('div', classNames);
 
         var self = this;

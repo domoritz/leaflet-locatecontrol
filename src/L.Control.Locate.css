@@ -1,11 +1,5 @@
 /* Compatible with Leaflet 0.6 */
 
-.leaflet-bar-part-single {
-	-webkit-border-radius: 4px 4px 4px 4px;
-	        border-radius: 4px 4px 4px 4px;
-	border-bottom: none;
-}
-
 .leaflet-touch .leaflet-bar-part-single {
 	-webkit-border-radius: 7px 7px 7px 7px;
 	        border-radius: 7px 7px 7px 7px;
@@ -22,12 +16,12 @@
 }
 
 .leaflet-control-locate.requesting a {
-    background-image: url(images/spinner.gif);
-    background-position: 50% 50%;
+	background-image: url(images/spinner.gif);
+	background-position: 50% 50%;
 }
 
 .leaflet-control-locate.active a {
-    background-position: -32px -2px;
+	background-position: -32px -2px;
 }
 
 .leaflet-control-locate.active.following a {
