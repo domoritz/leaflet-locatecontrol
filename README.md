@@ -47,7 +47,7 @@ L.control.locate({
     setView: true, // automatically sets the map view to the user's location
     strings: {
         title: "Show me where I am",  // title of the locat control
-        popupText: "You are within {distance} {unit} from this point",  // text to appear if user clicks on circle
+        popup: "You are within {distance} {unit} from this point",  // text to appear if user clicks on circle
         outsideMapBoundsMsg: "You seem located outside the boundaries of the map" // default message for onLocationOutsideMapBounds
     }
     locateOptions: {}  // define location options e.g enableHighAccuracy: true
