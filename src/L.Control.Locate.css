@@ -27,3 +27,8 @@
 .leaflet-control-locate.active.following a {
 	background-position: -62px -2px;
 }
+
+.leaflet-touch .leaflet-control-locate {
+	box-shadow: none;
+	border: 4px solid rgba(0,0,0,0.3);
+}
