@@ -64,6 +64,7 @@ L.control.locate({
 
 Sites that use this locate control:
 
+* [OpenStreetMap](http://www.openstreetmap.org/)
 * [wheelmap.org](http://wheelmap.org/map)
 * [OpenMensa](http://openmensa.org/)
 * ...
