@@ -1,3 +1,9 @@
+/*
+Copyright (c) 2013 Dominik Moritz
+
+This file is part of the leaflet locate control. It is licensed under the MIT license.
+You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
+*/
 L.Control.Locate = L.Control.extend({
     options: {
         position: 'topleft',
