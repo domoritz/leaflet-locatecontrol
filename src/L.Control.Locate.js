@@ -119,6 +119,10 @@ L.Control.Locate = L.Control.extend({
                 return;
             }
 
+            if (!self._active) {
+                return;
+            }
+
             self._event = e;
 
             if (self.options.follow && self._following) {
