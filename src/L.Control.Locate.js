@@ -156,7 +156,7 @@ L.Control.Locate = L.Control.extend({
 
             self._layer.clearLayers();
 
-            var radius = self._event.accuracy / 2;
+            var radius = self._event.accuracy;
             if (self._locateOnNextLocationFound) {
                 if (isOutsideMapBounds()) {
                     self.options.onLocationOutsideMapBounds(self);
