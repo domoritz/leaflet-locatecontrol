@@ -158,8 +158,6 @@ L.Control.Locate = L.Control.extend({
             if (self._event.accuracy === undefined)
                 self._event.accuracy = 0;
 
-            self._layer.clearLayers();
-
             var radius = self._event.accuracy;
             if (self._locateOnNextLocationFound) {
                 if (isOutsideMapBounds()) {
@@ -179,8 +177,12 @@ L.Control.Locate = L.Control.extend({
                     style = self.options.circleStyle;
                 }
 
-                L.circle(self._event.latlng, radius, style)
-                    .addTo(self._layer);
+                if (!self._circle) {
+                    self._circle = L.circle(self._event.latlng, radius, style)
+                        .addTo(self._layer);
+                } else {
+                    self._circle.setLatLng(self._event.latlng).setRadius(radius);
+                }
             }
 
             var distance, unit;
@@ -201,9 +203,15 @@ L.Control.Locate = L.Control.extend({
             }
 
             var t = self.options.strings.popup;
-            L.circleMarker(self._event.latlng, m)
-                .bindPopup(L.Util.template(t, {distance: distance, unit: unit}))
-                .addTo(self._layer);
+            if (!self._circleMarker) {
+                self._circleMarker = L.circleMarker(self._event.latlng, m)
+                    .bindPopup(L.Util.template(t, {distance: distance, unit: unit}))
+                    .addTo(self._layer);
+            } else {
+                self._circleMarker.setLatLng(self._event.latlng)
+                    .bindPopup(L.Util.template(t, {distance: distance, unit: unit}))
+                    ._popup.setLatLng(self._event.latlng);
+            }
 
             if (!self._container)
                 return;
@@ -230,6 +238,8 @@ L.Control.Locate = L.Control.extend({
             resetVariables();
 
             self._layer.clearLayers();
+            self._circleMarker = undefined;
+            self._circle = undefined;
         };
 
         var onLocationError = function (err) {
