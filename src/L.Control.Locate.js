@@ -115,8 +115,9 @@ L.Control.Locate = L.Control.extend({
         var onLocationFound = function (e) {
             // no need to do anything if the location has not changed
             if (self._event &&
-                (self._event.latlng.lat == e.latlng.lat &&
-                 self._event.latlng.lng == e.latlng.lng)) {
+                (self._event.latlng.lat === e.latlng.lat &&
+                 self._event.latlng.lng === e.latlng.lng &&
+                 self._event.accuracy === e.accuracy)) {
                 return;
             }
 
