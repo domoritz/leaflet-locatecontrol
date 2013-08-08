@@ -54,9 +54,8 @@ L.Control.Locate = L.Control.extend({
     },
 
     onAdd: function (map) {
-        var className = 'leaflet-control-locate',
-            classNames = className + ' leaflet-bar leaflet-control',
-            container = L.DomUtil.create('div', classNames);
+        var container = L.DomUtil.create('div',
+            'leaflet-control-locate leaflet-bar leaflet-control');
 
         var self = this;
         this._layer = new L.LayerGroup();
@@ -103,7 +102,9 @@ L.Control.Locate = L.Control.extend({
                         startFollowing();
                     }
                     if (!self._event) {
-                        self._container.className = classNames + " requesting";
+                        L.DomUtil.addClass(self._container, "requesting");
+                        L.DomUtil.removeClass(self._container, "active");
+                        L.DomUtil.removeClass(self._container, "following");
                     } else {
                         visualizeLocation();
                     }
@@ -216,9 +217,13 @@ L.Control.Locate = L.Control.extend({
             if (!self._container)
                 return;
             if (self._following) {
-                self._container.className = classNames + " active following";
+                L.DomUtil.removeClass(self._container, "requesting");
+                L.DomUtil.addClass(self._container, "active");
+                L.DomUtil.addClass(self._container, "following");
             } else {
-                self._container.className = classNames + " active";
+                L.DomUtil.removeClass(self._container, "requesting");
+                L.DomUtil.addClass(self._container, "active");
+                L.DomUtil.removeClass(self._container, "following");
             }
         };
 
@@ -234,7 +239,9 @@ L.Control.Locate = L.Control.extend({
             map.stopLocate();
             map.off('dragstart', stopFollowing);
 
-            self._container.className = classNames;
+            L.DomUtil.removeClass(self._container, "requesting");
+            L.DomUtil.removeClass(self._container, "active");
+            L.DomUtil.removeClass(self._container, "following");
             resetVariables();
 
             self._layer.clearLayers();
