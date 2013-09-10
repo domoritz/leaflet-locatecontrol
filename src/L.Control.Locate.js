@@ -91,26 +91,30 @@ L.Control.Locate = L.Control.extend({
                     isOutsideMapBounds())) {
                     stopLocate();
                 } else {
-                    if (self.options.setView) {
-                        self._locateOnNextLocationFound = true;
-                    }
-                    if(!self._active) {
-                        map.locate(self._locateOptions);
-                    }
-                    self._active = true;
-                    if (self.options.follow) {
-                        startFollowing();
-                    }
-                    if (!self._event) {
-                        L.DomUtil.addClass(self._container, "requesting");
-                        L.DomUtil.removeClass(self._container, "active");
-                        L.DomUtil.removeClass(self._container, "following");
-                    } else {
-                        visualizeLocation();
-                    }
+                    locate();
                 }
             })
             .on(link, 'dblclick', L.DomEvent.stopPropagation);
+
+        var locate = function () {
+            if (self.options.setView) {
+                self._locateOnNextLocationFound = true;
+            }
+            if(!self._active) {
+                map.locate(self._locateOptions);
+            }
+            self._active = true;
+            if (self.options.follow) {
+                startFollowing();
+            }
+            if (!self._event) {
+                L.DomUtil.addClass(self._container, "requesting");
+                L.DomUtil.removeClass(self._container, "active");
+                L.DomUtil.removeClass(self._container, "following");
+            } else {
+                visualizeLocation();
+            }
+        };
 
         var onLocationFound = function (e) {
             // no need to do anything if the location has not changed
@@ -263,6 +267,10 @@ L.Control.Locate = L.Control.extend({
         // event hooks
         map.on('locationfound', onLocationFound, self);
         map.on('locationerror', onLocationError, self);
+
+        // make locate functions available to outside world
+        this.locate = locate;
+        this.stopLocate = stopLocate;
 
         return container;
     }

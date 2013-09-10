@@ -54,6 +54,18 @@ L.control.locate({
 }).addTo(map);
 ```
 
+### Helper functions
+
+You can call `locate()` or `stopLocate()` on the locate control object to set the location of page load for example.
+
+```javascript
+// create control and add to map
+var lc = L.control.locate().addTo(map);
+
+// request location update and set location
+lc.locate();
+```
+
 
 ## Screenshot
 
