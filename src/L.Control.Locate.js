@@ -34,6 +34,7 @@ L.Control.Locate = L.Control.extend({
             //color: '#FFA500',
             //fillColor: '#FFB000'
         },
+        circlePadding: [0, 0],
         metric: true,
         onLocationError: function(err) {
             // this event is called in case of any location error
@@ -169,7 +170,7 @@ L.Control.Locate = L.Control.extend({
                 if (isOutsideMapBounds()) {
                     self.options.onLocationOutsideMapBounds(self);
                 } else {
-                    map.fitBounds(self._event.bounds);
+                    map.fitBounds(self._event.bounds, { padding: self.options.circlePadding });
                 }
                 self._locateOnNextLocationFound = false;
             }
