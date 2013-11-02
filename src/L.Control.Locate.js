@@ -170,6 +170,9 @@ L.Control.Locate = L.Control.extend({
                     self.options.onLocationOutsideMapBounds(self);
                 } else {
                     map.fitBounds(self._event.bounds);
+                    if (self.options.locateOptions.maxZoom) {
+                        map.setZoom(self.options.locateOptions.maxZoom);
+                    }
                 }
                 self._locateOnNextLocationFound = false;
             }
