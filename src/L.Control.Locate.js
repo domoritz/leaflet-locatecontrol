@@ -189,6 +189,9 @@ L.Control.Locate = L.Control.extend({
                         .addTo(self._layer);
                 } else {
                     self._circle.setLatLng(self._event.latlng).setRadius(radius);
+                    for (var styleOption in style) {
+                        self._circle.options[styleOption] = style[styleOption];
+                    }
                 }
             }
 
@@ -218,6 +221,9 @@ L.Control.Locate = L.Control.extend({
                 self._circleMarker.setLatLng(self._event.latlng)
                     .bindPopup(L.Util.template(t, {distance: distance, unit: unit}))
                     ._popup.setLatLng(self._event.latlng);
+                for (var styleOption in m) {
+                    self._circleMarker.options[styleOption] = m[styleOption];
+                }
             }
 
             if (!self._container)
