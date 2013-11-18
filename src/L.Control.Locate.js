@@ -272,6 +272,7 @@ L.Control.Locate = L.Control.extend({
         // make locate functions available to outside world
         this.locate = locate;
         this.stopLocate = stopLocate;
+        this.stopFollowing = stopFollowing;
 
         return container;
     }
