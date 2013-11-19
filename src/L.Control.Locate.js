@@ -140,7 +140,7 @@ L.Control.Locate = L.Control.extend({
         };
 
         var startFollowing = function() {
-            map.fire('startfollowing')
+            map.fire('startfollowing');
             self._following = true;
             if (self.options.stopFollowingOnDrag) {
                 map.on('dragstart', stopFollowing);
@@ -178,7 +178,7 @@ L.Control.Locate = L.Control.extend({
             }
 
             // circle with the radius of the location's accuracy
-            var style;
+            var style, o;
             if (self.options.drawCircle) {
                 if (self._following) {
                     style = self.options.followCircleStyle;
@@ -191,8 +191,8 @@ L.Control.Locate = L.Control.extend({
                         .addTo(self._layer);
                 } else {
                     self._circle.setLatLng(self._event.latlng).setRadius(radius);
-                    for (var styleOption in style) {
-                        self._circle.options[styleOption] = style[styleOption];
+                    for (o in style) {
+                        self._circle.options[o] = style[o];
                     }
                 }
             }
@@ -207,24 +207,24 @@ L.Control.Locate = L.Control.extend({
             }
 
             // small inner marker
-            var m;
+            var mStyle;
             if (self._following) {
-                m = self.options.followMarkerStyle;
+                mStyle = self.options.followMarkerStyle;
             } else {
-                m = self.options.markerStyle;
+                mStyle = self.options.markerStyle;
             }
 
             var t = self.options.strings.popup;
             if (!self._circleMarker) {
-                self._circleMarker = L.circleMarker(self._event.latlng, m)
+                self._circleMarker = L.circleMarker(self._event.latlng, mStyle)
                     .bindPopup(L.Util.template(t, {distance: distance, unit: unit}))
                     .addTo(self._layer);
             } else {
                 self._circleMarker.setLatLng(self._event.latlng)
                     .bindPopup(L.Util.template(t, {distance: distance, unit: unit}))
                     ._popup.setLatLng(self._event.latlng);
-                for (var styleOption in m) {
-                    self._circleMarker.options[styleOption] = m[styleOption];
+                for (o in mStyle) {
+                    self._circleMarker.options[o] = mStyle[o];
                 }
             }
 
