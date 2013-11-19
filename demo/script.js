@@ -15,6 +15,11 @@ var map = new L.Map('map', {
 // add location control to global name space for testing only
 // on a production site, omit the "lc = "!
 lc = L.control.locate({
-	follow: true,
-	stopFollowingOnDrag: true
+	follow: true
 }).addTo(map);
+
+map.on('startfollowing', function() {
+    map.on('dragstart', lc.stopFollowing);
+}).on('stopfollowing', function() {
+    map.off('dragstart', lc.stopFollowing);
+});

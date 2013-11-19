@@ -34,7 +34,7 @@ L.control.locate({
 	position: 'topleft',  // set the location of the control
     drawCircle: true,  // controls whether a circle is drawn that shows the uncertainty about the location
     follow: false,  // follow the location if `watch` and `setView` are set to true in locateOptions
-    stopFollowingOnDrag: false, // stop following when the map is dragged if `follow` is set to true (deprecated)
+    stopFollowingOnDrag: false, // stop following when the map is dragged if `follow` is set to true (deprecated, see below)
     circleStyle: {},  // change the style of the circle around the user's location
     markerStyle: {},
     followCircleStyle: {},  // set difference for the style of the circle around the user's location while following
@@ -59,7 +59,7 @@ L.control.locate({
 
 You can call `locate()` or `stopLocate()` on the locate control object to set the location of page load for example.
 
-```javascript
+```js
 // create control and add to map
 var lc = L.control.locate().addTo(map);
 
@@ -67,6 +67,22 @@ var lc = L.control.locate().addTo(map);
 lc.locate();
 ```
 
+You can also use the helper functions to automatically stop following when the map is panned. See the example below.
+
+```js
+var lc = L.control.locate().addTo(map);
+map.on('dragstart', lc.stopFollowing);
+```
+
+Alternatively, you can unload events when not following to avoid unnecessary events.
+
+```js
+map.on('startfollowing', function() {
+    map.on('dragstart', lc.stopFollowing);
+}).on('stopfollowing', function() {
+    map.off('dragstart', lc.stopFollowing);
+});
+```
 
 ## Screenshot
 
