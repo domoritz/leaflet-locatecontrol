@@ -9,7 +9,7 @@ L.Control.Locate = L.Control.extend({
         position: 'topleft',
         drawCircle: true,
         follow: false,  // follow with zoom and pan the user's location
-        stopFollowingOnDrag: false, // if follow is true, stop following when map is dragged
+        stopFollowingOnDrag: false, // if follow is true, stop following when map is dragged (deprecated)
         // range circle
         circleStyle: {
             color: '#136AEC',
@@ -140,6 +140,7 @@ L.Control.Locate = L.Control.extend({
         };
 
         var startFollowing = function() {
+            map.fire('startfollowing')
             self._following = true;
             if (self.options.stopFollowingOnDrag) {
                 map.on('dragstart', stopFollowing);
@@ -147,6 +148,7 @@ L.Control.Locate = L.Control.extend({
         };
 
         var stopFollowing = function() {
+            map.fire('stopfollowing');
             self._following = false;
             if (self.options.stopFollowingOnDrag) {
                 map.off('dragstart', stopFollowing);
