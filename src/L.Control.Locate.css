@@ -31,5 +31,5 @@
 .leaflet-touch .leaflet-control-locate {
 	box-shadow: none;
 	border: 2px solid rgba(0,0,0,0.2);
-    	background-clip: padding-box;
+	background-clip: padding-box;
 }
