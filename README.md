@@ -94,6 +94,7 @@ map.on('startfollowing', function() {
 Sites that use this locate control:
 
 * [OpenStreetMap](http://www.openstreetmap.org/)
+* [MapBox](https://www.mapbox.com/mapbox.js/example/v1.0.0/leaflet-locatecontrol/)
 * [wheelmap.org](http://wheelmap.org/map)
 * [OpenMensa](http://openmensa.org/)
 * ...
