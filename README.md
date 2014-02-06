@@ -33,8 +33,9 @@ The locate controls inherits options from [Leaflet Controls](http://leafletjs.co
 L.control.locate({
 	position: 'topleft',  // set the location of the control
     drawCircle: true,  // controls whether a circle is drawn that shows the uncertainty about the location
-    follow: false,  // follow the location if ``setView` is set to `true` in locateOptions
-    stopFollowingOnDrag: false, // stop following when the map is dragged if `follow` is set to true (deprecated, see below)
+    follow: false,  // follow the user's location
+    setView: true, // automatically sets the map view to the user's location, enabled if `follow` is true
+    stopFollowingOnDrag: false, // stop following when the map is dragged if `follow` is true (deprecated, see below)
     circleStyle: {},  // change the style of the circle around the user's location
     markerStyle: {},
     followCircleStyle: {},  // set difference for the style of the circle around the user's location while following
@@ -45,7 +46,6 @@ L.control.locate({
     onLocationOutsideMapBounds:  function(context) { // called when outside map boundaries
             alert(context.options.strings.outsideMapBoundsMsg);
     },
-    setView: true, // automatically sets the map view to the user's location
     strings: {
         title: "Show me where I am",  // title of the locat control
         popup: "You are within {distance} {unit} from this point",  // text to appear if user clicks on circle
