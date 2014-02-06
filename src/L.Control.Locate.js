@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2013 Dominik Moritz
+Copyright (c) 2014 Dominik Moritz
 
 This file is part of the leaflet locate control. It is licensed under the MIT license.
 You can find the project at: https://github.com/domoritz/leaflet-locatecontrol

@@ -33,7 +33,7 @@ The locate controls inherits options from [Leaflet Controls](http://leafletjs.co
 L.control.locate({
 	position: 'topleft',  // set the location of the control
     drawCircle: true,  // controls whether a circle is drawn that shows the uncertainty about the location
-    follow: false,  // follow the location if `watch` and `setView` are set to true in locateOptions
+    follow: false,  // follow the location if ``setView` is set to `true` in locateOptions
     stopFollowingOnDrag: false, // stop following when the map is dragged if `follow` is set to true (deprecated, see below)
     circleStyle: {},  // change the style of the circle around the user's location
     markerStyle: {},
