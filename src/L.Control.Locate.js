@@ -51,7 +51,10 @@ L.Control.Locate = L.Control.extend({
             popup: "You are within {distance} {unit} from this point",
             outsideMapBoundsMsg: "You seem located outside the boundaries of the map"
         },
-        locateOptions: {}
+        locateOptions: {
+            maxZoom: Infinity,
+            watch: true  // if you overwrite this, visualization cannot be updated
+        }
     },
 
     onAdd: function (map) {
@@ -63,9 +66,7 @@ L.Control.Locate = L.Control.extend({
         this._layer.addTo(map);
         this._event = undefined;
 
-        this._locateOptions = {
-            watch: true  // if you overwrite this, visualization cannot be updated
-        };
+        this._locateOptions = this.options.locateOptions;
         L.extend(this._locateOptions, this.options.locateOptions);
         L.extend(this._locateOptions, {
             setView: false // have to set this to false because we have to
@@ -172,7 +173,10 @@ L.Control.Locate = L.Control.extend({
                 if (isOutsideMapBounds()) {
                     self.options.onLocationOutsideMapBounds(self);
                 } else {
-                    map.fitBounds(self._event.bounds, { padding: self.options.circlePadding });
+                    map.fitBounds(self._event.bounds, {
+                        padding: self.options.circlePadding,
+                        maxZoom: self._locateOptions.maxZoom
+                    });
                 }
                 self._locateOnNextLocationFound = false;
             }
