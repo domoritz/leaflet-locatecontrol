@@ -18,7 +18,7 @@ Check out the demo at http://domoritz.github.com/leaflet-locatecontrol/demo/
 * add the javascript and css files
 * add the following snippet to your map initialization:
 
-```javascript
+```js
 L.control.locate().addTo(map);
 ```
 
@@ -29,7 +29,7 @@ The CSS style is compatible with the latest Leaflet. If you cannot use the lates
 
 The locate controls inherits options from [Leaflet Controls](http://leafletjs.com/reference.html#control-options).
 
-```javascript
+```js
 L.control.locate({
 	position: 'topleft',  // set the location of the control
     drawCircle: true,  // controls whether a circle is drawn that shows the uncertainty about the location
@@ -47,11 +47,11 @@ L.control.locate({
             alert(context.options.strings.outsideMapBoundsMsg);
     },
     strings: {
-        title: "Show me where I am",  // title of the locat control
+        title: "Show me where I am",  // title of the locate control
         popup: "You are within {distance} {unit} from this point",  // text to appear if user clicks on circle
         outsideMapBoundsMsg: "You seem located outside the boundaries of the map" // default message for onLocationOutsideMapBounds
     }
-    locateOptions: {}  // define location options e.g enableHighAccuracy: true
+    locateOptions: {}  // define location options e.g enableHighAccuracy: true or maxZoom: 10
 }).addTo(map);
 ```
 
@@ -83,6 +83,20 @@ map.on('startfollowing', function() {
     map.off('dragstart', lc.stopFollowing);
 });
 ```
+
+### FAQ
+
+#### How do I set the maximum zoom level?
+
+Set the `maxZoom` in `locateOptions`.
+
+```js
+map.addControl(L.control.locate({
+       locateOptions: {
+               maxZoom: 10
+}}));
+```
+
 
 ## Screenshot
 
