@@ -15,9 +15,13 @@ Check out the demo at http://domoritz.github.io/leaflet-locatecontrol/demo/
 
 ### Minimal set up:
 
-#### add the javascript and css files
+#### Add the JavaScript and CSS files
 
-Either download and include the js and css files manually or use the latest version directly from my repository using [rawgithub](http://rawgithub.com/).
+Download and include the JavaScript and CSS files.
+
+The CSS style is compatible with the latest Leaflet. If you cannot use the latest Leaflet, you can use the provided `L.Control.Locate.0.5.css` style for Leaflet 0.5.1 and below.
+
+For testing purposes and development, you can use the latest version directly from my repository using [rawgithub](http://rawgithub.com/). However, **don't do this in production environments**!
 
 ```html
 <link rel="stylesheet" href="//rawgithub.com/domoritz/leaflet-locatecontrol/gh-pages/src/L.Control.Locate.css" />
@@ -28,14 +32,11 @@ Either download and include the js and css files manually or use the latest vers
 <script src="//rawgithub.com/domoritz/leaflet-locatecontrol/gh-pages/src/L.Control.Locate.js" ></script>
 ```
 
-### add the following snippet to your map initialization:
+### Add the following snippet to your map initialization:
 
 ```js
 L.control.locate().addTo(map);
 ```
-
-The CSS style is compatible with the latest Leaflet. If you cannot use the latest Leaflet, you can use the provided `L.Control.Locate.0.5.css` style for Leaflet 0.5.1 and below.
-
 
 ### Possible options
 
