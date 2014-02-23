@@ -7,7 +7,7 @@ Tested with Leaflet 0.7 in Firefox, Webkit and mobile Webkit.
 
 ##Demo
 
-Check out the demo at http://domoritz.github.com/leaflet-locatecontrol/demo/
+Check out the demo at http://domoritz.github.io/leaflet-locatecontrol/demo/
 
 
 ## Usage
@@ -15,8 +15,20 @@ Check out the demo at http://domoritz.github.com/leaflet-locatecontrol/demo/
 
 ### Minimal set up:
 
-* add the javascript and css files
-* add the following snippet to your map initialization:
+#### add the javascript and css files
+
+Either download and include the js and css files manually or use the latest version directly from my repository using [rawgithub](http://rawgithub.com/).
+
+```html
+<link rel="stylesheet" href="//rawgithub.com/domoritz/leaflet-locatecontrol/gh-pages/src/L.Control.Locate.css" />
+<!--[if lt IE 9]>
+    <link rel="stylesheet" href="//rawgithub.com/domoritz/leaflet-locatecontrol/gh-pages/src/L.Control.Locate.ie.css"/>
+<![endif]-->
+
+<script src="//rawgithub.com/domoritz/leaflet-locatecontrol/gh-pages/src/L.Control.Locate.js" ></script>
+```
+
+### add the following snippet to your map initialization:
 
 ```js
 L.control.locate().addTo(map);
