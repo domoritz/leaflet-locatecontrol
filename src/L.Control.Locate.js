@@ -256,7 +256,7 @@ L.Control.Locate = L.Control.extend({
         var stopLocate = function() {
             map.stopLocate();
             map.off('dragstart', stopFollowing);
-            if (self.options.follow) {
+            if (self.options.follow && self._following) {
                 stopFollowing();
             }
 
