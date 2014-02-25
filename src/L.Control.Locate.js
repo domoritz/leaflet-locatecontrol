@@ -41,8 +41,9 @@ L.Control.Locate = L.Control.extend({
             // that is not a time out error.
             alert(err.message);
         },
-        onLocationOutsideMapBounds: function(context) {
+        onLocationOutsideMapBounds: function(control) {
             // this event is repeatedly called when the location changes
+            control.stopLocate();
             alert(context.options.strings.outsideMapBoundsMsg);
         },
         setView: true, // automatically sets the map view to the user's location
