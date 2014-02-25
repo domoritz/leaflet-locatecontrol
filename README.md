@@ -68,7 +68,7 @@ L.control.locate({
 }).addTo(map);
 ```
 
-### Helper functions
+### Methods
 
 You can call `locate()` or `stopLocate()` on the locate control object to set the location of page load for example.
 
@@ -96,6 +96,11 @@ map.on('startfollowing', function() {
     map.off('dragstart', lc.stopFollowing);
 });
 ```
+
+### Events
+
+The locate control fires `startfollowing` and `stopfollowing` on the map object and passes `self` as data.
+
 
 ### FAQ
 

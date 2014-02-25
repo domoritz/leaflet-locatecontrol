@@ -142,7 +142,7 @@ L.Control.Locate = L.Control.extend({
         };
 
         var startFollowing = function() {
-            map.fire('startfollowing');
+            map.fire('startfollowing', self);
             self._following = true;
             if (self.options.stopFollowingOnDrag) {
                 map.on('dragstart', stopFollowing);
@@ -150,7 +150,7 @@ L.Control.Locate = L.Control.extend({
         };
 
         var stopFollowing = function() {
-            map.fire('stopfollowing');
+            map.fire('stopfollowing', self);
             self._following = false;
             if (self.options.stopFollowingOnDrag) {
                 map.off('dragstart', stopFollowing);
