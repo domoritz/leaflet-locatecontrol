@@ -34,6 +34,7 @@ L.Control.Locate = L.Control.extend({
             //color: '#FFA500',
             //fillColor: '#FFB000'
         },
+        icon: 'icon-location',  // icon-locate or icon-direction
         circlePadding: [0, 0],
         metric: true,
         onLocationError: function(err) {
@@ -82,7 +83,7 @@ L.Control.Locate = L.Control.extend({
         L.extend(tmp, this.options.circleStyle, this.options.followCircleStyle);
         this.options.followCircleStyle = tmp;
 
-        var link = L.DomUtil.create('a', 'leaflet-bar-part leaflet-bar-part-single', container);
+        var link = L.DomUtil.create('a', 'leaflet-bar-part leaflet-bar-part-single ' + this.options.icon, container);
         link.href = '#';
         link.title = this.options.strings.title;
 
@@ -111,9 +112,7 @@ L.Control.Locate = L.Control.extend({
                 startFollowing();
             }
             if (!self._event) {
-                L.DomUtil.addClass(self._container, "requesting");
-                L.DomUtil.removeClass(self._container, "active");
-                L.DomUtil.removeClass(self._container, "following");
+                setClasses('requesting');
             } else {
                 visualizeLocation();
             }
@@ -236,15 +235,39 @@ L.Control.Locate = L.Control.extend({
             if (!self._container)
                 return;
             if (self._following) {
-                L.DomUtil.removeClass(self._container, "requesting");
-                L.DomUtil.addClass(self._container, "active");
-                L.DomUtil.addClass(self._container, "following");
+                setClasses('following');
             } else {
+                setClasses('active');
+            }
+        };
+
+        var setClasses = function(state) {
+            if (state == 'requesting') {
+                L.DomUtil.addClass(self._container, "requesting");
+                L.DomUtil.removeClass(self._container, "active");
+                L.DomUtil.removeClass(self._container, "following");
+
+                L.DomUtil.removeClass(link, self.options.icon);
+                L.DomUtil.addClass(link, "icon-spinner");
+                L.DomUtil.addClass(link, "animate-spin");
+            } else if (state == 'active') {
                 L.DomUtil.removeClass(self._container, "requesting");
                 L.DomUtil.addClass(self._container, "active");
                 L.DomUtil.removeClass(self._container, "following");
+
+                L.DomUtil.addClass(link, self.options.icon);
+                L.DomUtil.removeClass(link, "icon-spinner");
+                L.DomUtil.removeClass(link, "animate-spin");
+            } else if (state == 'following') {
+                L.DomUtil.removeClass(self._container, "requesting");
+                L.DomUtil.addClass(self._container, "active");
+                L.DomUtil.addClass(self._container, "following");
+
+                L.DomUtil.addClass(link, self.options.icon);
+                L.DomUtil.removeClass(link, "icon-spinner");
+                L.DomUtil.removeClass(link, "animate-spin");
             }
-        };
+        }
 
         var resetVariables = function() {
             self._active = false;

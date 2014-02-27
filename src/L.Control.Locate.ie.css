@@ -1,4 +1,6 @@
 /* Conditional stylesheet for IE. */
+@import url('font/locate-fa-ie7.css');
+
 .leaflet-control-locate {
 	border: 3px solid #999;
 }
