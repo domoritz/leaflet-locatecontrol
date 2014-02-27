@@ -19,8 +19,6 @@ Check out the demo at http://domoritz.github.io/leaflet-locatecontrol/demo/
 
 Download and include the JavaScript and CSS files.
 
-The CSS style is compatible with the latest Leaflet. If you cannot use the latest Leaflet, you can use the provided `L.Control.Locate.0.5.css` style for Leaflet 0.5.1 and below.
-
 For testing purposes and development, you can use the latest version directly from my repository using [rawgithub](http://rawgithub.com/). However, **don't do this in production environments**!
 
 ```html
