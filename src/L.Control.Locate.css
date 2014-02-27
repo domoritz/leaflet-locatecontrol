@@ -8,7 +8,12 @@
 
 .leaflet-control-locate a {
 	background-image: url(images/locate.png);
+    background-size:90px 30px;
 	background-position: -2px -2px;
+}
+
+.leaflet-retina .leaflet-control-locate a {
+	background-image: url(images/locate@2x.png);
 }
 
 .leaflet-touch .leaflet-control-locate a {
@@ -16,8 +21,13 @@
 }
 
 .leaflet-control-locate.requesting a {
+    background-size:12px 12px;
 	background-image: url(images/spinner.gif);
 	background-position: 50% 50%;
+}
+
+.leaflet-retina .leaflet-control-locate.requesting a {
+	background-image: url(images/spinner@2x.gif);
 }
 
 .leaflet-control-locate.active a {
