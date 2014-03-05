@@ -54,7 +54,7 @@ L.Control.Locate = L.Control.extend({
             outsideMapBoundsMsg: "You seem located outside the boundaries of the map"
         },
         locateOptions: {
-            maxZoom: Infinity,
+            keepCurrentZoomLevel: true,
             watch: true  // if you overwrite this, visualization cannot be updated
         }
     },
@@ -175,7 +175,7 @@ L.Control.Locate = L.Control.extend({
                 } else {
                     map.fitBounds(self._event.bounds, {
                         padding: self.options.circlePadding,
-                        maxZoom: self._locateOptions.maxZoom
+                        maxZoom: self._locateOptions.keepCurrentZoomLevel?map.getZoom():self._locateOptions.maxZoom
                     });
                 }
                 self._locateOnNextLocationFound = false;
