@@ -46,6 +46,7 @@ L.control.locate({
     drawCircle: true,  // controls whether a circle is drawn that shows the uncertainty about the location
     follow: false,  // follow the user's location
     setView: true, // automatically sets the map view to the user's location, enabled if `follow` is true
+    keepCurrentZoomLevel: false, // keep the current map zoom level when diplaying the user's location. (if false, use maxZoom)
     stopFollowingOnDrag: false, // stop following when the map is dragged if `follow` is true (deprecated, see below)
     circleStyle: {},  // change the style of the circle around the user's location
     markerStyle: {},
@@ -105,7 +106,7 @@ The locate control fires `startfollowing` and `stopfollowing` on the map object 
 
 #### How do I set the maximum zoom level?
 
-Set the `maxZoom` in `locateOptions`.
+Set the `maxZoom` in `locateOptions`. (`keepCurrentZoomLevel` must not be set to true)
 
 ```js
 map.addControl(L.control.locate({
