@@ -106,7 +106,7 @@ The locate control fires `startfollowing` and `stopfollowing` on the map object 
 
 #### How do I set the maximum zoom level?
 
-Set the `maxZoom` in `locateOptions`. (`keepCurrentZoomLevel` must not be set to true)
+Set the `maxZoom` in `locateOptions`. (and `keepCurrentZoomLevel` must not be set to true)
 
 ```js
 map.addControl(L.control.locate({
