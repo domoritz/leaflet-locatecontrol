@@ -280,6 +280,9 @@ L.Control.Locate = L.Control.extend({
         var stopLocate = function() {
             map.stopLocate();
             map.off('dragstart', stopFollowing);
+            if (self.options.follow && self._following) {
+                stopFollowing();
+            }
 
             L.DomUtil.removeClass(self._container, "requesting");
             L.DomUtil.removeClass(self._container, "active");
