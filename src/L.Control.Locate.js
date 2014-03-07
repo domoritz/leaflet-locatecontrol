@@ -298,7 +298,7 @@ L.Control.Locate = L.Control.extend({
 
         var onLocationError = function (err) {
             // ignore time out error if the location is watched
-            if (err.code == 3 && this._locateOptions.watch) {
+            if (err.code == 3 && self._locateOptions.watch) {
                 return;
             }
 
