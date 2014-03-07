@@ -48,7 +48,8 @@ L.Control.Locate = L.Control.extend({
             alert(context.options.strings.outsideMapBoundsMsg);
         },
         setView: true, // automatically sets the map view to the user's location
-        keepCurrentZoomLevel: false, // keep the current map zoom level when diplaying the user's location. (if 'false', use maxZoom)
+        // keep the current map zoom level when displaying the user's location. (if 'false', use maxZoom)
+        keepCurrentZoomLevel: false,
         strings: {
             title: "Show me where I am",
             popup: "You are within {distance} {unit} from this point",
@@ -176,7 +177,7 @@ L.Control.Locate = L.Control.extend({
                 } else {
                     map.fitBounds(self._event.bounds, {
                         padding: self.options.circlePadding,
-                        maxZoom: self.options.keepCurrentZoomLevel?map.getZoom():self._locateOptions.maxZoom
+                        maxZoom: self.options.keepCurrentZoomLevel ? map.getZoom() : self._locateOptions.maxZoom
                     });
                 }
                 self._locateOnNextLocationFound = false;
