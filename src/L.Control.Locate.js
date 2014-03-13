@@ -35,6 +35,7 @@ L.Control.Locate = L.Control.extend({
             //fillColor: '#FFB000'
         },
         icon: 'icon-location',  // icon-locate or icon-direction
+        iconLoading: 'icon-spinner',
         circlePadding: [0, 0],
         metric: true,
         onLocationError: function(err) {
@@ -250,7 +251,7 @@ L.Control.Locate = L.Control.extend({
                 L.DomUtil.removeClass(self._container, "following");
 
                 L.DomUtil.removeClass(link, self.options.icon);
-                L.DomUtil.addClass(link, "icon-spinner");
+                L.DomUtil.addClass(link, self.options.iconLoading);
                 L.DomUtil.addClass(link, "animate-spin");
             } else if (state == 'active') {
                 L.DomUtil.removeClass(self._container, "requesting");
@@ -258,7 +259,7 @@ L.Control.Locate = L.Control.extend({
                 L.DomUtil.removeClass(self._container, "following");
 
                 L.DomUtil.addClass(link, self.options.icon);
-                L.DomUtil.removeClass(link, "icon-spinner");
+                L.DomUtil.removeClass(link, self.options.iconLoading);
                 L.DomUtil.removeClass(link, "animate-spin");
             } else if (state == 'following') {
                 L.DomUtil.removeClass(self._container, "requesting");
@@ -266,7 +267,7 @@ L.Control.Locate = L.Control.extend({
                 L.DomUtil.addClass(self._container, "following");
 
                 L.DomUtil.addClass(link, self.options.icon);
-                L.DomUtil.removeClass(link, "icon-spinner");
+                L.DomUtil.removeClass(link, self.options.iconLoading);
                 L.DomUtil.removeClass(link, "animate-spin");
             }
         }
