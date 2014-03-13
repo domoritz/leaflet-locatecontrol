@@ -53,6 +53,7 @@ L.control.locate({
     followCircleStyle: {},  // set difference for the style of the circle around the user's location while following
     followMarkerStyle: {},
     icon: 'icon-location',  // `icon-locate` or `icon-direction`
+    iconLoading: 'icon-spinner',
     circlePadding: [0, 0], // padding around accuracy circle, value is passed to setBounds
     metric: true,  // use metric or imperial units
     onLocationError: function(err) {alert(err.message)},  // define an error callback function
