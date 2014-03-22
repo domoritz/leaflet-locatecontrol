@@ -4,6 +4,22 @@ Copyright (c) 2014 Dominik Moritz
 This file is part of the leaflet locate control. It is licensed under the MIT license.
 You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
 */
+
+(function(){
+  // leaflet.js raises bug when trying to addClass / removeClass multiple classes at once
+  // Let's create a wrapper on it which fixes it.
+  var LDomUtilApplyClassesMethod = function(method, element, classNames) {
+    classNames = classNames.split(' ');
+    for (var i = 0; i < classNames.length; i++) {
+      var className = classNames[i];
+      L.DomUtil[method].call(this, element, className);
+    };
+  };
+  
+  L.DomUtil.addClasses = function(el, names) { LDomUtilApplyClassesMethod('addClass', el, names); }
+  L.DomUtil.removeClasses = function(el, names) { LDomUtilApplyClassesMethod('removeClass', el, names); }
+})();
+
 L.Control.Locate = L.Control.extend({
     options: {
         position: 'topleft',
@@ -35,7 +51,7 @@ L.Control.Locate = L.Control.extend({
             //fillColor: '#FFB000'
         },
         icon: 'icon-location',  // icon-locate or icon-direction
-        iconLoading: 'icon-spinner',
+        iconLoading: 'icon-spinner animate-spin',
         circlePadding: [0, 0],
         metric: true,
         onLocationError: function(err) {
@@ -246,29 +262,23 @@ L.Control.Locate = L.Control.extend({
 
         var setClasses = function(state) {
             if (state == 'requesting') {
-                L.DomUtil.addClass(self._container, "requesting");
-                L.DomUtil.removeClass(self._container, "active");
-                L.DomUtil.removeClass(self._container, "following");
+                L.DomUtil.removeClasses(self._container, "active following");
+                L.DomUtil.addClasses(self._container, "requesting");
 
-                L.DomUtil.removeClass(link, self.options.icon);
-                L.DomUtil.addClass(link, self.options.iconLoading);
-                L.DomUtil.addClass(link, "animate-spin");
+                L.DomUtil.removeClasses(link, self.options.icon);
+                L.DomUtil.addClasses(link, self.options.iconLoading);
             } else if (state == 'active') {
-                L.DomUtil.removeClass(self._container, "requesting");
-                L.DomUtil.addClass(self._container, "active");
-                L.DomUtil.removeClass(self._container, "following");
+                L.DomUtil.removeClasses(self._container, "requesting following");
+                L.DomUtil.addClasses(self._container, "active");
 
-                L.DomUtil.addClass(link, self.options.icon);
-                L.DomUtil.removeClass(link, self.options.iconLoading);
-                L.DomUtil.removeClass(link, "animate-spin");
+                L.DomUtil.removeClasses(link, self.options.iconLoading);
+                L.DomUtil.addClasses(link, self.options.icon);
             } else if (state == 'following') {
-                L.DomUtil.removeClass(self._container, "requesting");
-                L.DomUtil.addClass(self._container, "active");
-                L.DomUtil.addClass(self._container, "following");
+                L.DomUtil.removeClasses(self._container, "requesting");
+                L.DomUtil.addClasses(self._container, "active following");
 
-                L.DomUtil.addClass(link, self.options.icon);
-                L.DomUtil.removeClass(link, self.options.iconLoading);
-                L.DomUtil.removeClass(link, "animate-spin");
+                L.DomUtil.removeClasses(link, self.options.iconLoading);
+                L.DomUtil.addClasses(link, self.options.icon);
             }
         }
 
