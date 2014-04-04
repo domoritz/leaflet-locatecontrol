@@ -4,22 +4,6 @@ Copyright (c) 2014 Dominik Moritz
 This file is part of the leaflet locate control. It is licensed under the MIT license.
 You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
 */
-
-(function(){
-  // leaflet.js raises bug when trying to addClass / removeClass multiple classes at once
-  // Let's create a wrapper on it which fixes it.
-  var LDomUtilApplyClassesMethod = function(method, element, classNames) {
-    classNames = classNames.split(' ');
-    for (var i = 0; i < classNames.length; i++) {
-      var className = classNames[i];
-      L.DomUtil[method].call(this, element, className);
-    };
-  };
-  
-  L.DomUtil.addClasses = function(el, names) { LDomUtilApplyClassesMethod('addClass', el, names); }
-  L.DomUtil.removeClasses = function(el, names) { LDomUtilApplyClassesMethod('removeClass', el, names); }
-})();
-
 L.Control.Locate = L.Control.extend({
     options: {
         position: 'topleft',
@@ -340,3 +324,17 @@ L.Map.addInitHook(function () {
 L.control.locate = function (options) {
     return new L.Control.Locate(options);
 };
+
+(function(){
+  // leaflet.js raises bug when trying to addClass / removeClass multiple classes at once
+  // Let's create a wrapper on it which fixes it.
+  var LDomUtilApplyClassesMethod = function(method, element, classNames) {
+    classNames = classNames.split(' ');
+    classNames.forEach(function(className) {
+        L.DomUtil[method].call(this, element, className);
+    });
+  };
+
+  L.DomUtil.addClasses = function(el, names) { LDomUtilApplyClassesMethod('addClass', el, names); }
+  L.DomUtil.removeClasses = function(el, names) { LDomUtilApplyClassesMethod('removeClass', el, names); }
+})();
