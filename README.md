@@ -65,6 +65,11 @@ L.control.locate({
         popup: "You are within {distance} {unit} from this point",  // text to appear if user clicks on circle
         outsideMapBoundsMsg: "You seem located outside the boundaries of the map" // default message for onLocationOutsideMapBounds
     }
+    enableCompass: false,
+    compassOptions: { // Cordova-specific options
+        frequency: 100 // [ms] how often the angle should be updated? 
+    },
+    compassMarkerStyle: {},
     locateOptions: {}  // define location options e.g enableHighAccuracy: true or maxZoom: 10
 }).addTo(map);
 ```

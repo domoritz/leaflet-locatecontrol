@@ -29,3 +29,23 @@
 	border: 2px solid rgba(0,0,0,0.2);
 	background-clip: padding-box;
 }
+
+.leaflet-control-locate-compass {
+  font-size: 24px;
+  text-align: center;
+  color: #265B86;
+
+  -webkit-transform-origin: 50% 50%;
+     -moz-transform-origin: 50% 50%;
+      -ms-transform-origin: 50% 50%;
+       -o-transform-origin: 50% 50%;
+          transform-origin: 50% 50%;
+}
+.leaflet-control-locate-compass:before { 
+  -webkit-transform: rotate(-45deg);
+     -moz-transform: rotate(-45deg);
+      -ms-transform: rotate(-45deg);
+       -o-transform: rotate(-45deg);
+          transform: rotate(-45deg);
+  margin: 0;
+} 

@@ -4,6 +4,34 @@ Copyright (c) 2014 Dominik Moritz
 This file is part of the leaflet locate control. It is licensed under the MIT license.
 You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
 */
+
+
+// MIT-licensed code by Benjamin Becquet
+// https://github.com/bbecquet/Leaflet.PolylineDecorator
+// 
+// Note: This may become obsolete after https://github.com/Leaflet/Leaflet/pull/2362 gets merged.
+L.RotatedMarker = L.Marker.extend({
+  options: { angle: 0 },
+  _setPos: function(pos) {
+    L.Marker.prototype._setPos.call(this, pos);
+    if (L.DomUtil.TRANSFORM) {
+      // use the CSS transform rule if available
+      this._icon.style[L.DomUtil.TRANSFORM] += ' rotate(' + this.options.angle + 'deg)';
+    } else if (L.Browser.ie) {
+      // fallback for IE6, IE7, IE8
+      var rad = this.options.angle * L.LatLng.DEG_TO_RAD,
+      costheta = Math.cos(rad),
+      sintheta = Math.sin(rad);
+      this._icon.style.filter += ' progid:DXImageTransform.Microsoft.Matrix(sizingMethod=\'auto expand\', M11=' +
+        costheta + ', M12=' + (-sintheta) + ', M21=' + sintheta + ', M22=' + costheta + ')';
+    }
+  }
+});
+L.rotatedMarker = function(pos, options) {
+    return new L.RotatedMarker(pos, options);
+};
+
+
 L.Control.Locate = L.Control.extend({
     options: {
         position: 'topleft',
@@ -56,6 +84,17 @@ L.Control.Locate = L.Control.extend({
             popup: "You are within {distance} {unit} from this point",
             outsideMapBoundsMsg: "You seem located outside the boundaries of the map"
         },
+        enableCompass: false,
+        compassOptions: { // Cordova-specific options
+            frequency: 100 // [ms] how often the angle should be updated? 
+            // filter: 3 // not supported on Android - don't set it! if it's set, watchHeading stops working on Android
+        },
+        compassMarkerStyle: {
+            icon: L.divIcon({
+                className: "icon-direction leaflet-control-locate-compass",
+                iconSize: [24, 24]
+            })
+        },
         locateOptions: {
             maxZoom: Infinity,
             watch: true  // if you overwrite this, visualization cannot be updated
@@ -72,19 +111,14 @@ L.Control.Locate = L.Control.extend({
         this._event = undefined;
 
         this._locateOptions = this.options.locateOptions;
-        L.extend(this._locateOptions, this.options.locateOptions);
-        L.extend(this._locateOptions, {
+        L.extend(this._locateOptions, this.options.locateOptions, {
             setView: false // have to set this to false because we have to
                            // do setView manually
         });
 
         // extend the follow marker style and circle from the normal style
-        var tmp = {};
-        L.extend(tmp, this.options.markerStyle, this.options.followMarkerStyle);
-        this.options.followMarkerStyle = tmp;
-        tmp = {};
-        L.extend(tmp, this.options.circleStyle, this.options.followCircleStyle);
-        this.options.followCircleStyle = tmp;
+        this.options.followMarkerStyle = L.extend({}, this.options.markerStyle, this.options.followMarkerStyle);
+        this.options.followCircleStyle = L.extend({}, this.options.circleStyle, this.options.followCircleStyle);
 
         var link = L.DomUtil.create('a', 'leaflet-bar-part leaflet-bar-part-single ' + this.options.icon, container);
         link.href = '#';
@@ -109,6 +143,9 @@ L.Control.Locate = L.Control.extend({
             }
             if(!self._active) {
                 map.locate(self._locateOptions);
+                if (self.options.enableCompass) {
+                    startCompass();
+                }
             }
             self._active = true;
             if (self.options.follow) {
@@ -118,6 +155,33 @@ L.Control.Locate = L.Control.extend({
                 setClasses('requesting');
             } else {
                 visualizeLocation();
+            }
+        };
+
+        var startCompass = function() {
+            if (navigator.compass) { // cordova navigator.compass plugin
+                var onCompassSuccess = function(heading) {
+                    updateCompassHeading(heading.magneticHeading);
+                };
+
+                if (self._locateOptions.watch) {
+                    self._compassWatchID = navigator.compass.watchHeading(onCompassSuccess, null, self.options.compassOptions);
+                } else {
+                    navigator.compass.getCurrentHeading(onCompassSuccess, null, self.options.compassOptions);
+                }
+            } else if(window.DeviceOrientationEvent) { // HTML5 deviceOrientation API
+                self._deviceOrientationListener = window.addEventListener('deviceorientation', function(event) {
+                  updateCompassHeading(event.alpha);
+                });
+            }
+        };
+
+        var stopCompass = function() {
+            if (self._compassWatchID) {
+                navigator.compass.clearWatch(self._compassWatchID);
+            }
+            if (self._deviceOrientationListener) {
+                window.removeEventListener('deviceorientation', self._deviceOrientationListener);
             }
         };
 
@@ -185,21 +249,21 @@ L.Control.Locate = L.Control.extend({
             }
 
             // circle with the radius of the location's accuracy
-            var style, o;
+            var circleStyle, o;
             if (self.options.drawCircle) {
                 if (self._following) {
-                    style = self.options.followCircleStyle;
+                    circleStyle = self.options.followCircleStyle;
                 } else {
-                    style = self.options.circleStyle;
+                    circleStyle = self.options.circleStyle;
                 }
 
-                if (!self._circle) {
-                    self._circle = L.circle(self._event.latlng, radius, style)
+                if (!self._outerMarker) {
+                    self._outerMarker = L.circle(self._event.latlng, radius, circleStyle)
                         .addTo(self._layer);
                 } else {
-                    self._circle.setLatLng(self._event.latlng).setRadius(radius);
-                    for (o in style) {
-                        self._circle.options[o] = style[o];
+                    self._outerMarker.setLatLng(self._event.latlng).setRadius(radius);
+                    for (o in circleStyle) {
+                        self._outerMarker.options[o] = circleStyle[o];
                     }
                 }
             }
@@ -214,24 +278,29 @@ L.Control.Locate = L.Control.extend({
             }
 
             // small inner marker
-            var mStyle;
+            var markerStyle;
             if (self._following) {
-                mStyle = self.options.followMarkerStyle;
+                markerStyle = self.options.followMarkerStyle;
             } else {
-                mStyle = self.options.markerStyle;
+                markerStyle = self.options.markerStyle;
             }
 
             var t = self.options.strings.popup;
-            if (!self._circleMarker) {
-                self._circleMarker = L.circleMarker(self._event.latlng, mStyle)
+            if (!self._innerMarker) {
+                if (self.options.compassOptions) {
+                    self._innerMarker = L.rotatedMarker(self._event.latlng, self.options.compassMarkerStyle);
+                } else {
+                    self._innerMarker = L.circleMarker(self._event.latlng, markerStyle);
+                }
+                self._innerMarker
                     .bindPopup(L.Util.template(t, {distance: distance, unit: unit}))
                     .addTo(self._layer);
             } else {
-                self._circleMarker.setLatLng(self._event.latlng)
+                self._innerMarker.setLatLng(self._event.latlng)
                     .bindPopup(L.Util.template(t, {distance: distance, unit: unit}))
                     ._popup.setLatLng(self._event.latlng);
-                for (o in mStyle) {
-                    self._circleMarker.options[o] = mStyle[o];
+                for (o in markerStyle) {
+                    self._innerMarker.options[o] = markerStyle[o];
                 }
             }
 
@@ -276,6 +345,7 @@ L.Control.Locate = L.Control.extend({
 
         var stopLocate = function() {
             map.stopLocate();
+            stopCompass();
             map.off('dragstart', stopFollowing);
             if (self.options.follow && self._following) {
                 stopFollowing();
@@ -287,8 +357,8 @@ L.Control.Locate = L.Control.extend({
             resetVariables();
 
             self._layer.clearLayers();
-            self._circleMarker = undefined;
-            self._circle = undefined;
+            self._innerMarker = undefined;
+            self._outerMarker = undefined;
         };
 
         var onLocationError = function (err) {
@@ -299,6 +369,13 @@ L.Control.Locate = L.Control.extend({
 
             stopLocate();
             self.options.onLocationError(err);
+        };
+
+        var updateCompassHeading = function(degrees) {
+            if (self._innerMarker) {
+                self._innerMarker.options.angle = degrees;
+                self._innerMarker.update();
+            }
         };
 
         // event hooks
