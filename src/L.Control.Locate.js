@@ -38,6 +38,9 @@ L.Control.Locate = L.Control.extend({
         iconLoading: 'icon-spinner animate-spin',
         circlePadding: [0, 0],
         metric: true,
+        onClick: function(control){
+            // this event is called when the user clicks on the locate control
+        },
         onLocationError: function(err) {
             // this event is called in case of any location error
             // that is not a time out error.
@@ -49,6 +52,9 @@ L.Control.Locate = L.Control.extend({
             alert(context.options.strings.outsideMapBoundsMsg);
         },
         setView: true, // automatically sets the map view to the user's location
+        // locate control remains active on click even if the user's
+        // location is in view.
+        remainActive: true,
         // keep the current map zoom level when displaying the user's location. (if 'false', use maxZoom)
         keepCurrentZoomLevel: false,
         strings: {
@@ -94,12 +100,24 @@ L.Control.Locate = L.Control.extend({
             .on(link, 'click', L.DomEvent.stopPropagation)
             .on(link, 'click', L.DomEvent.preventDefault)
             .on(link, 'click', function() {
-                if (self._active && (self._event === undefined || map.getBounds().contains(self._event.latlng) || !self.options.setView ||
-                    isOutsideMapBounds())) {
+                if (self._active
+                    && (self._event === undefined
+                        || isOutsideMapBounds()
+                        || (!self.options.remainActive
+                            && (map.getBounds().contains(self._event.latlng)
+                                || !self.options.setView
+                            )
+                        )
+                    )
+                ) {
                     stopLocate();
                 } else {
                     locate();
                 }
+
+            })
+            .on(link, 'click', function(){
+                self.options.onClick(self);
             })
             .on(link, 'dblclick', L.DomEvent.stopPropagation);
 
