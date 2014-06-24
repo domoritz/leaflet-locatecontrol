@@ -10,6 +10,7 @@ L.Control.Locate = L.Control.extend({
         drawCircle: true,
         follow: false,  // follow with zoom and pan the user's location
         stopFollowingOnDrag: false, // if follow is true, stop following when map is dragged (deprecated)
+        markerClass: L.circleMarker, // L.circleMarker or L.marker
         // range circle
         circleStyle: {
             color: '#136AEC',
@@ -222,16 +223,16 @@ L.Control.Locate = L.Control.extend({
             }
 
             var t = self.options.strings.popup;
-            if (!self._circleMarker) {
-                self._circleMarker = L.circleMarker(self._event.latlng, mStyle)
+            if (!self._marker) {
+                self._marker = self.options.markerClass(self._event.latlng, mStyle)
                     .bindPopup(L.Util.template(t, {distance: distance, unit: unit}))
                     .addTo(self._layer);
             } else {
-                self._circleMarker.setLatLng(self._event.latlng)
+                self._marker.setLatLng(self._event.latlng)
                     .bindPopup(L.Util.template(t, {distance: distance, unit: unit}))
                     ._popup.setLatLng(self._event.latlng);
                 for (o in mStyle) {
-                    self._circleMarker.options[o] = mStyle[o];
+                    self._marker.options[o] = mStyle[o];
                 }
             }
 
@@ -287,7 +288,7 @@ L.Control.Locate = L.Control.extend({
             resetVariables();
 
             self._layer.clearLayers();
-            self._circleMarker = undefined;
+            self._marker = undefined;
             self._circle = undefined;
         };
 
