@@ -47,7 +47,7 @@ L.Control.Locate = L.Control.extend({
         onLocationOutsideMapBounds: function(control) {
             // this event is repeatedly called when the location changes
             control.stopLocate();
-            alert(context.options.strings.outsideMapBoundsMsg);
+            alert(control.options.strings.outsideMapBoundsMsg);
         },
         setView: true, // automatically sets the map view to the user's location
         // keep the current map zoom level when displaying the user's location. (if 'false', use maxZoom)
@@ -265,7 +265,7 @@ L.Control.Locate = L.Control.extend({
                 L.DomUtil.removeClasses(link, self.options.iconLoading);
                 L.DomUtil.addClasses(link, self.options.icon);
             }
-        }
+        };
 
         var resetVariables = function() {
             self._active = false;
@@ -336,6 +336,6 @@ L.control.locate = function (options) {
     });
   };
 
-  L.DomUtil.addClasses = function(el, names) { LDomUtilApplyClassesMethod('addClass', el, names); }
-  L.DomUtil.removeClasses = function(el, names) { LDomUtilApplyClassesMethod('removeClass', el, names); }
+  L.DomUtil.addClasses = function(el, names) { LDomUtilApplyClassesMethod('addClass', el, names); };
+  L.DomUtil.removeClasses = function(el, names) { LDomUtilApplyClassesMethod('removeClass', el, names); };
 })();
