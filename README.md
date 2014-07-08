@@ -48,7 +48,7 @@ L.control.locate({
     setView: true, // automatically sets the map view to the user's location, enabled if `follow` is true
     keepCurrentZoomLevel: false, // keep the current map zoom level when displaying the user's location. (if `false`, use maxZoom)
     stopFollowingOnDrag: false, // stop following when the map is dragged if `follow` is true (deprecated, see below)
-    remainActive: false, // If true location is always active. Clicking control will just pan to location
+    remainActive: false, // if true locate control remains active on click even if the user's location is in view.
     markerClass: L.circleMarker, // L.circleMarker or L.marker
     circleStyle: {},  // change the style of the circle around the user's location
     markerStyle: {},

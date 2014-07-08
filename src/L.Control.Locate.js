@@ -10,7 +10,9 @@ L.Control.Locate = L.Control.extend({
         drawCircle: true,
         follow: false,  // follow with zoom and pan the user's location
         stopFollowingOnDrag: false, // if follow is true, stop following when map is dragged (deprecated)
-        remainActive: false, // If true location is always active. Clicking control will just pan to location
+        // if true locate control remains active on click even if the user's location is in view.
+        // clicking control will just pan to location
+        remainActive: false,
         markerClass: L.circleMarker, // L.circleMarker or L.marker
         // range circle
         circleStyle: {
@@ -96,8 +98,8 @@ L.Control.Locate = L.Control.extend({
             .on(link, 'click', L.DomEvent.stopPropagation)
             .on(link, 'click', L.DomEvent.preventDefault)
             .on(link, 'click', function() {
-                if (!self.options.remainActive && (self._active && (self._event === undefined || map.getBounds().contains(self._event.latlng) || !self.options.setView ||
-                    isOutsideMapBounds()))) {
+                var shouldStop = (self._event === undefined || map.getBounds().contains(self._event.latlng) || !self.options.setView || isOutsideMapBounds())
+                if (!self.options.remainActive && (self._active && shouldStop)) {
                     stopLocate();
                 } else {
                     locate();
