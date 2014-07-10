@@ -55,6 +55,7 @@ L.Control.Locate = L.Control.extend({
         setView: true, // automatically sets the map view to the user's location
         // keep the current map zoom level when displaying the user's location. (if 'false', use maxZoom)
         keepCurrentZoomLevel: false,
+        showPopup: true, // display a popup when the user click on the inner marker
         strings: {
             title: "Show me where I am",
             popup: "You are within {distance} {unit} from this point",
@@ -225,18 +226,20 @@ L.Control.Locate = L.Control.extend({
                 mStyle = self.options.markerStyle;
             }
 
-            var t = self.options.strings.popup;
             if (!self._marker) {
                 self._marker = self.options.markerClass(self._event.latlng, mStyle)
-                    .bindPopup(L.Util.template(t, {distance: distance, unit: unit}))
                     .addTo(self._layer);
             } else {
-                self._marker.setLatLng(self._event.latlng)
-                    .bindPopup(L.Util.template(t, {distance: distance, unit: unit}))
-                    ._popup.setLatLng(self._event.latlng);
+                self._marker.setLatLng(self._event.latlng);
                 for (o in mStyle) {
                     self._marker.options[o] = mStyle[o];
                 }
+            }
+
+            var t = self.options.strings.popup;
+            if (self.options.showPopup && t) {
+              self._marker.bindPopup(L.Util.template(t, {distance: distance, unit: unit}))
+                  ._popup.setLatLng(self._event.latlng);
             }
 
             if (!self._container)
