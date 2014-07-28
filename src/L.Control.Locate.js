@@ -161,7 +161,9 @@ L.Control.Locate = L.Control.extend({
             if (self.options.stopFollowingOnDrag) {
                 map.off('dragstart', stopFollowing);
             }
-            visualizeLocation();
+            if (self._event) {
+                visualizeLocation();
+            }
         };
 
         var isOutsideMapBounds = function () {
