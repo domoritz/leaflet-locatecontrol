@@ -8,6 +8,23 @@
   font-weight: normal;
   font-style: normal;
 }
+/* use SVG only on mobile devices to avoid display issue on android
+issue: https://github.com/domoritz/leaflet-locatecontrol/issues/78
+solution: http://stackoverflow.com/a/21050160/1106908
+*/
+@media only screen and (max-width: 320px),
+            screen and (max-device-width: 720px) and (orientation: portrait),
+            screen and (max-device-width: 1280px) and (orientation: landscape)
+{
+    @font-face {
+        font-family: 'locate-fa';
+        src: url('../font/locate-fa.eot?9201824');
+        src: url('../font/locate-fa.svg?9201824#locate-fa') format('svg');
+        font-weight: normal;
+        font-style: normal;
+    }
+}
+
 /* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */
 /* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */
 /*
