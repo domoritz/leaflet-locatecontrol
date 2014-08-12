@@ -161,7 +161,7 @@ L.Control.Locate = L.Control.extend({
             if (self.options.stopFollowingOnDrag) {
                 map.off('dragstart', stopFollowing);
             }
-            visualizeLocation();
+            setContainerStyle();
         };
 
         var isOutsideMapBounds = function () {
@@ -239,6 +239,10 @@ L.Control.Locate = L.Control.extend({
                 }
             }
 
+            setContainerStyle();
+        };
+
+        var setContainerStyle = function() {
             if (!self._container)
                 return;
             if (self._following) {
