@@ -1,11 +1,11 @@
-#Leaflet.Locate
+# Leaflet.Locate
 
 A useful control to geolocate the user with many options.
 
 Tested with Leaflet 0.7 in Firefox, Webkit and mobile Webkit.
 
 
-##Demo
+## Demo
 
 Check out the demo at http://domoritz.github.io/leaflet-locatecontrol/demo/
 
