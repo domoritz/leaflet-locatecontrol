@@ -62,6 +62,7 @@ L.control.locate({
     onLocationOutsideMapBounds:  function(context) { // called when outside map boundaries
             alert(context.options.strings.outsideMapBoundsMsg);
     },
+    showPopup: true, // display a popup when the user click on the inner marker
     strings: {
         title: "Show me where I am",  // title of the locate control
         popup: "You are within {distance} {unit} from this point",  // text to appear if user clicks on circle
