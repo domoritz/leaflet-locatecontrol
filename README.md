@@ -12,7 +12,6 @@ Check out the demo at http://domoritz.github.io/leaflet-locatecontrol/demo/
 
 ## Usage
 
-
 ### Minimal set up:
 
 #### Add the JavaScript and CSS files
@@ -30,11 +29,16 @@ For testing purposes and development, you can use the latest version directly fr
 <script src="//rawgithub.com/domoritz/leaflet-locatecontrol/gh-pages/src/L.Control.Locate.js" ></script>
 ```
 
-### Add the following snippet to your map initialization:
+#### Add the following snippet to your map initialization:
 
 ```js
 L.control.locate().addTo(map);
 ```
+
+#### Install using bower
+
+To install the locate control with [Bower](http://bower.io/), just run `bower install leaflet.locate`.
+
 
 ### Possible options
 
