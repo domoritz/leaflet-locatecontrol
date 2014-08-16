@@ -37,7 +37,7 @@ L.control.locate().addTo(map);
 
 #### Install using bower
 
-To install the locate control with [Bower](http://bower.io/), just run `bower install leaflet.locate`.
+To install the locate control with [Bower](http://bower.io/), just run `bower install leaflet.locatecontrol`.
 
 
 ### Possible options
