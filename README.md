@@ -72,7 +72,10 @@ L.control.locate({
         popup: "You are within {distance} {unit} from this point",  // text to appear if user clicks on circle
         outsideMapBoundsMsg: "You seem located outside the boundaries of the map" // default message for onLocationOutsideMapBounds
     }
-    locateOptions: {}  // define location options e.g enableHighAccuracy: true or maxZoom: 10
+    locateOptions: {  // define location options e.g enableHighAccuracy: true or maxZoom: 10
+        maxZoom: Infinity,
+        watch: true
+    }
 }).addTo(map);
 ```
 
