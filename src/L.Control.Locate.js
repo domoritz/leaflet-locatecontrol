@@ -69,19 +69,141 @@ L.Control.Locate = L.Control.extend({
 
     initialize: function (options) {
         for (var i in options) {
-            if (typeof this.options[i] === 'object') {
-                L.extend(this.options[i], options[i]);
-            } else {
-                this.options[i] = options[i];
-            }
+            L.extend(this.options[i], options[i]);
         }
     },
 
+    /**
+     * Tells the map to stopLocating.
+     * Removes dragstart bind (to stopFollowing).
+     * Cleans container classes.
+     * Resets variables.
+     * Clears layers.
+     * Removes marker and circle
+     */
+    stopLocate: function(control) {
+        control._map.stopLocate();
+        control._map.off('dragstart', this.stopFollowing);
+        if (control.options.follow && control._following) {
+            this.stopFollowing();
+        }
+
+        this.cleanClasses();
+        this.resetVariables();
+
+        control._layer.clearLayers();
+        control._marker = undefined;
+        control._circle = undefined;
+    },
+
+    /**
+     * Changes container class
+     */
+    toggleContainerStyle: function() {
+        if (!this._container) {
+            return;
+        }
+
+        if (this._following) {
+            this.setClasses('following');
+        } else {
+            this.setClasses('active');
+        }
+    },
+
+    /**
+     * Changes container class
+     */
+    cleanClasses: function() {
+        L.DomUtil.removeClass(this._container, "requesting");
+        L.DomUtil.removeClass(this._container, "active");
+        L.DomUtil.removeClass(this._container, "following");
+    },
+
+    /**
+     * Changes container class
+     */
+    setClasses: function(state) {
+        if (state === 'requesting') { L.DomUtil.removeClasses(this._container, "active following");
+            L.DomUtil.addClasses(this._container, "requesting");
+
+            L.DomUtil.removeClasses(this._icon, this.options.icon);
+            L.DomUtil.addClasses(this._icon, this.options.iconLoading);
+        } else if (state === 'active') {
+            L.DomUtil.removeClasses(this._container, "requesting following");
+            L.DomUtil.addClasses(this._container, "active");
+
+            L.DomUtil.removeClasses(this._icon, this.options.iconLoading);
+            L.DomUtil.addClasses(this._icon, this.options.icon);
+        } else if (state === 'following') {
+            L.DomUtil.removeClasses(this._container, "requesting");
+            L.DomUtil.addClasses(this._container, "active following");
+
+            L.DomUtil.removeClasses(this._icon, this.options.iconLoading);
+            L.DomUtil.addClasses(this._icon, this.options.icon);
+        }
+    },
+
+    /**
+     * Dispatches an event.
+     * Unbinds stopFollowing.
+     * Changes style.
+     */
+    stopFollowing: function(map) {
+        map.fire('stopfollowing', this);
+        this._following = false;
+        if (this.options.stopFollowingOnDrag) {
+            map.off('dragstart', this.stopFollowing);
+        }
+        this.toggleContainerStyle();
+    },
+
+    /**
+     * Dispatches an event.
+     * Binds stopFollowing.
+     */
+    startFollowing: function(map) {
+        map.fire('startfollowing', this);
+        this._following = true;
+        if (this.options.stopFollowingOnDrag) {
+            map.on('dragstart', this.stopFollowing);
+        }
+    },
+ 
+    /**
+     * Does stuff.
+     * Launches map.locate.
+     * Starts following.
+     * Toggles class or shows location on map.
+     */
+    locate: function (map) {
+        if (this.options.setView) {
+            this._locateOnNextLocationFound = true;
+        }
+        if(!this._active) {
+            map.locate(this._locateOptions);
+        }
+        this._active = true;
+        if (this.options.follow) {
+            this.startFollowing(map);
+        }
+        if (!this._event) {
+            this.setClasses('requesting');
+        } else {
+            this.visualizeLocation(map);
+        }
+    },
+
+    /**
+     * Creates button.
+     * Binds events on button.
+     * Reinitializes state.
+     * Binds events on map.
+     */
     onAdd: function (map) {
         var container = L.DomUtil.create('div',
             'leaflet-control-locate leaflet-bar leaflet-control');
 
-        var self = this;
         this._layer = new L.LayerGroup();
         this._layer.addTo(map);
         this._event = undefined;
@@ -104,238 +226,170 @@ L.Control.Locate = L.Control.extend({
         this._link = L.DomUtil.create('a', 'leaflet-bar-part leaflet-bar-part-single', container);
         this._link.href = '#';
         this._link.title = this.options.strings.title;
-
         this._icon = L.DomUtil.create('span', this.options.icon, this._link);
 
         L.DomEvent
             .on(this._link, 'click', L.DomEvent.stopPropagation)
             .on(this._link, 'click', L.DomEvent.preventDefault)
+            .on(this._link, 'dblclick', L.DomEvent.stopPropagation)
             .on(this._link, 'click', function() {
-                var shouldStop = (self._event === undefined || map.getBounds().contains(self._event.latlng)
-                    || !self.options.setView || isOutsideMapBounds());
-                if (!self.options.remainActive && (self._active && shouldStop)) {
-                    stopLocate();
+                var shouldStop = (this._event === undefined || this._map.getBounds().contains(this._event.latlng) || !this.options.setView || this.isOutsideMapBounds())
+                if (!this.options.remainActive && (this._active && shouldStop)) {
+                    this.stopLocate(this);
                 } else {
-                    locate();
+                    this.locate(map);
                 }
-            })
-            .on(this._link, 'dblclick', L.DomEvent.stopPropagation);
+            }, this
+        );
 
-        var locate = function () {
-            if (self.options.setView) {
-                self._locateOnNextLocationFound = true;
-            }
-            if(!self._active) {
-                map.locate(self._locateOptions);
-            }
-            self._active = true;
-            if (self.options.follow) {
-                startFollowing();
-            }
-            if (!self._event) {
-                setClasses('requesting');
-            } else {
-                visualizeLocation();
-            }
-        };
+        //for (var i = 0, len = this.options.hooks.length; i < len; i++) {
+        //    L.DomEvent
+        //        // @todo This is compatible only IE9+
+        //        .on(link, 'click', this.options.hooks[i], this);
+        //}
 
-        var onLocationFound = function (e) {
-            // no need to do anything if the location has not changed
-            if (self._event &&
-                (self._event.latlng.lat === e.latlng.lat &&
-                 self._event.latlng.lng === e.latlng.lng &&
-                 self._event.accuracy === e.accuracy)) {
-                return;
-            }
-
-            if (!self._active) {
-                return;
-            }
-
-            self._event = e;
-
-            if (self.options.follow && self._following) {
-                self._locateOnNextLocationFound = true;
-            }
-
-            visualizeLocation();
-        };
-
-        var startFollowing = function() {
-            map.fire('startfollowing', self);
-            self._following = true;
-            if (self.options.stopFollowingOnDrag) {
-                map.on('dragstart', stopFollowing);
-            }
-        };
-
-        var stopFollowing = function() {
-            map.fire('stopfollowing', self);
-            self._following = false;
-            if (self.options.stopFollowingOnDrag) {
-                map.off('dragstart', stopFollowing);
-            }
-            setContainerStyle();
-        };
-
-        var isOutsideMapBounds = function () {
-            if (self._event === undefined)
-                return false;
-            return map.options.maxBounds &&
-                !map.options.maxBounds.contains(self._event.latlng);
-        };
-
-        var visualizeLocation = function() {
-            if (self._event.accuracy === undefined)
-                self._event.accuracy = 0;
-
-            var radius = self._event.accuracy;
-            if (self._locateOnNextLocationFound) {
-                if (isOutsideMapBounds()) {
-                    self.options.onLocationOutsideMapBounds(self);
-                } else {
-                    map.fitBounds(self._event.bounds, {
-                        padding: self.options.circlePadding,
-                        maxZoom: self.options.keepCurrentZoomLevel ? map.getZoom() : self._locateOptions.maxZoom
-                    });
-                }
-                self._locateOnNextLocationFound = false;
-            }
-
-            // circle with the radius of the location's accuracy
-            var style, o;
-            if (self.options.drawCircle) {
-                if (self._following) {
-                    style = self.options.followCircleStyle;
-                } else {
-                    style = self.options.circleStyle;
-                }
-
-                if (!self._circle) {
-                    self._circle = L.circle(self._event.latlng, radius, style)
-                        .addTo(self._layer);
-                } else {
-                    self._circle.setLatLng(self._event.latlng).setRadius(radius);
-                    for (o in style) {
-                        self._circle.options[o] = style[o];
-                    }
-                }
-            }
-
-            var distance, unit;
-            if (self.options.metric) {
-                distance = radius.toFixed(0);
-                unit = "meters";
-            } else {
-                distance = (radius * 3.2808399).toFixed(0);
-                unit = "feet";
-            }
-
-            // small inner marker
-            var mStyle;
-            if (self._following) {
-                mStyle = self.options.followMarkerStyle;
-            } else {
-                mStyle = self.options.markerStyle;
-            }
-
-            if (!self._marker) {
-                self._marker = self.options.markerClass(self._event.latlng, mStyle)
-                    .addTo(self._layer);
-            } else {
-                self._marker.setLatLng(self._event.latlng);
-                for (o in mStyle) {
-                    self._marker.options[o] = mStyle[o];
-                }
-            }
-
-			var t = self.options.strings.popup;
-            if (self.options.showPopup && t) {
-              self._marker.bindPopup(L.Util.template(t, {distance: distance, unit: unit}))
-                  ._popup.setLatLng(self._event.latlng);
-            }
-
-            setContainerStyle();
-        };
-
-        var setContainerStyle = function() {
-            if (!self._container)
-                return;
-            if (self._following) {
-                setClasses('following');
-            } else {
-                setClasses('active');
-            }
-        };
-
-        var setClasses = function(state) {
-            if (state == 'requesting') {
-                L.DomUtil.removeClasses(self._container, "active following");
-                L.DomUtil.addClasses(self._container, "requesting");
-
-                L.DomUtil.removeClasses(self._icon, self.options.icon);
-                L.DomUtil.addClasses(self._icon, self.options.iconLoading);
-            } else if (state == 'active') {
-                L.DomUtil.removeClasses(self._container, "requesting following");
-                L.DomUtil.addClasses(self._container, "active");
-
-                L.DomUtil.removeClasses(self._icon, self.options.iconLoading);
-                L.DomUtil.addClasses(self._icon, self.options.icon);
-            } else if (state == 'following') {
-                L.DomUtil.removeClasses(self._container, "requesting");
-                L.DomUtil.addClasses(self._container, "active following");
-
-                L.DomUtil.removeClasses(self._icon, self.options.iconLoading);
-                L.DomUtil.addClasses(self._icon, self.options.icon);
-            }
-        };
-
-        var resetVariables = function() {
-            self._active = false;
-            self._locateOnNextLocationFound = self.options.setView;
-            self._following = false;
-        };
-
-        resetVariables();
-
-        var stopLocate = function() {
-            map.stopLocate();
-            map.off('dragstart', stopFollowing);
-            if (self.options.follow && self._following) {
-                stopFollowing();
-            }
-
-            L.DomUtil.removeClass(self._container, "requesting");
-            L.DomUtil.removeClass(self._container, "active");
-            L.DomUtil.removeClass(self._container, "following");
-            resetVariables();
-
-            self._layer.clearLayers();
-            self._marker = undefined;
-            self._circle = undefined;
-        };
-
-        var onLocationError = function (err) {
-            // ignore time out error if the location is watched
-            if (err.code == 3 && self._locateOptions.watch) {
-                return;
-            }
-
-            stopLocate();
-            self.options.onLocationError(err);
-        };
+        this.resetVariables();
 
         // event hooks
-        map.on('locationfound', onLocationFound, self);
-        map.on('locationerror', onLocationError, self);
-        map.on('unload', stopLocate, self);
-
-        // make locate functions available to outside world
-        this.locate = locate;
-        this.stopLocate = stopLocate;
-        this.stopFollowing = stopFollowing;
+        map.on('locationfound', this.onLocationFound, this, this);
+        map.on('locationerror', this.onLocationError, this, this);
+        map.on('unload', this.stopLocate, this, this);
 
         return container;
+    },
+
+    /**
+     * Stops Location.
+     * Dispatch error.
+     */
+    onLocationError: function (err) {
+        // ignore time out error if the location is watched
+        if (err.code == 3 && this._locateOptions.watch) {
+            return;
+        }
+
+        this.stopLocate();
+        this.options.onLocationError(err);
+    },
+    
+    /**
+     * Updates location on map if needed.
+     */
+    onLocationFound: function (e) {
+        // no need to do anything if the location has not changed
+        if (this._event &&
+            (this._event.latlng.lat === e.latlng.lat &&
+                this._event.latlng.lng === e.latlng.lng &&
+                this._event.accuracy === e.accuracy)) {
+            return;
+        }
+
+        if (!this._active) {
+            return;
+        }
+
+        this._event = e;
+
+        if (this.options.follow && this._following) {
+            this._locateOnNextLocationFound = true;
+        }
+
+        this.visualizeLocation(this._map);
+    },
+
+    /**
+     * Reinitializes local variables
+     */
+    resetVariables: function() {
+        this._active = false;
+        this._locateOnNextLocationFound = this.options.setView;
+        this._following = false;
+    },
+
+    /**
+     * Show location on map
+     */
+    visualizeLocation: function(map, center) {
+        if (this._event.accuracy === undefined)
+            this._event.accuracy = 0;
+
+        var radius = this._event.accuracy;
+        if (this._locateOnNextLocationFound) {
+            if (this.isOutsideMapBounds()) {
+                this.options.onLocationOutsideMapBounds(this);
+            } else {
+                map.fitBounds(this._event.bounds, {
+                    padding: this.options.circlePadding,
+                    maxZoom: this.options.keepCurrentZoomLevel ? map.getZoom() : this._locateOptions.maxZoom
+                });
+            }
+            this._locateOnNextLocationFound = false;
+        }
+
+        // circle with the radius of the location's accuracy
+        var style, o;
+        if (this.options.drawCircle) {
+            if (this._following) {
+                style = this.options.followCircleStyle;
+            } else {
+                style = this.options.circleStyle;
+            }
+
+            if (!this._circle) {
+                this._circle = L.circle(this._event.latlng, radius, style)
+                    .addTo(this._layer);
+            } else {
+                this._circle.setLatLng(this._event.latlng).setRadius(radius);
+                for (o in style) {
+                    this._circle.options[o] = style[o];
+                }
+            }
+        }
+
+        var distance, unit;
+        if (this.options.metric) {
+            distance = radius.toFixed(0);
+            unit = "meters";
+        } else {
+            distance = (radius * 3.2808399).toFixed(0);
+            unit = "feet";
+        }
+
+        // small inner marker
+        var mStyle;
+        if (this._following) {
+            mStyle = this.options.followMarkerStyle;
+        } else {
+            mStyle = this.options.markerStyle;
+        }
+
+        if (!this._marker) {
+            this._marker = this.options.markerClass(this._event.latlng, mStyle)
+                .addTo(this._layer);
+        } else {
+            this._marker.setLatLng(this._event.latlng);
+            for (o in mStyle) {
+                this._marker.options[o] = mStyle[o];
+            }
+        }
+
+        var t = this.options.strings.popup;
+        if (this.options.showPopup && t) {
+            this._marker.bindPopup(L.Util.template(t, {distance: distance, unit: unit}))
+                ._popup.setLatLng(this._event.latlng);
+        }
+
+        this.toggleContainerStyle();
+    },
+
+    /**
+     * Check if location is in map bounds
+     */
+    isOutsideMapBounds: function () {
+        if (this._event === undefined)
+            return false;
+        return this._map.options.maxBounds &&
+            !this._map.options.maxBounds.contains(this._event.latlng);
     }
 });
 
@@ -349,6 +403,7 @@ L.Map.addInitHook(function () {
 L.control.locate = function (options) {
     return new L.Control.Locate(options);
 };
+
 
 (function(){
   // leaflet.js raises bug when trying to addClass / removeClass multiple classes at once
