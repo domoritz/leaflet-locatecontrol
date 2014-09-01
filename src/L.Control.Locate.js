@@ -67,6 +67,12 @@ L.Control.Locate = L.Control.extend({
         }
     },
 
+    initialize: function (options) {
+        for (var i in options) {
+            L.extend(this.options[i], options[i]);
+        }
+    },
+
     onAdd: function (map) {
         var container = L.DomUtil.create('div',
             'leaflet-control-locate leaflet-bar leaflet-control');
