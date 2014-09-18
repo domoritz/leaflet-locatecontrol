@@ -321,6 +321,7 @@ L.Control.Locate = L.Control.extend({
         // event hooks
         map.on('locationfound', onLocationFound, self);
         map.on('locationerror', onLocationError, self);
+        map.on('unload', stopLocate, self);
 
         // make locate functions available to outside world
         this.locate = locate;
