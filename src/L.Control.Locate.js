@@ -69,7 +69,11 @@ L.Control.Locate = L.Control.extend({
 
     initialize: function (options) {
         for (var i in options) {
-            L.extend(this.options[i], options[i]);
+            if (typeof this.options[i] === 'object') {
+                L.extend(this.options[i], options[i]);
+            } else {
+                this.options[i] = options[i];
+            }
         }
     },
 
