@@ -38,8 +38,8 @@ L.Control.Locate = L.Control.extend({
             //color: '#FFA500',
             //fillColor: '#FFB000'
         },
-        icon: 'icon-location',  // icon-location or icon-direction
-        iconLoading: 'icon-spinner animate-spin',
+        icon: 'fa fa-map-marker',  // fa-location-arrow or fa-map-marker
+        iconLoading: 'fa fa-spinner fa-spin',
         circlePadding: [0, 0],
         metric: true,
         onLocationError: function(err) {
@@ -101,22 +101,25 @@ L.Control.Locate = L.Control.extend({
         L.extend(tmp, this.options.circleStyle, this.options.followCircleStyle);
         this.options.followCircleStyle = tmp;
 
-        var link = L.DomUtil.create('a', 'leaflet-bar-part leaflet-bar-part-single ' + this.options.icon, container);
-        link.href = '#';
-        link.title = this.options.strings.title;
+        this._link = L.DomUtil.create('a', 'leaflet-bar-part leaflet-bar-part-single', container);
+        this._link.href = '#';
+        this._link.title = this.options.strings.title;
+
+        this._icon = L.DomUtil.create('span', this.options.icon, this._link);
 
         L.DomEvent
-            .on(link, 'click', L.DomEvent.stopPropagation)
-            .on(link, 'click', L.DomEvent.preventDefault)
-            .on(link, 'click', function() {
-                var shouldStop = (self._event === undefined || map.getBounds().contains(self._event.latlng) || !self.options.setView || isOutsideMapBounds())
+            .on(this._link, 'click', L.DomEvent.stopPropagation)
+            .on(this._link, 'click', L.DomEvent.preventDefault)
+            .on(this._link, 'click', function() {
+                var shouldStop = (self._event === undefined || map.getBounds().contains(self._event.latlng)
+                    || !self.options.setView || isOutsideMapBounds())
                 if (!self.options.remainActive && (self._active && shouldStop)) {
                     stopLocate();
                 } else {
                     locate();
                 }
             })
-            .on(link, 'dblclick', L.DomEvent.stopPropagation);
+            .on(this._link, 'dblclick', L.DomEvent.stopPropagation);
 
         var locate = function () {
             if (self.options.setView) {
@@ -270,20 +273,20 @@ L.Control.Locate = L.Control.extend({
                 L.DomUtil.removeClasses(self._container, "active following");
                 L.DomUtil.addClasses(self._container, "requesting");
 
-                L.DomUtil.removeClasses(link, self.options.icon);
-                L.DomUtil.addClasses(link, self.options.iconLoading);
+                L.DomUtil.removeClasses(self._icon, self.options.icon);
+                L.DomUtil.addClasses(self._icon, self.options.iconLoading);
             } else if (state == 'active') {
                 L.DomUtil.removeClasses(self._container, "requesting following");
                 L.DomUtil.addClasses(self._container, "active");
 
-                L.DomUtil.removeClasses(link, self.options.iconLoading);
-                L.DomUtil.addClasses(link, self.options.icon);
+                L.DomUtil.removeClasses(self._icon, self.options.iconLoading);
+                L.DomUtil.addClasses(self._icon, self.options.icon);
             } else if (state == 'following') {
                 L.DomUtil.removeClasses(self._container, "requesting");
                 L.DomUtil.addClasses(self._container, "active following");
 
-                L.DomUtil.removeClasses(link, self.options.iconLoading);
-                L.DomUtil.addClasses(link, self.options.icon);
+                L.DomUtil.removeClasses(self._icon, self.options.iconLoading);
+                L.DomUtil.addClasses(self._icon, self.options.icon);
             }
         };
 

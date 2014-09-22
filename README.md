@@ -2,7 +2,7 @@
 
 A useful control to geolocate the user with many options.
 
-Tested with Leaflet 0.7 in Firefox, Webkit and mobile Webkit.
+Tested with [Leaflet](http://leafletjs.com/) 0.7 in Firefox, Webkit and mobile Webkit. Tested with [Font Awesome](https://fortawesome.github.io/) 4.2.0.
 
 
 ## Demo
@@ -16,11 +16,12 @@ Check out the demo at http://domoritz.github.io/leaflet-locatecontrol/demo/
 
 #### Add the JavaScript and CSS files
 
-Download and include the JavaScript and CSS files.
+Download and include the JavaScript and CSS files. The control uses [Font Awesome](https://fortawesome.github.io/) for the icons and if you don't have it included yet, you can use the CSS from the CDN.
 
 For testing purposes and development, you can use the latest version directly from my repository using [rawgithub](http://rawgithub.com/). However, **don't do this in production environments**! For production environments, use the [mapbox CDN](https://www.mapbox.com/mapbox.js/plugins/#leaflet-locatecontrol).
 
 ```html
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
 <link rel="stylesheet" href="//rawgithub.com/domoritz/leaflet-locatecontrol/gh-pages/src/L.Control.Locate.css" />
 <!--[if lt IE 9]>
     <link rel="stylesheet" href="//rawgithub.com/domoritz/leaflet-locatecontrol/gh-pages/src/L.Control.Locate.ie.css"/>
@@ -58,8 +59,8 @@ L.control.locate({
     markerStyle: {},
     followCircleStyle: {},  // set difference for the style of the circle around the user's location while following
     followMarkerStyle: {},
-    icon: 'icon-location',  // `icon-location` or `icon-direction`
-    iconLoading: 'icon-spinner  animate-spin',  // class for loading icon
+    icon: 'fa fa-map-marker',  // class for icon, fa-location-arrow or fa-map-marker
+    iconLoading: 'fa fa-spinner fa-spin',  // class for loading icon
     circlePadding: [0, 0], // padding around accuracy circle, value is passed to setBounds
     metric: true,  // use metric or imperial units
     onLocationError: function(err) {alert(err.message)},  // define an error callback function

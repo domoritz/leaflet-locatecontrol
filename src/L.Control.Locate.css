@@ -1,8 +1,4 @@
 /* Compatible with Leaflet 0.7 */
-
-@import url('css/locate-fa.css');
-@import url('css/animation.css');
-
 .leaflet-touch .leaflet-bar-part-single {
 	-webkit-border-radius: 7px 7px 7px 7px;
 	        border-radius: 7px 7px 7px 7px;
