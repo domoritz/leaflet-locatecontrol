@@ -14,15 +14,17 @@ Check out the demo at http://domoritz.github.io/leaflet-locatecontrol/demo/
 
 ### Set up:
 
-You need to add the CSS and JavaScript files and then initialize the plugin with the map. You can either download the files and add them manually to your project, use a CDN or, (only for testing) link to the files in this repo directly. The files can also be downloaded and kept up to date with bower.
+Tl;DR
 
-After adding the files, you need to initialize the plugin with the leaflet map and (optionally) provide additional options.
+1. Get CSS and JavaScript files
+2. Include CSS and JavaScript files
+3. Initialize plugin
 
 #### Download JavaScript and CSS files
 
 For testing purposes and development, you can use the latest version directly from my repository using [rawgithub](http://rawgithub.com/). However, **don't do this in production environments**!
 
-For production environments, use the [mapbox CDN](https://www.mapbox.com/mapbox.js/plugins/#leaflet-locatecontrol) or download the files from this repository.
+For production environments, use the [mapbox CDN](https://www.mapbox.com/mapbox.js/plugins/#leaflet-locatecontrol) or [download the files from this repository](/domoritz/leaflet-locatecontrol/archive/gh-pages.zip).
 
 The latest version is always available through [Bower](http://bower.io/), just run `bower install leaflet.locatecontrol`. With bower, everything can easily be kept up to date.
 
