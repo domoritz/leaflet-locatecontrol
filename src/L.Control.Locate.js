@@ -112,7 +112,7 @@ L.Control.Locate = L.Control.extend({
             .on(this._link, 'click', L.DomEvent.preventDefault)
             .on(this._link, 'click', function() {
                 var shouldStop = (self._event === undefined || map.getBounds().contains(self._event.latlng)
-                    || !self.options.setView || isOutsideMapBounds())
+                    || !self.options.setView || isOutsideMapBounds());
                 if (!self.options.remainActive && (self._active && shouldStop)) {
                     stopLocate();
                 } else {

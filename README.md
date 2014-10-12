@@ -14,11 +14,25 @@ Check out the demo at http://domoritz.github.io/leaflet-locatecontrol/demo/
 
 ### Minimal set up:
 
+You need to add the CSS and JavaScript files and then initialize the plugin with the map. You can either download the files and add them manually to your project, use a CDN or, (only for testing) link to the files in this repo directly. The files can also be downloaded and kept up to date with bower.
+
+After adding the files, you need to initialize the plugin with the leaflet map and (optionally) provide additional options.
+
+#### Download JavaScript and CSS files
+
+For testing purposes and development, you can use the latest version directly from my repository using [rawgithub](http://rawgithub.com/). However, **don't do this in production environments**!
+
+For production environments, use the [mapbox CDN](https://www.mapbox.com/mapbox.js/plugins/#leaflet-locatecontrol) or download the files from this repository.
+
+The latest version is always available through [Bower](http://bower.io/), just run `bower install leaflet.locatecontrol`. With bower, everything can easily be kept up to date.
+
 #### Add the JavaScript and CSS files
 
-Download and include the JavaScript and CSS files. The control uses [Font Awesome](https://fortawesome.github.io/) for the icons and if you don't have it included yet, you can use the CSS from the CDN.
+The control uses [Font Awesome](https://fortawesome.github.io/) for the icons and if you don't have it included yet, you can use the CSS from the CDN.
 
-For testing purposes and development, you can use the latest version directly from my repository using [rawgithub](http://rawgithub.com/). However, **don't do this in production environments**! For production environments, use the [mapbox CDN](https://www.mapbox.com/mapbox.js/plugins/#leaflet-locatecontrol).
+Then include the CSS and JavaScript files.
+
+This example shows how to include font awesome from a CDN and the locate control files through rawgit. **Only use rawgit for testing and never in production! Always prefer using the Mapbox CDN or bower.**
 
 ```html
 <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -32,14 +46,11 @@ For testing purposes and development, you can use the latest version directly fr
 
 #### Add the following snippet to your map initialization:
 
+This snippet adds the control to the map. You can pass also pass a configuration.
+
 ```js
 L.control.locate().addTo(map);
 ```
-
-#### Install using bower
-
-To install the locate control with [Bower](http://bower.io/), just run `bower install leaflet.locatecontrol`.
-
 
 ### Possible options
 
