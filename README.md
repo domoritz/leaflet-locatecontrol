@@ -14,7 +14,7 @@ Check out the demo at http://domoritz.github.io/leaflet-locatecontrol/demo/
 
 ### Set up:
 
-Tl;DR
+tl;dr
 
 1. Get CSS and JavaScript files
 2. Include CSS and JavaScript files
