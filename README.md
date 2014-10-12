@@ -12,7 +12,7 @@ Check out the demo at http://domoritz.github.io/leaflet-locatecontrol/demo/
 
 ## Usage
 
-### Minimal set up:
+### Set up:
 
 You need to add the CSS and JavaScript files and then initialize the plugin with the map. You can either download the files and add them manually to your project, use a CDN or, (only for testing) link to the files in this repo directly. The files can also be downloaded and kept up to date with bower.
 
