@@ -309,7 +309,7 @@ L.Control.Locate = L.Control.extend({
     /**
      * Show location on map
      */
-    visualizeLocation: function(map, center) {
+    visualizeLocation: function(map) {
         if (this._event.accuracy === undefined) {
             this._event.accuracy = 0;
         }
