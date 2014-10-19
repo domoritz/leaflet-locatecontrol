@@ -49,7 +49,7 @@ L.Control.Locate = L.Control.extend({
         },
         onLocationOutsideMapBounds: function(control) {
             // this event is repeatedly called when the location changes
-            control.stopLocate();
+            control.stopLocate(control);
             alert(control.options.strings.outsideMapBoundsMsg);
         },
         setView: true, // automatically sets the map view to the user's location
@@ -85,7 +85,7 @@ L.Control.Locate = L.Control.extend({
         control._map.stopLocate();
         control._map.off('dragstart', this.stopFollowing);
         if (control.options.follow && control._following) {
-            this.stopFollowing();
+            this.stopFollowing(control._map);
         }
 
         this.cleanClasses();
@@ -268,7 +268,7 @@ L.Control.Locate = L.Control.extend({
             return;
         }
 
-        this.stopLocate();
+        this.stopLocate(this);
         this.options.onLocationError(err);
     },
     
@@ -310,8 +310,9 @@ L.Control.Locate = L.Control.extend({
      * Show location on map
      */
     visualizeLocation: function(map, center) {
-        if (this._event.accuracy === undefined)
+        if (this._event.accuracy === undefined) {
             this._event.accuracy = 0;
+        }
 
         var radius = this._event.accuracy;
         if (this._locateOnNextLocationFound) {
