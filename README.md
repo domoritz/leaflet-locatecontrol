@@ -30,7 +30,7 @@ The latest version is always available through [Bower](http://bower.io/), just r
 
 #### Add the JavaScript and CSS files
 
-The control uses [Font Awesome](https://fortawesome.github.io/) for the icons and if you don't have it included yet, you can use the CSS from the CDN.
+The control uses [Font Awesome](https://fortawesome.github.io/Font-Awesome/) for the icons and if you don't have it included yet, you can use the CSS from the CDN.
 
 Then include the CSS and JavaScript files.
 
