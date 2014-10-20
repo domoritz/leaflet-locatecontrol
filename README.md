@@ -2,7 +2,7 @@
 
 A useful control to geolocate the user with many options.
 
-Tested with [Leaflet](http://leafletjs.com/) 0.7 in Firefox, Webkit and mobile Webkit. Tested with [Font Awesome](https://fortawesome.github.io/) 4.2.0.
+Tested with [Leaflet](http://leafletjs.com/) 0.7 in Firefox, Webkit and mobile Webkit. Tested with [Font Awesome](https://fortawesome.github.io/Font-Awesome/) 4.2.0.
 
 
 ## Demo
