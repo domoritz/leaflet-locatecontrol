@@ -123,6 +123,26 @@ map.on('startfollowing', function() {
 
 The locate control fires `startfollowing` and `stopfollowing` on the map object and passes `self` as data.
 
+### Extending
+
+To add other options, like a compass, use L.extend to override run, stop and/or drawMarker and removeMarker methods.
+
+```js
+L.Control.Compass = L.Control.Locate.extend({
+   run: function() {
+      // execute compass
+   },
+   stop: function() {
+     // override to stop the compass
+   },
+   drawMarker: function() {
+     // override to display the arrow
+   },
+   removeMarker: function() {
+     // override to remove the arrow
+    }
+});
+```
 
 ### FAQ
 
