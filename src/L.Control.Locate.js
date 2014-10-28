@@ -4,7 +4,10 @@ Copyright (c) 2014 Dominik Moritz
 This file is part of the leaflet locate control. It is licensed under the MIT license.
 You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
 */
-(function (factory) {
+(function (factory, window) {
+     // see https://github.com/Leaflet/Leaflet/blob/master/PLUGIN-GUIDE.md#module-loaders
+     // for details on how to structure a leaflet plugin.
+
     // define an AMD module that relies on 'leaflet'
     if (typeof define === 'function' && define.amd) {
         define(['leaflet'], factory);
@@ -12,7 +15,6 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
     // define a Common JS module that relies on 'leaflet'
     } else if (typeof exports === 'object') {
         module.exports = factory(require('leaflet'));
-
     }
 
     // attach your plugin to the global 'L' variable
