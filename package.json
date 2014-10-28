@@ -9,9 +9,16 @@
     "type": "git",
     "url": "git@github.com:domoritz/leaflet-locatecontrol.git"
   },
+  "keywords": [
+    "leaflet",
+    "locate",
+    "plugin"
+  ],
   "license": "MIT",
+  "readmeFilename": "README.md",
   "dependencies": {
-    "leaflet": "^0.7.0"
+    "leaflet": "^0.7.0",
+    "font-awesome": "^4.2.0"
   },
   "devDependencies": {
     "grunt": "~0.4.5",

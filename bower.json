@@ -7,9 +7,6 @@
   ],
   "description": "A useful control to geolocate the user with many options. Used by osm.org and mapbox among many others.",
   "main": "src/L.Control.Locate.js",
-  "devDependencies": {
-    "leaflet": "~0.7.0"
-  },
   "directories": {
     "example": "demo"
   },
