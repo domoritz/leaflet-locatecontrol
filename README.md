@@ -28,6 +28,9 @@ For production environments, use the [mapbox CDN](https://www.mapbox.com/mapbox.
 
 The latest version is always available through [Bower](http://bower.io/), just run `bower install leaflet.locatecontrol`. With bower, everything can easily be kept up to date.
 
+You can also get the latest version of the plugin with [npm](https://www.npmjs.org/package/leaflet.locatecontrol).
+
+
 #### Add the JavaScript and CSS files
 
 The control uses [Font Awesome](https://fortawesome.github.io/Font-Awesome/) for the icons and if you don't have it included yet, you can use the CSS from the CDN.
