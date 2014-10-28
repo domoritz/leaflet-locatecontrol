@@ -24,7 +24,7 @@ tl;dr
 
 For testing purposes and development, you can use the latest version directly from my repository using [rawgithub](http://rawgithub.com/). However, **don't do this in production environments**!
 
-For production environments, use the [mapbox CDN](https://www.mapbox.com/mapbox.js/plugins/#leaflet-locatecontrol) or [download the files from this repository](/domoritz/leaflet-locatecontrol/archive/gh-pages.zip).
+For production environments, use the [mapbox CDN](https://www.mapbox.com/mapbox.js/plugins/#leaflet-locatecontrol) or [download the files from this repository](/domoritz/leaflet-locatecontrol/archive/gh-pages.zip). In `\src` are the original JS and CSS files and in `\dist` you can find the minified versions suitable for production.
 
 The latest version is always available through [Bower](http://bower.io/), just run `bower install leaflet.locatecontrol`. With bower, everything can easily be kept up to date.
 
@@ -41,12 +41,12 @@ This example shows how to include font awesome from a CDN and the locate control
 
 ```html
 <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
-<link rel="stylesheet" href="//rawgithub.com/domoritz/leaflet-locatecontrol/gh-pages/src/L.Control.Locate.css" />
+<link rel="stylesheet" href="//rawgithub.com/domoritz/leaflet-locatecontrol/gh-pages/dist/L.Control.Locate.min.css" />
 <!--[if lt IE 9]>
-    <link rel="stylesheet" href="//rawgithub.com/domoritz/leaflet-locatecontrol/gh-pages/src/L.Control.Locate.ie.css"/>
+    <link rel="stylesheet" href="//rawgithub.com/domoritz/leaflet-locatecontrol/gh-pages/dist/L.Control.Locate.ie.min.css"/>
 <![endif]-->
 
-<script src="//rawgithub.com/domoritz/leaflet-locatecontrol/gh-pages/src/L.Control.Locate.js" ></script>
+<script src="//rawgithub.com/domoritz/leaflet-locatecontrol/gh-pages/dist/L.Control.Locate.min.js" ></script>
 ```
 
 #### Add the following snippet to your map initialization:
@@ -161,10 +161,13 @@ Sites that use this locate control:
 
 Run the demo locally with `python -m SimpleHTTPServer` and then open http://0.0.0.0:8000/demo.
 
+To generate the minified JS and CSS files, use [grunt](http://gruntjs.com/getting-started) and run `grunt`.
+
 
 ## Thanks
 
 To all [contributors](https://github.com/domoritz/leaflet-locatecontrol/contributors) and issue reporters.
+
 
 ## License
 

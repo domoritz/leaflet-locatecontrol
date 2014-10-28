@@ -1,4 +1,4 @@
-/*
+/*!
 Copyright (c) 2014 Dominik Moritz
 
 This file is part of the leaflet locate control. It is licensed under the MIT license.
