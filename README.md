@@ -28,7 +28,7 @@ For production environments, use the [mapbox CDN](https://www.mapbox.com/mapbox.
 
 The latest version is always available through [Bower](http://bower.io/), just run `bower install leaflet.locatecontrol`. With bower, everything can easily be kept up to date.
 
-You can also get the latest version of the plugin with [npm](https://www.npmjs.org/package/leaflet.locatecontrol).
+You can also get the latest version of the plugin with [npm](https://www.npmjs.org/). This plugin is available in the [npm repository](https://www.npmjs.org/package/leaflet.locatecontrol).
 
 
 #### Add the JavaScript and CSS files
