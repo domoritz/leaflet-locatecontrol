@@ -306,7 +306,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             map.on('locationfound', this._onLocationFound, this, this);
             map.on('locationerror', this._onLocationError, this, this);
             map.on('unload', this._deactivate, this, this);
-        }
+        },
 
         /**
          * Activates the plugin:
