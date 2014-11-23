@@ -379,22 +379,22 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
         /**
          * Dispatches the 'startfollowing' event on map.
          */
-        _startFollowing: function(map) {
-            map.fire('startfollowing', this);
+        _startFollowing: function() {
+            this._map.fire('startfollowing', this);
             this._following = true;
             if (this.options.stopFollowingOnDrag) {
-                map.on('dragstart', this._stopFollowing);
+                this._map.on('dragstart', this._stopFollowing, this, this);
             }
         },
 
         /**
          * Dispatches the 'stopfollowing' event on map.
          */
-        _stopFollowing: function(map) {
-            map.fire('stopfollowing', this);
+        _stopFollowing: function() {
+            this._map.fire('stopfollowing', this);
             this._following = false;
             if (this.options.stopFollowingOnDrag) {
-                map.off('dragstart', this._stopFollowing);
+                this._map.off('dragstart', this._stopFollowing);
             }
             this._toggleContainerStyle();
         },

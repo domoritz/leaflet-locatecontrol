@@ -109,16 +109,16 @@ You can also use the helper functions to automatically stop following when the m
 
 ```js
 var lc = L.control.locate().addTo(map);
-map.on('dragstart', lc.stopFollowing);
+map.on('dragstart', lc._stopFollowing, lc, lc);
 ```
 
 Alternatively, you can unload events when not following to avoid unnecessary events.
 
 ```js
 map.on('startfollowing', function() {
-    map.on('dragstart', lc.stopFollowing);
+    map.on('dragstart', lc._stopFollowing, lc, lc);
 }).on('stopfollowing', function() {
-    map.off('dragstart', lc.stopFollowing);
+    map.off('dragstart', lc._stopFollowing, lc, lc);
 });
 ```
 

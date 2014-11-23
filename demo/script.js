@@ -21,7 +21,7 @@ lc = L.control.locate({
 }).addTo(map);
 
 map.on('startfollowing', function() {
-    map.on('dragstart', lc.stopFollowing);
+    map.on('dragstart', lc._stopFollowing, lc, lc);
 }).on('stopfollowing', function() {
-    map.off('dragstart', lc.stopFollowing);
+    map.off('dragstart', lc._stopFollowing, lc, lc);
 });
