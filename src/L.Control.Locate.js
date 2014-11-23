@@ -68,7 +68,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             },
             onLocationOutsideMapBounds: function(control) {
                 // this event is repeatedly called when the location changes
-                control.stopLocate();
+                control._deactivate();
                 alert(control.options.strings.outsideMapBoundsMsg);
             },
             setView: true, // automatically sets the map view to the user's location
