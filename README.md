@@ -161,7 +161,7 @@ Sites that use this locate control:
 
 Run the demo locally with `python -m SimpleHTTPServer` and then open http://0.0.0.0:8000/demo.
 
-To generate the minified JS and CSS files, use [grunt](http://gruntjs.com/getting-started) and run `grunt`.
+To generate the minified JS and CSS files, use [grunt](http://gruntjs.com/getting-started) and run `grunt`. A new version is released with `grunt bump:minor`. however, don't include new minified files or a new version as part of a pull request.
 
 
 ## Thanks
