@@ -308,7 +308,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
 
         /**
          * Starts the plugin:
-         * - activates the engine,
+         * - activates the engine
          * - draws the marker (if coordinates available)
          */
         start: function() {
@@ -323,8 +323,8 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
 
         /**
          * Stops the plugin:
-         * - deactivates the engine,
-         * - reinitializes the button,
+         * - deactivates the engine
+         * - reinitializes the button
          * - removes the marker
          */
         stop: function() {
