@@ -127,6 +127,11 @@ map.on('startfollowing', function() {
 The locate control fires `startfollowing` and `stopfollowing` on the map object and passes `self` as data.
 
 
+### Extending
+
+To customize the behavior of the plugin, use L.extend to override specific methods. Please be aware that functions may change and customizations become incompatible.
+
+For example:
 ### FAQ
 
 #### How do I set the maximum zoom level?

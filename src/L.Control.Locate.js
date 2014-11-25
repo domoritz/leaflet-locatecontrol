@@ -22,7 +22,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
         window.L.Locate = factory(L);
     }
 
-} (function (L){
+} (function (L) {
     L.Control.Locate = L.Control.extend({
         options: {
             position: 'topleft',
@@ -108,8 +108,8 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
          * It is called before the marker is updated,
          * event if it does not mean that the event will be ready.
          *
-         * Override it if you want to add more functionnalities.
-         * It should set the this._active to true and do nothing if 
+         * Override it if you want to add more functionalities.
+         * It should set the this._active to true and do nothing if
          * this._active is not true.
          */
         start: function(map) {
@@ -130,7 +130,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
         /**
          * Called to stop the location engine.
          *
-         * Override it to shutdown any functionnalities you added on start.
+         * Override it to shutdown any functionalities you added on start.
          */
         stop: function(control) {
             control._map.stopLocate();
@@ -217,14 +217,13 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             this._toggleContainerStyle();
         },
 
-
         /**
          * Creates the marker.
          *
-         * Should return the base marker so it is possible to bind a popup if the
+         * Should return the base marker so it is possible to bind a pop-up if the
          * option is activated.
          *
-         * Used by drawMarker, you can ignore it if you have overriden it.
+         * Used by drawMarker, you can ignore it if you have overridden it.
          */
         createMarker: function(latlng, mStyle) {
             return this.options.markerClass(latlng, mStyle)
@@ -233,7 +232,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
         /**
          * Updates the marker with current coordinates.
          *
-         * Used by drawMarker, you can ignore it if you have overriden it.
+         * Used by drawMarker, you can ignore it if you have overridden it.
          */
         updateMarker: function(latlng, mStyle) {
             this._marker.setLatLng(latlng);
@@ -326,7 +325,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
         /**
          * Deactivates the plugin:
          * - stops the engine,
-         * - reinitalizes the button,
+         * - reinitializes the button,
          * - removes the marker
          */
         _deactivate: function(control) {
@@ -399,7 +398,6 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             this._toggleContainerStyle();
         },
 
-
         /**
          * Check if location is in map bounds
          */
@@ -425,6 +423,9 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             }
         },
 
+        /**
+         * Sets the CSS classes for the state.
+         */
         _setClasses: function(state) {
             if (state == 'requesting') {
                 L.DomUtil.removeClasses(this._container, "active following");
@@ -490,5 +491,6 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
       L.DomUtil.addClasses = function(el, names) { LDomUtilApplyClassesMethod('addClass', el, names); };
       L.DomUtil.removeClasses = function(el, names) { LDomUtilApplyClassesMethod('removeClass', el, names); };
     })();
+
     return L.Control.Locate;
 }, window));
