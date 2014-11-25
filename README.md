@@ -95,14 +95,14 @@ L.control.locate({
 
 ### Methods
 
-You can call `locate()` or `stopLocate()` on the locate control object to set the location of page load for example.
+You can call `start()` or `stop()` on the locate control object to set the location of page load for example.
 
 ```js
 // create control and add to map
 var lc = L.control.locate().addTo(map);
 
 // request location update and set location
-lc.locate();
+lc.start();
 ```
 
 You can also use the helper functions to automatically stop following when the map is panned. See the example below.
@@ -126,6 +126,28 @@ map.on('startfollowing', function() {
 
 The locate control fires `startfollowing` and `stopfollowing` on the map object and passes `self` as data.
 
+### Extending
+
+Extending
+
+To add other options, like a compass, use L.extend to override start, stop and/or drawMarker and removeMarker methods.
+
+```js
+L.Control.Compass = L.Control.Locate.extend({
+   start: function() {
+      // execute compass
+   },
+   stop: function() {
+     // override to stop the compass
+   },
+   drawMarker: function() {
+     // override to display the arrow
+   },
+   removeMarker: function() {
+     // override to remove the arrow
+    }
+});
+```
 
 ### FAQ
 
