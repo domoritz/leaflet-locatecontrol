@@ -28,7 +28,7 @@ For production environments, use the [mapbox CDN](https://www.mapbox.com/mapbox.
 
 The latest version is always available through [Bower](http://bower.io/), just run `bower install leaflet.locatecontrol`. With bower, everything can easily be kept up to date.
 
-You can also get the latest version of the plugin with [npm](https://www.npmjs.org/). This plugin is available in the [npm repository](https://www.npmjs.org/package/leaflet.locatecontrol).
+You can also get the latest version of the plugin with [npm](https://www.npmjs.org/). This plugin is available in the [npm repository](https://www.npmjs.org/package/leaflet.locatecontrol). Just run `npm install leaflet.locatecontrol`.
 
 
 #### Add the JavaScript and CSS files
@@ -178,7 +178,12 @@ Sites that use this locate control:
 
 Run the demo locally with `grunt serve` and then open [localhost:9000/demo/index.html](http://localhost:9000/demo/index.html).
 
-To generate the minified JS and CSS files, use [grunt](http://gruntjs.com/getting-started) and run `grunt`. A new version is released with `grunt bump:minor`. However, don't include new minified files or a new version as part of a pull request.
+To generate the minified JS and CSS files, use [grunt](http://gruntjs.com/getting-started) and run `grunt`. However, don't include new minified files or a new version as part of a pull request.
+
+
+## Making a release (only core developer)
+
+A new version is released with `grunt bump:minor`. Then recompile the JS/CSS with `grunt` and commit the changes into the previous commit with `git commit -a --amend`. Then push the new code with `git push` and publish to npm with `npm publish`.
 
 
 ## Thanks
