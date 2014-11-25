@@ -101,6 +101,11 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
                     this.options[i] = options[i];
                 }
             }
+
+            L.extend(this.options.locateOptions, {
+                setView: false // have to set this to false because we have to
+                               // do setView manually
+            });
         },
 
         /**
@@ -118,7 +123,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             }
 
             if(!this._active) {
-                this._map.locate(this._locateOptions);
+                this._map.locate(this.options.locateOptions);
             }
             this._active = true;
 
@@ -158,7 +163,8 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
                 } else {
                     map.fitBounds(this._event.bounds, {
                         padding: this.options.circlePadding,
-                        maxZoom: this.options.keepCurrentZoomLevel ? map.getZoom() : this._locateOptions.maxZoom
+                        maxZoom: this.options.keepCurrentZoomLevel ?
+                            map.getZoom() : this.options.locateOptions.maxZoom
                     });
                 }
                 this._locateOnNextLocationFound = false;
@@ -258,13 +264,6 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             this._layer.addTo(map);
             this._event = undefined;
 
-            this._locateOptions = this.options.locateOptions;
-            L.extend(this._locateOptions, this.options.locateOptions);
-            L.extend(this._locateOptions, {
-                setView: false // have to set this to false because we have to
-                               // do setView manually
-            });
-
             // extend the follow marker style and circle from the normal style
             var tmp = {};
             L.extend(tmp, this.options.markerStyle, this.options.followMarkerStyle);
@@ -342,7 +341,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
          */
         _onLocationError: function(err) {
             // ignore time out error if the location is watched
-            if (err.code == 3 && this._locateOptions.watch) {
+            if (err.code == 3 && this.options.locateOptions.watch) {
                 return;
             }
 
