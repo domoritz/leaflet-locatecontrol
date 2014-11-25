@@ -1,0 +1,11 @@
+/* Conditional stylesheet for IE. */
+
+.leaflet-control-locate {
+	border: 3px solid #999;
+	a {
+		background-color: #eee;
+		&:hover {
+			background-color: #fff;
+		}
+	}
+}

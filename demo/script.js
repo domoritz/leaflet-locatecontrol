@@ -8,20 +8,20 @@ var map = new L.Map('map', {
     layers: [osm],
     center: [51.505, -0.09],
     zoom: 10,
-	zoomControl: true
+    zoomControl: true
 });
 
 // add location control to global name space for testing only
 // on a production site, omit the "lc = "!
 lc = L.control.locate({
-	follow: true,
-	strings: {
-		title: "Show me where I am, yo!"
-	}
+    follow: true,
+    strings: {
+        title: "Show me where I am, yo!"
+    }
 }).addTo(map);
 
 map.on('startfollowing', function() {
-    map.on('dragstart', lc.stopFollowing);
+    map.on('dragstart', lc._stopFollowing, lc, lc);
 }).on('stopfollowing', function() {
-    map.off('dragstart', lc.stopFollowing);
+    map.off('dragstart', lc._stopFollowing, lc, lc);
 });

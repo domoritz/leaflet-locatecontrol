@@ -95,36 +95,53 @@ L.control.locate({
 
 ### Methods
 
-You can call `locate()` or `stopLocate()` on the locate control object to set the location of page load for example.
+You can call `start()` or `stop()` on the locate control object to set the location of page load for example.
 
 ```js
 // create control and add to map
 var lc = L.control.locate().addTo(map);
 
 // request location update and set location
-lc.locate();
+lc.start();
 ```
 
 You can also use the helper functions to automatically stop following when the map is panned. See the example below.
 
 ```js
 var lc = L.control.locate().addTo(map);
-map.on('dragstart', lc.stopFollowing);
+map.on('dragstart', lc._stopFollowing, lc, lc);
 ```
 
 Alternatively, you can unload events when not following to avoid unnecessary events.
 
 ```js
 map.on('startfollowing', function() {
-    map.on('dragstart', lc.stopFollowing);
+    map.on('dragstart', lc._stopFollowing, lc, lc);
 }).on('stopfollowing', function() {
-    map.off('dragstart', lc.stopFollowing);
+    map.off('dragstart', lc._stopFollowing, lc, lc);
 });
 ```
 
 ### Events
 
 The locate control fires `startfollowing` and `stopfollowing` on the map object and passes `self` as data.
+
+
+### Extending
+
+Extending
+
+To customize the behavior of the plugin, use L.extend to override `start`, `stop`, `drawMarker` and/or `removeMarker`. Please be aware that functions may change and customizations become incompatible.
+
+```js
+L.Control.MyLocate = L.Control.Locate.extend({
+   drawMarker: function() {
+     // override to customize the marker
+   }
+});
+
+var lc = new L.Control.MyLocate();
+```
 
 
 ### FAQ
@@ -159,7 +176,7 @@ Sites that use this locate control:
 
 ## Developers
 
-Run the demo locally with `python -m SimpleHTTPServer` and then open http://0.0.0.0:8000/demo.
+Run the demo locally with `grunt serve` and then open [localhost:9000/demo/index.html](http://localhost:9000/demo/index.html).
 
 To generate the minified JS and CSS files, use [grunt](http://gruntjs.com/getting-started) and run `grunt`. A new version is released with `grunt bump:minor`. however, don't include new minified files or a new version as part of a pull request.
 
