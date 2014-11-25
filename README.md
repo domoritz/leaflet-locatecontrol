@@ -176,7 +176,7 @@ Sites that use this locate control:
 
 ## Developers
 
-Run the demo locally with `python -m SimpleHTTPServer` and then open http://0.0.0.0:8000/demo.
+Run the demo locally with `grunt serve` and then open [localhost:9000/demo/index.html](http://localhost:9000/demo/index.html).
 
 To generate the minified JS and CSS files, use [grunt](http://gruntjs.com/getting-started) and run `grunt`.
 
