@@ -134,10 +134,10 @@ To add other options, like a compass, use L.extend to override start, stop and/o
 
 ```js
 L.Control.Compass = L.Control.Locate.extend({
-   start: function() {
+   _activate: function() {
       // execute compass
    },
-   stop: function() {
+   _deactivate: function() {
      // override to stop the compass
    },
    drawMarker: function() {

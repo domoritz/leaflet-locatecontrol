@@ -68,7 +68,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             },
             onLocationOutsideMapBounds: function(control) {
                 // this event is repeatedly called when the location changes
-                control._deactivate();
+                control.stop();
                 alert(control.options.strings.outsideMapBoundsMsg);
             },
             setView: true, // automatically sets the map view to the user's location
@@ -112,7 +112,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
          * It should set the this._active to true and do nothing if 
          * this._active is not true.
          */
-        start: function() {
+        _activate: function() {
             if (this.options.setView) {
                 this._locateOnNextLocationFound = true;
             }
@@ -132,7 +132,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
          *
          * Override it to shutdown any functionnalities you added on start.
          */
-        stop: function() {
+        _deactivate: function() {
             this._map.stopLocate();
 
             this._map.off('dragstart', this._stopFollowing);
@@ -286,9 +286,9 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
                     var shouldStop = (this._event === undefined || this._map.getBounds().contains(this._event.latlng)
                         || !this.options.setView || this._isOutsideMapBounds());
                     if (!this.options.remainActive && (this._active && shouldStop)) {
-                        this._deactivate(this);
+                        this.stop();
                     } else {
-                        this._activate(map);
+                        this.start();
                     }
                 }, this)
                 .on(this._link, 'dblclick', L.DomEvent.stopPropagation);
@@ -305,16 +305,16 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
         bindEvents: function(map) {
             map.on('locationfound', this._onLocationFound, this);
             map.on('locationerror', this._onLocationError, this);
-            map.on('unload', this._deactivate, this);
+            map.on('unload', this.stop, this);
         },
 
         /**
-         * Activates the plugin:
-         * - calls the engine,
+         * Starts the plugin:
+         * - activates the engine,
          * - draws the marker (if coordinates available)
          */
-        _activate: function() {
-            this.start();
+        start: function() {
+            this._activate();
 
             if (!this._event) {
                 this._setClasses('requesting');
@@ -324,13 +324,13 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
         },
 
         /**
-         * Deactivates the plugin:
-         * - stops the engine,
+         * Stops the plugin:
+         * - deactivates the engine,
          * - reinitalizes the button,
          * - removes the marker
          */
-        _deactivate: function(control) {
-            this.stop();
+        stop: function() {
+            this._deactivate();
 
             this._cleanClasses();
             this._resetVariables();
