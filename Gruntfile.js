@@ -1,11 +1,13 @@
 module.exports = function(grunt) {
 
+  var banner = '/*! Version: <%= pkg.version %>\nDate: <%= grunt.template.today("yyyy-mm-dd") %> */\n';
+
   // Project configuration.
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     uglify: {
       options: {
-        banner: '/*! Version: <%= pkg.version %>\nDate: <%= grunt.template.today("yyyy-mm-dd") %> */\n',
+        banner: banner,
       	preserveComments: 'some'
       },
       build: {
@@ -16,6 +18,7 @@ module.exports = function(grunt) {
     sass: {
       dist: {
         options: {
+          banner: banner,
           style: 'compressed'  // debug with 'expanded'
         },
         files: {
