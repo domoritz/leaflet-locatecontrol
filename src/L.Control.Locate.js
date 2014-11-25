@@ -112,18 +112,18 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
          * It should set the this._active to true and do nothing if 
          * this._active is not true.
          */
-        start: function(map) {
+        start: function() {
             if (this.options.setView) {
                 this._locateOnNextLocationFound = true;
             }
 
             if(!this._active) {
-                map.locate(this._locateOptions);
+                this._map.locate(this._locateOptions);
             }
             this._active = true;
 
             if (this.options.follow) {
-                this._startFollowing(map);
+                this._startFollowing(this._map);
             }
         },
 
@@ -132,12 +132,12 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
          *
          * Override it to shutdown any functionnalities you added on start.
          */
-        stop: function(control) {
-            control._map.stopLocate();
+        stop: function() {
+            this._map.stopLocate();
 
-            control._map.off('dragstart', this._stopFollowing);
-            if (control.options.follow && control._following) {
-                this._stopFollowing(control._map);
+            this._map.off('dragstart', this._stopFollowing);
+            if (this.options.follow && this._following) {
+                this._stopFollowing(this._map);
             }
         },
 
@@ -245,10 +245,10 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
         /**
          * Remove the marker from map.
          */
-        removeMarker: function(control) {
-            control._layer.clearLayers();
-            control._marker = undefined;
-            control._circle = undefined;
+        removeMarker: function() {
+            this._layer.clearLayers();
+            this._marker = undefined;
+            this._circle = undefined;
         },
 
         onAdd: function (map) {
@@ -313,13 +313,13 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
          * - calls the engine,
          * - draws the marker (if coordinates available)
          */
-        _activate: function(map) {
-            this.start(map);
+        _activate: function() {
+            this.start();
 
             if (!this._event) {
                 this._setClasses('requesting');
             } else {
-                this.drawMarker(map);
+                this.drawMarker(this._map);
             }
         },
 
@@ -330,12 +330,12 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
          * - removes the marker
          */
         _deactivate: function(control) {
-            this.stop(control);
+            this.stop();
 
             this._cleanClasses();
             this._resetVariables();
 
-            this.removeMarker(control);
+            this.removeMarker();
         },
 
         /**
