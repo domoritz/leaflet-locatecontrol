@@ -178,7 +178,7 @@ Sites that use this locate control:
 
 Run the demo locally with `grunt serve` and then open [localhost:9000/demo/index.html](http://localhost:9000/demo/index.html).
 
-To generate the minified JS and CSS files, use [grunt](http://gruntjs.com/getting-started) and run `grunt`. A new version is released with `grunt bump:minor`. however, don't include new minified files or a new version as part of a pull request.
+To generate the minified JS and CSS files, use [grunt](http://gruntjs.com/getting-started) and run `grunt`. A new version is released with `grunt bump:minor`. However, don't include new minified files or a new version as part of a pull request.
 
 
 ## Thanks
