@@ -303,9 +303,9 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
          * Binds the actions to the map events.
          */
         bindEvents: function(map) {
-            map.on('locationfound', this._onLocationFound, this, this);
-            map.on('locationerror', this._onLocationError, this, this);
-            map.on('unload', this._deactivate, this, this);
+            map.on('locationfound', this._onLocationFound, this);
+            map.on('locationerror', this._onLocationError, this);
+            map.on('unload', this._deactivate, this);
         },
 
         /**
@@ -383,7 +383,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             this._map.fire('startfollowing', this);
             this._following = true;
             if (this.options.stopFollowingOnDrag) {
-                this._map.on('dragstart', this._stopFollowing, this, this);
+                this._map.on('dragstart', this._stopFollowing, this);
             }
         },
 
