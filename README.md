@@ -126,34 +126,24 @@ map.on('startfollowing', function() {
 
 The locate control fires `startfollowing` and `stopfollowing` on the map object and passes `self` as data.
 
+
 ### Extending
 
 Extending
 
-To add other options, like a compass, use L.extend to override start, stop and/or drawMarker and removeMarker methods.
+To customize the behavior of the plugin, use L.extend to override `start`, `stop`, `drawMarker` and/or `removeMarker`. Please be aware that functions may change and customizations become incompatible.
 
 ```js
-L.Control.Compass = L.Control.Locate.extend({
-   _activate: function() {
-      // execute compass
-   },
-   _deactivate: function() {
-     // override to stop the compass
-   },
+L.Control.MyLocate = L.Control.Locate.extend({
    drawMarker: function() {
-     // override to display the arrow
-   },
-   removeMarker: function() {
-     // override to remove the arrow
-    }
+     // override to customize the marker
+   }
 });
+
+var lc = new L.Control.MyLocate();
 ```
 
-### Extending
 
-To customize the behavior of the plugin, use L.extend to override specific methods. Please be aware that functions may change and customizations become incompatible.
-
-For example:
 ### FAQ
 
 #### How do I set the maximum zoom level?
