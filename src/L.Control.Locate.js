@@ -236,7 +236,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
          * Used by drawMarker, you can ignore it if you have overriden it.
          */
         updateMarker: function(latlng, mStyle) {
-            this._marker.setLatLng();
+            this._marker.setLatLng(latlng);
             for (o in mStyle) {
                 this._marker.options[o] = mStyle[o];
             }
