@@ -19,11 +19,21 @@ module.exports = function(grunt) {
       dist: {
         options: {
           banner: banner,
-          style: 'compressed'  // debug with 'expanded'
+          style: 'compressed'
         },
         files: {
           'dist/L.Control.Locate.min.css': 'src/L.Control.Locate.scss',
           'dist/L.Control.Locate.ie.min.css': 'src/L.Control.Locate.ie.scss'
+        }
+      },
+      uncompressed: {
+        options: {
+          banner: banner,
+          style: 'expanded'
+        },
+        files: {
+          'dist/L.Control.Locate.css': 'src/L.Control.Locate.scss',
+          'dist/L.Control.Locate.ie.css': 'src/L.Control.Locate.ie.scss'
         }
       }
     },
