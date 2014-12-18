@@ -17,13 +17,12 @@
   "license": "MIT",
   "readmeFilename": "README.md",
   "dependencies": {
-    "leaflet": "^0.7.0",
-    "font-awesome": "^4.2.0"
+    "font-awesome": "^4.2.0",
+    "leaflet": "^0.7.3"
   },
   "devDependencies": {
-    "grunt": "~0.4.5",
+    "grunt": "^0.4.5",
     "grunt-bump": "0.0.16",
-    "grunt-contrib-cssmin": "^0.10.0",
     "grunt-contrib-jshint": "^0.10.0",
     "grunt-contrib-nodeunit": "^0.4.1",
     "grunt-contrib-sass": "^0.8.1",
