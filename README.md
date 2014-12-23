@@ -130,8 +130,6 @@ The locate control fires `startfollowing` and `stopfollowing` on the map object 
 
 ### Extending
 
-Extending
-
 To customize the behavior of the plugin, use L.extend to override `start`, `stop`, `drawMarker` and/or `removeMarker`. Please be aware that functions may change and customizations become incompatible.
 
 ```js
