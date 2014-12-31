@@ -21,6 +21,7 @@ tl;dr
 2. Include CSS and JavaScript files
 3. Initialize plugin
 
+
 #### Download JavaScript and CSS files
 
 For testing purposes and development, you can use the latest version directly from my repository using [rawgithub](http://rawgithub.com/). However, **don't do this in production environments**!
