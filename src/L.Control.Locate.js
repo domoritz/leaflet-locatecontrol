@@ -345,7 +345,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
                 return;
             }
 
-            this._deactivate(this);
+            this.stop();
             this.options.onLocationError(err);
         },
 
@@ -454,6 +454,9 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             L.DomUtil.removeClass(this._container, "requesting");
             L.DomUtil.removeClass(this._container, "active");
             L.DomUtil.removeClass(this._container, "following");
+
+            L.DomUtil.removeClasses(this._icon, this.options.iconLoading);
+            L.DomUtil.addClasses(this._icon, this.options.icon);
         },
 
         /**
