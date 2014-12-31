@@ -8,7 +8,8 @@ module.exports = function(grunt) {
     uglify: {
       options: {
         banner: banner,
-      	preserveComments: 'some'
+        preserveComments: 'some',
+        sourceMap: true
       },
       build: {
         src: 'src/L.Control.Locate.js',
@@ -29,7 +30,8 @@ module.exports = function(grunt) {
       uncompressed: {
         options: {
           banner: banner,
-          style: 'expanded'
+          style: 'expanded',
+          sourcemap: 'none'
         },
         files: {
           'dist/L.Control.Locate.css': 'src/L.Control.Locate.scss',
@@ -38,12 +40,12 @@ module.exports = function(grunt) {
       }
     },
     bump: {
-	    options: {
-  			files: ['package.json', 'bower.json'],
-  			commitFiles: ['package.json', 'bower.json'],
-  			push: false
-	    }
-	  },
+      options: {
+        files: ['package.json', 'bower.json'],
+        commitFiles: ['package.json', 'bower.json'],
+        push: false
+      }
+    },
   });
 
   grunt.loadNpmTasks('grunt-contrib-uglify');
