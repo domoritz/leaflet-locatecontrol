@@ -408,7 +408,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
         },
 
         /**
-         * Toggles button class.
+         * Toggles button class between following and active.
          */
         _toggleContainerStyle: function() {
             if (!this._container) {
