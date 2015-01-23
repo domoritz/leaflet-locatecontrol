@@ -14,7 +14,11 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
 
     // define a Common JS module that relies on 'leaflet'
     } else if (typeof exports === 'object') {
-        module.exports = factory(require('leaflet'));
+        if (typeof window !== 'undefined' && window.L) {
+            module.exports = factory(L);
+        } else {
+            module.exports = factory(require('leaflet'));
+        }
     }
 
     // attach your plugin to the global 'L' variable
