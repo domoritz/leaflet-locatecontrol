@@ -183,7 +183,7 @@ To generate the minified JS and CSS files, use [grunt](http://gruntjs.com/gettin
 
 ## Making a release (only core developer)
 
-A new version is released with `grunt bump:minor`. Then recompile the JS/CSS with `grunt` and commit the changes into the previous commit with `git commit -a --amend`. Then push the new code with `git push` and publish to npm with `npm publish`.
+A new version is released with `grunt bump:minor`. Then recompile the JS/CSS with `grunt` and commit the changes into the previous commit with `git commit -a --amend`. Then push the new code with `git push` and `git push --tags` and publish to npm with `npm publish`.
 
 
 ## Thanks
