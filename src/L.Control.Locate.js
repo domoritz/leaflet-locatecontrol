@@ -236,7 +236,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
          * Used by drawMarker, you can ignore it if you have overridden it.
          */
         createMarker: function(latlng, mStyle) {
-            return this.options.markerClass(latlng, mStyle)
+            return this.options.markerClass(latlng, mStyle);
         },
 
         /**
@@ -246,7 +246,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
          */
         updateMarker: function(latlng, mStyle) {
             this._marker.setLatLng(latlng);
-            for (o in mStyle) {
+            for (var o in mStyle) {
                 this._marker.options[o] = mStyle[o];
             }
         },
@@ -285,8 +285,9 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
                 .on(this._link, 'click', L.DomEvent.stopPropagation)
                 .on(this._link, 'click', L.DomEvent.preventDefault)
                 .on(this._link, 'click', function() {
-                    var shouldStop = (this._event === undefined || this._map.getBounds().contains(this._event.latlng)
-                        || !this.options.setView || this._isOutsideMapBounds());
+                    var shouldStop = (this._event === undefined ||
+                        this._map.getBounds().contains(this._event.latlng) ||
+                        !this.options.setView || this._isOutsideMapBounds());
                     if (!this.options.remainActive && (this._active && shouldStop)) {
                         this.stop();
                     } else {
