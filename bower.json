@@ -31,6 +31,6 @@
   "readmeFilename": "README.md",
   "dependencies": {
     "leaflet": "~0.7.3",
-    "fontawesome": "~4.2.0"
+    "fontawesome": "~4.3.0"
   }
 }
