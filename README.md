@@ -2,9 +2,10 @@
 
 A useful control to geolocate the user with many options.
 
-Tested with [Leaflet](http://leafletjs.com/) 0.7 in Firefox, Webkit and mobile Webkit. Tested with [Font Awesome](https://fortawesome.github.io/Font-Awesome/) 4.2.0.
+Tested with [Leaflet](http://leafletjs.com/) 0.7 in Firefox, Webkit and mobile Webkit. Tested with [Font Awesome](https://fortawesome.github.io/Font-Awesome/) 4.3.0.
 
 **v0.34.0 introduced breaking changes to the API. Please check your code!**
+
 
 ## Demo
 
@@ -26,11 +27,11 @@ tl;dr
 
 For testing purposes and development, you can use the latest version directly from my repository using [rawgithub](http://rawgithub.com/). However, **don't do this in production environments**!
 
-For production environments, use the [mapbox CDN](https://www.mapbox.com/mapbox.js/plugins/#leaflet-locatecontrol) or [download the files from this repository](https://github.com/domoritz/leaflet-locatecontrol/archive/gh-pages.zip). In `\src` are the original JS and CSS files and in `\dist` you can find the minified versions suitable for production.
-
-The latest version is always available through [Bower](http://bower.io/), just run `bower install leaflet.locatecontrol`. With bower, everything can easily be kept up to date.
+For production environments, use [Bower](http://bower.io/) and run `bower install leaflet.locatecontrol` or [download the files from this repository](https://github.com/domoritz/leaflet-locatecontrol/archive/gh-pages.zip). Bower will always download the latest version and keep the code up to date. The original JS and CSS files are in [`\src`](https://github.com/domoritz/leaflet-locatecontrol/tree/gh-pages/src) and the minified versions suitable for production are in [`\dist`](https://github.com/domoritz/leaflet-locatecontrol/tree/gh-pages/dist).
 
 You can also get the latest version of the plugin with [npm](https://www.npmjs.org/). This plugin is available in the [npm repository](https://www.npmjs.org/package/leaflet.locatecontrol). Just run `npm install leaflet.locatecontrol`.
+
+If you don't need the latest version, you can use the [mapbox CDN](https://www.mapbox.com/mapbox.js/plugins/#leaflet-locatecontrol).
 
 
 #### Add the JavaScript and CSS files
@@ -51,6 +52,7 @@ This example shows how to include font awesome from a CDN and the locate control
 <script src="//rawgithub.com/domoritz/leaflet-locatecontrol/gh-pages/dist/L.Control.Locate.min.js" ></script>
 ```
 
+
 #### Add the following snippet to your map initialization:
 
 This snippet adds the control to the map. You can pass also pass a configuration.
@@ -58,6 +60,7 @@ This snippet adds the control to the map. You can pass also pass a configuration
 ```js
 L.control.locate().addTo(map);
 ```
+
 
 ### Possible options
 
@@ -95,6 +98,7 @@ L.control.locate({
 }).addTo(map);
 ```
 
+
 ### Methods
 
 You can call `start()` or `stop()` on the locate control object to set the location of page load for example.
@@ -123,6 +127,7 @@ map.on('startfollowing', function() {
     map.off('dragstart', lc._stopFollowing, lc);
 });
 ```
+
 
 ### Events
 
