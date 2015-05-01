@@ -26,7 +26,7 @@ tl;dr
 
 For testing purposes and development, you can use the latest version directly from my repository using [rawgithub](http://rawgithub.com/). However, **don't do this in production environments**!
 
-For production environments, use the [mapbox CDN](https://www.mapbox.com/mapbox.js/plugins/#leaflet-locatecontrol) or [download the files from this repository](/domoritz/leaflet-locatecontrol/archive/gh-pages.zip). In `\src` are the original JS and CSS files and in `\dist` you can find the minified versions suitable for production.
+For production environments, use the [mapbox CDN](https://www.mapbox.com/mapbox.js/plugins/#leaflet-locatecontrol) or [download the files from this repository](https://github.com/domoritz/leaflet-locatecontrol/archive/gh-pages.zip). In `\src` are the original JS and CSS files and in `\dist` you can find the minified versions suitable for production.
 
 The latest version is always available through [Bower](http://bower.io/), just run `bower install leaflet.locatecontrol`. With bower, everything can easily be kept up to date.
 
@@ -39,7 +39,7 @@ The control uses [Font Awesome](https://fortawesome.github.io/Font-Awesome/) for
 
 Then include the CSS and JavaScript files.
 
-This example shows how to include font awesome from a CDN and the locate control files through rawgit. **Only use rawgit for testing and never in production! Always prefer using the Mapbox CDN or bower.**
+This example shows how to include font awesome from a CDN and the locate control files through rawgit. **Only use rawgit for testing and never in production! Always prefer using the bower (or Mapbox CDN).**
 
 ```html
 <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
