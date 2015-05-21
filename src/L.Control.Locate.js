@@ -478,13 +478,6 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
         }
     });
 
-    L.Map.addInitHook(function () {
-        if (this.options.locateControl) {
-            this.locateControl = L.control.locate();
-            this.addControl(this.locateControl);
-        }
-    });
-
     L.control.locate = function (options) {
         return new L.Control.Locate(options);
     };
