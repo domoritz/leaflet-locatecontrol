@@ -1,5 +1,5 @@
-/*! Version: 0.42.0
-Date: 2015-04-29 */
+/*! Version: 0.43.0
+Date: 2015-05-27 */
 
 /* Compatible with Leaflet 0.7 */
 .leaflet-touch .leaflet-bar-part-single {
@@ -15,7 +15,6 @@ Date: 2015-04-29 */
 
 .leaflet-control-locate a {
   font-size: 1.4em;
-  margin-left: 1px;
   color: #444;
 }
 .leaflet-control-locate.active a {
