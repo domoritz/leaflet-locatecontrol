@@ -81,6 +81,8 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             showPopup: true, // display a popup when the user click on the inner marker
             strings: {
                 title: "Show me where I am",
+                metersUnit: "meters",
+                feetsUnit: "feets",
                 popup: "You are within {distance} {unit} from this point",
                 outsideMapBoundsMsg: "You seem located outside the boundaries of the map"
             },
@@ -201,10 +203,10 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             var distance, unit;
             if (this.options.metric) {
                 distance = radius.toFixed(0);
-                unit = "meters";
+                unit =  this.options.strings.metersUnit;
             } else {
                 distance = (radius * 3.2808399).toFixed(0);
-                unit = "feet";
+                unit = this.options.strings.feetsUnit;
             }
 
             // small inner marker
