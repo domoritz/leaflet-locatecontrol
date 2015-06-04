@@ -82,7 +82,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             strings: {
                 title: "Show me where I am",
                 metersUnit: "meters",
-                feetsUnit: "feets",
+                feetUnit: "feet",
                 popup: "You are within {distance} {unit} from this point",
                 outsideMapBoundsMsg: "You seem located outside the boundaries of the map"
             },
