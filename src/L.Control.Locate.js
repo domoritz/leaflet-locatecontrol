@@ -206,7 +206,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
                 unit =  this.options.strings.metersUnit;
             } else {
                 distance = (radius * 3.2808399).toFixed(0);
-                unit = this.options.strings.feetsUnit;
+                unit = this.options.strings.feetUnit;
             }
 
             // small inner marker
