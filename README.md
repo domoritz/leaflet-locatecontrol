@@ -92,7 +92,7 @@ L.control.locate({
     strings: {
         title: "Show me where I am",  // title of the locate control
         metersUnit: "meters", // string for metric units
-        feetsUnit: "feets", // string for imperial units
+        feetUnit: "feet", // string for imperial units
         popup: "You are within {distance} {unit} from this point",  // text to appear if user clicks on circle
         outsideMapBoundsMsg: "You seem located outside the boundaries of the map" // default message for onLocationOutsideMapBounds
     },
