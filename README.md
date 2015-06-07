@@ -44,12 +44,12 @@ This example shows how to include font awesome from a CDN and the locate control
 
 ```html
 <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
-<link rel="stylesheet" href="//rawgithub.com/domoritz/leaflet-locatecontrol/gh-pages/dist/L.Control.Locate.min.css" />
+<link rel="stylesheet" href="//cdn.rawgit.com/domoritz/leaflet-locatecontrol/v0.43.0/dist/L.Control.Locate.min.css" />
 <!--[if lt IE 9]>
-    <link rel="stylesheet" href="//rawgithub.com/domoritz/leaflet-locatecontrol/gh-pages/dist/L.Control.Locate.ie.min.css"/>
+    <link rel="stylesheet" href="//cdn.rawgit.com/domoritz/leaflet-locatecontrol/v0.43.0/dist/L.Control.Locate.ie.min.css"/>
 <![endif]-->
 
-<script src="//rawgithub.com/domoritz/leaflet-locatecontrol/gh-pages/dist/L.Control.Locate.min.js" ></script>
+<script src="//cdn.rawgit.com/domoritz/leaflet-locatecontrol/v0.43.0/dist/L.Control.Locate.min.js" ></script>
 ```
 
 
