@@ -145,7 +145,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
         _deactivate: function() {
             this._map.stopLocate();
 
-            this._map.off('dragstart', this._stopFollowing);
+            this._map.off('dragstart', this._stopFollowing, this);
             if (this.options.follow && this._following) {
                 this._stopFollowing(this._map);
             }
@@ -403,7 +403,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             this._map.fire('stopfollowing', this);
             this._following = false;
             if (this.options.stopFollowingOnDrag) {
-                this._map.off('dragstart', this._stopFollowing);
+                this._map.off('dragstart', this._stopFollowing, this);
             }
             this._toggleContainerStyle();
         },
