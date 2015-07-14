@@ -330,6 +330,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             } else {
                 this.drawMarker(this._map);
             }
+            this._map.fire('startlocator', this);
         },
 
         /**
@@ -345,6 +346,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             this._resetVariables();
 
             this.removeMarker();
+            this._map.fire('stoplocator', this);
         },
 
         /**
