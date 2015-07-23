@@ -1,5 +1,8 @@
 # Leaflet.Locate
 
+[![Bower version](https://badge.fury.io/bo/leaflet.locatecontrol.svg)](http://badge.fury.io/bo/leaflet.locatecontrol)
+[![npm version](https://badge.fury.io/js/leaflet.locatecontrol.svg)](http://badge.fury.io/js/leaflet.locatecontrol)
+
 A useful control to geolocate the user with many options.
 
 Tested with [Leaflet](http://leafletjs.com/) 0.7 in Firefox, Webkit and mobile Webkit. Tested with [Font Awesome](https://fortawesome.github.io/Font-Awesome/) 4.3.0.
