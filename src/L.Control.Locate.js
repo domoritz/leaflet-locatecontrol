@@ -383,6 +383,8 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             }
 
             this.drawMarker(this._map);
+            
+            this.options.onLocationFound(e);
         },
 
         /**
