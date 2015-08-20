@@ -1,3 +1,7 @@
+var esriUrl='http://maps1.arcgisonline.com/ArcGIS/rest/services/USA_Federal_Lands/MapServer';
+var esriAttrib='Map data © <a href="http://osm.org/copyright">OpenStreetMap</a> contributors';
+var esri = L.esri.dynamicMapLayer(esriUrl, {});
+
 var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 var osmAttrib='Map data © <a href="http://osm.org/copyright">OpenStreetMap</a> contributors';
 var osm = new L.TileLayer(osmUrl, {
