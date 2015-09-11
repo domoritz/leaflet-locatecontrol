@@ -23,6 +23,7 @@ var map = new L.Map('map', {
 // on a production site, omit the "lc = "!
 lc = L.control.locate({
     follow: true,
+    displayWithZoomControl: true,
     strings: {
         title: "Show me where I am, yo!"
     }
