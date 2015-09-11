@@ -17,7 +17,6 @@
   "license": "MIT",
   "readmeFilename": "README.md",
   "dependencies": {
-    "font-awesome": "^4.2.0",
     "leaflet": "^0.7.3"
   },
   "devDependencies": {
