@@ -1,5 +1,5 @@
 /*! Version: 0.44.0
-Date: 2015-07-22 */
+Date: 2015-09-11 */
 
 /* Compatible with Leaflet 0.7 */
 .leaflet-touch .leaflet-bar-part-single {
@@ -9,18 +9,17 @@ Date: 2015-07-22 */
 }
 .leaflet-touch .leaflet-control-locate {
   box-shadow: none;
-  border: 2px solid rgba(0, 0, 0, 0.2);
   background-clip: padding-box;
 }
 
-.leaflet-control-locate a {
+a.leaflet-control-locate {
   font-size: 1.4em;
   color: #444;
 }
-.leaflet-control-locate.active a {
+a.leaflet-control-locate.active {
   color: #2074B6;
 }
-.leaflet-control-locate.active.following a {
+a.leaflet-control-locate.active.following {
   color: #FC8428;
 }
 

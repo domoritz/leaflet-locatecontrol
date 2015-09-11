@@ -9,23 +9,16 @@
 
   .leaflet-control-locate {
     box-shadow: none;
-    border: 2px solid rgba(0,0,0,0.2);
     background-clip: padding-box;
   }
 }
-
-.leaflet-control-locate {
-  a {
-    font-size: 1.4em;
-    color: #444;
-  }
-  &.active {
-    a {
-      color: #2074B6;
-    }
-    &.following a {
+a.leaflet-control-locate{
+  font-size: 1.4em;
+  color: #444;
+  &.active{
+    color: #2074B6;
+    &.following{
       color: #FC8428;
     }
   }
 }
-

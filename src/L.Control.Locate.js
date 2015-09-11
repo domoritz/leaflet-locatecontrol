@@ -89,7 +89,8 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             locateOptions: {
                 maxZoom: Infinity,
                 watch: true  // if you overwrite this, visualization cannot be updated
-            }
+            },
+            displayWithZoomControl: false
         },
 
         initialize: function (options) {
@@ -267,8 +268,13 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
         },
 
         onAdd: function (map) {
-            var container = L.DomUtil.create('div',
-                'leaflet-control-locate leaflet-bar leaflet-control');
+            var container;
+            // check if zoom control was accepted before and locate control would be displayed with it
+            if (map.zoomControl && this.options.displayWithZoomControl) {
+              container = map.zoomControl._container;
+            } else {
+              container = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
+            }
 
             this._layer = new L.LayerGroup();
             this._layer.addTo(map);
@@ -282,7 +288,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             L.extend(tmp, this.options.circleStyle, this.options.followCircleStyle);
             this.options.followCircleStyle = tmp;
 
-            this._link = L.DomUtil.create('a', 'leaflet-bar-part leaflet-bar-part-single', container);
+            this._link = L.DomUtil.create('a', 'leaflet-control-locate', container);
             this._link.href = '#';
             this._link.title = this.options.strings.title;
             this._icon = L.DomUtil.create('span', this.options.icon, this._link);

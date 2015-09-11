@@ -30,7 +30,6 @@
   "license": "MIT",
   "readmeFilename": "README.md",
   "dependencies": {
-    "leaflet": "~0.7.3",
-    "font-awesome": "~4.3.0"
+    "leaflet": "~0.7.3"
   }
 }
