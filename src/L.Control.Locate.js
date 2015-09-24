@@ -30,6 +30,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
     L.Control.Locate = L.Control.extend({
         options: {
             position: 'topleft',
+            layer: new L.LayerGroup(),  // use your own layer for the location marker
             drawCircle: true,
             follow: false,  // follow with zoom and pan the user's location
             stopFollowingOnDrag: false, // if follow is true, stop following when map is dragged (deprecated)
@@ -270,7 +271,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             var container = L.DomUtil.create('div',
                 'leaflet-control-locate leaflet-bar leaflet-control');
 
-            this._layer = new L.LayerGroup();
+            this._layer = this.options.layer;
             this._layer.addTo(map);
             this._event = undefined;
 
