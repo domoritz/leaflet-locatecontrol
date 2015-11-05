@@ -86,7 +86,7 @@ L.control.locate({
     followMarkerStyle: {},
     icon: 'fa fa-map-marker',  // class for icon, fa-location-arrow or fa-map-marker
     iconLoading: 'fa fa-spinner fa-spin',  // class for loading icon
-    tagNameForIconElement: 'span',  // set the icon element tag
+    iconElementTag: 'span',  // tag for the icon element, span or i
     circlePadding: [0, 0], // padding around accuracy circle, value is passed to setBounds
     metric: true,  // use metric or imperial units
     onLocationError: function(err) {alert(err.message)},  // define an error callback function

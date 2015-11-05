@@ -64,7 +64,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             },
             icon: 'fa fa-map-marker',  // fa-location-arrow or fa-map-marker
             iconLoading: 'fa fa-spinner fa-spin',
-            tagNameForIconElement: 'span', // i
+            iconElementTag: 'span', // span or i
             circlePadding: [0, 0],
             metric: true,
             onLocationError: function(err) {
@@ -287,7 +287,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             this._link = L.DomUtil.create('a', 'leaflet-bar-part leaflet-bar-part-single', container);
             this._link.href = '#';
             this._link.title = this.options.strings.title;
-            this._icon = L.DomUtil.create(this.options.tagNameForIconElement, this.options.icon, this._link);
+            this._icon = L.DomUtil.create(this.options.iconElementTag, this.options.icon, this._link);
 
             L.DomEvent
                 .on(this._link, 'click', L.DomEvent.stopPropagation)
