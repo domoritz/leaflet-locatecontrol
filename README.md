@@ -3,7 +3,7 @@
 [![Bower version](https://badge.fury.io/bo/leaflet.locatecontrol.svg)](http://badge.fury.io/bo/leaflet.locatecontrol)
 [![npm version](https://badge.fury.io/js/leaflet.locatecontrol.svg)](http://badge.fury.io/js/leaflet.locatecontrol)
 
-A useful control to geolocate the user with many options.
+A useful control to geolocate the user with many options. Official [Leaflet](http://leafletjs.com/plugins.html#geolocation) and [MapBox plugin](https://www.mapbox.com/mapbox.js/example/v1.0.0/leaflet-locatecontrol/).
 
 Tested with [Leaflet](http://leafletjs.com/) 0.7 in Firefox, Webkit and mobile Webkit. Tested with [Font Awesome](https://fortawesome.github.io/Font-Awesome/) 4.3.0.
 
@@ -178,7 +178,7 @@ map.addControl(L.control.locate({
 
 Sites that use this locate control:
 
-* [OpenStreetMap](http://www.openstreetmap.org/)
+* [OpenStreetMap](http://www.openstreetmap.org/) on the start page
 * [MapBox](https://www.mapbox.com/mapbox.js/example/v1.0.0/leaflet-locatecontrol/)
 * [wheelmap.org](http://wheelmap.org/map)
 * [OpenMensa](http://openmensa.org/)
