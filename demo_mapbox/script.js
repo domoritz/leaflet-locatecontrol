@@ -1,5 +1,6 @@
 L.mapbox.accessToken = 'pk.eyJ1IjoiZG9tb3JpdHoiLCJhIjoieENoTEhXUSJ9.kjCosRk1pmnOqTvfsjmgIg';
-var map = L.mapbox.map('map', 'examples.map-i86nkdio').setView([51.505, -0.09], 10);
+
+var map = L.mapbox.map('map', 'mapbox.streets').setView([51.505, -0.09], 10);
 
 // add location control to global name space for testing only
 // on a production site, omit the "lc = "!
