@@ -24,7 +24,6 @@ module.exports = function(grunt) {
         },
         files: {
           'dist/L.Control.Locate.min.css': 'src/L.Control.Locate.scss',
-          'dist/L.Control.Locate.ie.min.css': 'src/L.Control.Locate.ie.scss',
           'dist/L.Control.Locate.mapbox.min.css': 'src/L.Control.Locate.mapbox.scss'
         }
       },
@@ -36,7 +35,6 @@ module.exports = function(grunt) {
         },
         files: {
           'dist/L.Control.Locate.css': 'src/L.Control.Locate.scss',
-          'dist/L.Control.Locate.ie.css': 'src/L.Control.Locate.ie.scss',
           'dist/L.Control.Locate.mapbox.css': 'src/L.Control.Locate.mapbox.scss'
         }
       }

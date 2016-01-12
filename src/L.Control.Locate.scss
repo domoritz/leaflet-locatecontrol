@@ -1,19 +1,4 @@
 /* Compatible with Leaflet 0.7 */
-
-.leaflet-touch {
-  .leaflet-bar-part-single {
-    -webkit-border-radius: 7px 7px 7px 7px;
-            border-radius: 7px 7px 7px 7px;
-    border-bottom: none;
-  }
-
-  .leaflet-control-locate {
-    box-shadow: none;
-    border: 2px solid rgba(0,0,0,0.2);
-    background-clip: padding-box;
-  }
-}
-
 .leaflet-control-locate {
   a {
     font-size: 1.4em;
