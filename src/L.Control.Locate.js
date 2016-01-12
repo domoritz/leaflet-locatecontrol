@@ -169,7 +169,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
                     this.options.onLocationOutsideMapBounds(this);
                 } else {
                     // If accuracy info isn't desired, keep the current zoom level
-                    if(this.options.keepCurrentZoomLevel || !this.options.drawCircle){
+                    if(this.options.keepCurrentZoomLevel) {
                         map.panTo([this._event.latitude, this._event.longitude]);
                     } else {
                         map.fitBounds(this._event.bounds, {
