@@ -28,13 +28,13 @@ tl;dr
 
 #### Download JavaScript and CSS files
 
-For testing purposes and development, you can use the latest version directly from my repository using [rawgithub](http://rawgithub.com/). However, **don't do this in production environments**!
+For testing purposes and development, you can use the latest version directly from my repository.
 
 For production environments, use [Bower](http://bower.io/) and run `bower install leaflet.locatecontrol` or [download the files from this repository](https://github.com/domoritz/leaflet-locatecontrol/archive/gh-pages.zip). Bower will always download the latest version and keep the code up to date. The original JS and CSS files are in [`\src`](https://github.com/domoritz/leaflet-locatecontrol/tree/gh-pages/src) and the minified versions suitable for production are in [`\dist`](https://github.com/domoritz/leaflet-locatecontrol/tree/gh-pages/dist).
 
 You can also get the latest version of the plugin with [npm](https://www.npmjs.org/). This plugin is available in the [npm repository](https://www.npmjs.org/package/leaflet.locatecontrol). Just run `npm install leaflet.locatecontrol`.
 
-If you don't need the latest version, you can use the [mapbox CDN](https://www.mapbox.com/mapbox.js/plugins/#leaflet-locatecontrol).
+The control is [available from JsDelivr CDN](https://www.jsdelivr.com/projects/leaflet.locatecontrol). If you don't need the latest version, you can use the [mapbox CDN](https://www.mapbox.com/mapbox.js/plugins/#leaflet-locatecontrol).
 
 
 #### Add the JavaScript and CSS files
@@ -43,16 +43,13 @@ The control uses [Font Awesome](https://fortawesome.github.io/Font-Awesome/) for
 
 Then include the CSS and JavaScript files.
 
-This example shows how to include font awesome from a CDN and the locate control files through rawgit. **Only use rawgit for testing and never in production! Always prefer using the bower (or Mapbox CDN).**
+This example shows how to include font awesome from a CDN and the locate control files directly from github. In production, prefer using bower or the Mapbox or JsDelivr CDN.
 
 ```html
-<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
-<link rel="stylesheet" href="//rawgithub.com/domoritz/leaflet-locatecontrol/gh-pages/dist/L.Control.Locate.min.css" />
-<!--[if lt IE 9]>
-    <link rel="stylesheet" href="//rawgithub.com/domoritz/leaflet-locatecontrol/gh-pages/dist/L.Control.Locate.ie.min.css"/>
-<![endif]-->
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://domoritz.github.io/leaflet-locatecontrol/dist/L.Control.Locate.min.css" />
 
-<script src="//rawgithub.com/domoritz/leaflet-locatecontrol/gh-pages/dist/L.Control.Locate.min.js" ></script>
+<script src="https://domoritz.github.io/leaflet-locatecontrol/dist/L.Control.Locate.min.js" charset="utf-8"></script>
 ```
 
 
