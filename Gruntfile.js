@@ -1,6 +1,6 @@
 module.exports = function(grunt) {
 
-  var banner = '/*! Version: <%= pkg.version %>\nDate: <%= grunt.template.today("yyyy-mm-dd") %> */\n';
+  var banner = '/*! Version: <%= pkg.version %>\nCopyright (c) 2016 Dominik Moritz */\n';
 
   // Project configuration.
   grunt.initConfig({
@@ -8,7 +8,7 @@ module.exports = function(grunt) {
     uglify: {
       options: {
         banner: banner,
-        preserveComments: 'some',
+        preserveComments: false,
         sourceMap: true
       },
       build: {
@@ -19,7 +19,6 @@ module.exports = function(grunt) {
     sass: {
       dist: {
         options: {
-          banner: banner,
           style: 'compressed'
         },
         files: {
@@ -29,7 +28,6 @@ module.exports = function(grunt) {
       },
       uncompressed: {
         options: {
-          banner: banner,
           style: 'expanded',
           sourcemap: 'none'
         },
