@@ -1,5 +1,5 @@
 /*!
-Copyright (c) 2014 Dominik Moritz
+Copyright (c) 2016 Dominik Moritz
 
 This file is part of the leaflet locate control. It is licensed under the MIT license.
 You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
@@ -30,7 +30,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
     L.Control.Locate = L.Control.extend({
         options: {
             position: 'topleft',
-            layer: new L.LayerGroup(),  // use your own layer for the location marker
+            layer: undefined,  // use your own layer for the location marker
             drawCircle: true,
             follow: false,  // follow with zoom and pan the user's location
             stopFollowingOnDrag: false, // if follow is true, stop following when map is dragged (deprecated)
@@ -272,7 +272,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             var container = L.DomUtil.create('div',
                 'leaflet-control-locate leaflet-bar leaflet-control');
 
-            this._layer = this.options.layer;
+            this._layer = this.options.layer || new L.LayerGroup();
             this._layer.addTo(map);
             this._event = undefined;
 

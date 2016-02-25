@@ -69,7 +69,7 @@ The locate controls inherits options from [Leaflet Controls](http://leafletjs.co
 ```js
 L.control.locate({
 	position: 'topleft',  // set the location of the control
-    layer: new L.LayerGroup(),  // use your own layer for the location marker
+    layer: undefined,  // use your own layer for the location marker, creates a new layer by default
     drawCircle: true,  // controls whether a circle is drawn that shows the uncertainty about the location
     follow: false,  // follow the user's location
     setView: true, // automatically sets the map view to the user's location, enabled if `follow` is true
