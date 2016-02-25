@@ -272,7 +272,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             var container = L.DomUtil.create('div',
                 'leaflet-control-locate leaflet-bar leaflet-control');
 
-            this._layer = this.options.layer;
+            this._layer = L.layerGroup();
             this._layer.addTo(map);
             this._event = undefined;
 
