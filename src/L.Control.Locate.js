@@ -77,7 +77,13 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
                 control.stop();
                 alert(control.options.strings.outsideMapBoundsMsg);
             },
-            setView: true, // automatically sets the map view to the user's location
+            // automatically sets the map view to the user's location.
+            // Possible values: 
+            //  - false: never updates the map view when location changes.
+            //  - always: always updates the map view when location changes.
+            //  - untilPan: (default) like 'always', except stops updating the 
+            //    view if the user has manually panned the map.
+            setView: 'untilPan',
             // keep the current map zoom level when displaying the user's location. (if 'false', use maxZoom)
             keepCurrentZoomLevel: false,
             showPopup: true, // display a popup when the user click on the inner marker
@@ -133,6 +139,8 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
                 this._map.locate(this.options.locateOptions);
             }
             this._active = true;
+            // Reset _userPanned so that drawMarker() will pan map.
+            this._userPanned = false;
 
             if (this.options.follow) {
                 this._startFollowing(this._map);
@@ -170,7 +178,13 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
                 } else {
                     // If accuracy info isn't desired, keep the current zoom level
                     if(this.options.keepCurrentZoomLevel) {
+                      // If user hasn't panned.
+                      if (this.options.setView === 'always' || !this._userPanned) {
+                        console.log('Panning to ' + [this._event.latitude, this._event.longitude]);
                         map.panTo([this._event.latitude, this._event.longitude]);
+                      } else {
+                        console.log('Not panning, $this._userPanned == true. Moving marker to ' + [this._event.latitude, this._event.longitude]);
+                      }
                     } else {
                         map.fitBounds(this._event.bounds, {
                             padding: this.options.circlePadding,
@@ -396,6 +410,12 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             if (this.options.stopFollowingOnDrag) {
                 this._map.on('dragstart', this._stopFollowing, this);
             }
+            if (this.options.setView === 'untilPan') {
+                this._map.on('dragstart', function (){
+                  // This listener is on map, not on locateControl.
+                  this.locateControl._userPanned = true;
+                });
+            }
         },
 
         /**
@@ -477,7 +497,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
          */
         _resetVariables: function() {
             this._active = false;
-            this._locateOnNextLocationFound = this.options.setView;
+            this._locateOnNextLocationFound = Boolean(this.options.setView);
             this._following = false;
         }
     });
