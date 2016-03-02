@@ -172,19 +172,16 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             }
 
             var radius = this._event.accuracy;
-            if (this._locateOnNextLocationFound) {
+            if (this._locateOnNextLocationFound &&
+              // If user hasn't panned.
+              !(this.options.setView === 'untilPan' && this._userPanned)) {
+
                 if (this._isOutsideMapBounds()) {
                     this.options.onLocationOutsideMapBounds(this);
                 } else {
                     // If accuracy info isn't desired, keep the current zoom level
                     if(this.options.keepCurrentZoomLevel) {
-                      // If user hasn't panned.
-                      if (this.options.setView === 'always' || !this._userPanned) {
-                        console.log('Panning to ' + [this._event.latitude, this._event.longitude]);
                         map.panTo([this._event.latitude, this._event.longitude]);
-                      } else {
-                        console.log('Not panning, $this._userPanned == true. Moving marker to ' + [this._event.latitude, this._event.longitude]);
-                      }
                     } else {
                         map.fitBounds(this._event.bounds, {
                             padding: this.options.circlePadding,
