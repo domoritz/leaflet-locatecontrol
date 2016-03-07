@@ -32,7 +32,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             position: 'topleft',
             layer: undefined,  // use your own layer for the location marker
             drawCircle: true,
-            follow: false,  // follow with zoom and pan the user's location
+            follow: false,  // follow with zoom and pan the user's location (possibly deprecated with new setView options).
             stopFollowingOnDrag: false, // if follow is true, stop following when map is dragged (deprecated)
             // if true locate control remains active on click even if the user's location is in view.
             // clicking control will just pan to location
@@ -140,8 +140,9 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             }
             this._active = true;
             // Reset _userPanned so that drawMarker() will pan map.
-            this._userPanned = false;
+            this._map._userPanned = false;
 
+            // @todo Is 'follow' deprecated with new setView options?
             if (this.options.follow) {
                 this._startFollowing(this._map);
             }
@@ -156,11 +157,30 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             this._map.stopLocate();
 
             this._map.off('dragstart', this._stopFollowing, this);
+            // @todo Is 'follow' deprecated with new setView options?
             if (this.options.follow && this._following) {
                 this._stopFollowing(this._map);
             }
         },
-
+        
+        doSetView: function(map) {
+            if (this._isOutsideMapBounds()) {
+                this.options.onLocationOutsideMapBounds(this);
+            } else {
+                // If accuracy info isn't desired, keep the current zoom level
+                if(this.options.keepCurrentZoomLevel) {
+                    map.panTo([this._event.latitude, this._event.longitude]);
+                } else {
+                    map.fitBounds(this._event.bounds, {
+                        padding: this.options.circlePadding,
+                        maxZoom: this.options.keepCurrentZoomLevel ?
+                        map.getZoom() : this.options.locateOptions.maxZoom
+                    });
+                }
+            }
+            this._locateOnNextLocationFound = false;
+        },
+        
         /**
          * Draw the resulting marker on the map.
          *
@@ -172,25 +192,18 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             }
 
             var radius = this._event.accuracy;
-            if (this._locateOnNextLocationFound &&
-              // If user hasn't panned.
-              !(this.options.setView === 'untilPan' && this._userPanned)) {
-
-                if (this._isOutsideMapBounds()) {
-                    this.options.onLocationOutsideMapBounds(this);
-                } else {
-                    // If accuracy info isn't desired, keep the current zoom level
-                    if(this.options.keepCurrentZoomLevel) {
-                        map.panTo([this._event.latitude, this._event.longitude]);
-                    } else {
-                        map.fitBounds(this._event.bounds, {
-                            padding: this.options.circlePadding,
-                            maxZoom: this.options.keepCurrentZoomLevel ?
-                            map.getZoom() : this.options.locateOptions.maxZoom
-                        });
-                    }
-                }
-                this._locateOnNextLocationFound = false;
+            if (this._locateOnNextLocationFound && 
+                  // new logic, per #152.
+                  (
+                      (this.options.setView === 'once' && !this._viewWasSet) ||
+                      this.options.setView === 'always' ||
+                      // If user hasn't panned.
+                      (this.options.setView === 'untilPan' && !map._userPanned)
+                  )
+              ) {
+                  this.doSetView(map);
+                  // Flag for setView === 'once' option.
+                  this._viewWasSet = true;
             }
 
             // circle with the radius of the location's accuracy
@@ -391,6 +404,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
 
             this._event = e;
 
+            // @todo Is 'follow' deprecated with new setView options?
             if (this.options.follow && this._following) {
                 this._locateOnNextLocationFound = true;
             }
@@ -410,7 +424,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             if (this.options.setView === 'untilPan') {
                 this._map.on('dragstart', function (){
                   // This listener is on map, not on locateControl.
-                  this.locateControl._userPanned = true;
+                  this._userPanned = true;
                 });
             }
         },
