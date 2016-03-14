@@ -40,7 +40,7 @@ module.exports = function(grunt) {
     bump: {
       options: {
         files: ['package.json', 'bower.json'],
-        commitFiles: ['package.json', 'bower.json'],
+        commitFiles: ['package.json', 'bower.json', 'dist/L.Control.Locate.css', 'dist/L.Control.Locate.mapbox.css', 'dist/L.Control.Locate.min.js'],
         push: false
       }
     },

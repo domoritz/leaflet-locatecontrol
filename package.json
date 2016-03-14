@@ -20,6 +20,10 @@
     "font-awesome": "^4.4.0",
     "leaflet": "^0.7.7"
   },
+  "scripts": {
+    "build": "grunt",
+    "bump:minor": "grunt bump-only:minor && grunt && grunt bump-commit"
+  },
   "devDependencies": {
     "grunt": "^0.4.5",
     "grunt-bump": "0.7.0",
