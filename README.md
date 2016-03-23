@@ -137,6 +137,7 @@ map.on('startfollowing', function() {
 
 The locate control fires `startfollowing` and `stopfollowing` on the map object and passes `self` as data.
 
+You can also leverage the native Leaflet events `onlocationfound` and `onlocationerror` to handle when geolocation is successful or produces an error. You can find out more about these events in the [Leaflet documentation](http://leafletjs.com/examples/mobile.html#geolocation).
 
 ### Extending
 
