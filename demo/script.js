@@ -1,4 +1,4 @@
-var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+var osmUrl='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 var osmAttrib='Map data © <a href="http://osm.org/copyright">OpenStreetMap</a> contributors';
 var osm = new L.TileLayer(osmUrl, {
     attribution: osmAttrib,
@@ -6,7 +6,7 @@ var osm = new L.TileLayer(osmUrl, {
 });
 
 var token = 'pk.eyJ1IjoiZG9tb3JpdHoiLCJhIjoieENoTEhXUSJ9.kjCosRk1pmnOqTvfsjmgIg';
-var mapboxUrl = 'http://api.tiles.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}@2x.png?access_token=' + token;
+var mapboxUrl = 'https://api.tiles.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}@2x.png?access_token=' + token;
 var mapboxAttrib = 'Map data © <a href="http://osm.org/copyright">OpenStreetMap</a> contributors. Tiles from <a href="https://www.mapbox.com">Mapbox</a>.';
 var mapbox = new L.TileLayer(mapboxUrl, {
   attribution: mapboxAttrib
