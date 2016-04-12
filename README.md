@@ -7,15 +7,13 @@ A useful control to geolocate the user with many options. Official [Leaflet](htt
 
 Tested with [Leaflet](http://leafletjs.com/) 0.7 in Firefox, Webkit and mobile Webkit. Tested with [Font Awesome](https://fortawesome.github.io/Font-Awesome/) 4.3.0.
 
-**v0.34.0 introduced breaking changes to the API. Please check your code!**
-
 
 ## Demo
 
 Check out the demo at http://domoritz.github.io/leaflet-locatecontrol/demo/
 
 
-## Usage
+## Basic Usage
 
 ### Set up:
 
@@ -66,46 +64,70 @@ L.control.locate().addTo(map);
 
 The locate controls inherits options from [Leaflet Controls](http://leafletjs.com/reference.html#control-options).
 
+To customize the control, pass an object with your custom options to the locate control.
+
 ```js
-L.control.locate({
-	position: 'topleft',  // set the location of the control
-    layer: undefined,  // use your own layer for the location marker, creates a new layer by default
-    drawCircle: true,  // controls whether a circle is drawn that shows the uncertainty about the location
-    follow: false,  // follow the user's location
-    setView: true, // automatically sets the map view to the user's location, enabled if `follow` is true
-    keepCurrentZoomLevel: false, // keep the current map zoom level when displaying the user's location. (if `false`, use maxZoom)
-    stopFollowingOnDrag: false, // stop following when the map is dragged if `follow` is true (deprecated, see below)
-    remainActive: false, // if true locate control remains active on click even if the user's location is in view.
-    markerClass: L.circleMarker, // L.circleMarker or L.marker
-    circleStyle: {},  // change the style of the circle around the user's location
-    markerStyle: {},
-    followCircleStyle: {},  // set difference for the style of the circle around the user's location while following
-    followMarkerStyle: {},
-    icon: 'fa fa-map-marker',  // class for icon, fa-location-arrow or fa-map-marker
-    iconLoading: 'fa fa-spinner fa-spin',  // class for loading icon
-    iconElementTag: 'span',  // tag for the icon element, span or i
-    circlePadding: [0, 0], // padding around accuracy circle, value is passed to setBounds
-    metric: true,  // use metric or imperial units
-    onLocationError: function(err) {alert(err.message)},  // define an error callback function
-    onLocationOutsideMapBounds:  function(context) { // called when outside map boundaries
-            alert(context.options.strings.outsideMapBoundsMsg);
-    },
-    showPopup: true, // display a popup when the user click on the inner marker
+L.control.locate(OPTIONS).addTo(map);
+```
+
+Possible options are listed in the following table. More details are [in the code](https://github.com/domoritz/leaflet-locatecontrol/blob/gh-pages/src/L.Control.Locate.js#L31).
+
+
+| Option     | Type      | Description       |  Default |
+|------------|-----------|-------------------|----------|
+| `position` | `string`  | Position of the control | `topleft` |
+| `layer` | [`ILayer`](http://leafletjs.com/reference.html#ilayer)  | The layer that the user's location should be drawn on. | a new layer |
+| `drawCircle` | `boolean`  | If set, a circle that shows the location accuracy is drawn. | `true` |
+| `setView` | `boolean`  or `string`  | Set the map view (zoom and pan) to the user's location as it updates. Options are `false`, `'once'`, `'always'`, `and 'untilPan'` | `untilPan` |
+| `keepCurrentZoomLevel` | `boolean`  | Only pan when setting the view. | `false` |
+| `clickBehavior` | `object`  | What to do when the user clicks on the control. Has two options `inView` and `outOfView`. Possible values are `stop` and `setView`. | `{inView: 'stop', outOfView: 'setView'}` |
+| `markerClass` | `class`  | he class to be used to create the marker. | `L.CircleMarker` |
+| `circleStyle` | [`Path options`](http://leafletjs.com/reference.html#path-options) | Accuracy circle style properties. | see code |
+| `markerStyle` | [`Path options`](http://leafletjs.com/reference.html#path-options) | Inner marker style properties. | see code |
+| `followCircleStyle` | [`Path options`](http://leafletjs.com/reference.html#path-options)  | Changes to the accuracy circle while following. Only need to provide changes. | `{}` |
+| `followMarkerStyle` | [`Path options`](http://leafletjs.com/reference.html#path-options)  | Changes to the inner marker while following. Only need to provide changes. | `{}` |
+| `icon` | `string`  | The CSS class for the icon. | `fa fa-map-marker` |
+| `iconLoading` | `string`  | The CSS class for the icon while loading. | `fa fa-spinner fa-spin` |
+| `iconElementTag` | `string`  | The element to be created for icons. | `span` |
+| `circlePadding` | `array`  | Padding around the accuracy circle. | `[0, 0]` |
+| `onLocationError` | `function`  | This even is called when the user's location is outside the bounds set on the map. | see code |
+| `onLocationOutsideMapBounds` | `function`  | Use metric units. | see code |
+| `showPopup` | `boolean`  | Display a pop-up when the user click on the inner marker. | `true` |
+| `strings` | `object`  | Strings used in the control. Options are `title`, `metersUnit`, `feetUnit`, `popup`, and `outsideMapBoundsMsg` | see code |
+| `locateOptions` | [`Locate options`](http://leafletjs.com/reference.html#map-locate-options)  | The default options passed to leaflets locate method. | see code |
+
+For example, to customize the position and the title, you could write
+
+```js
+var lc = L.control.locate({
+    position: 'topright',
     strings: {
-        title: "Show me where I am",  // title of the locate control
-        metersUnit: "meters", // string for metric units
-        feetUnit: "feet", // string for imperial units
-        popup: "You are within {distance} {unit} from this point",  // text to appear if user clicks on circle
-        outsideMapBoundsMsg: "You seem located outside the boundaries of the map" // default message for onLocationOutsideMapBounds
-    },
-    locateOptions: {}  // define location options e.g enableHighAccuracy: true or maxZoom: 10
+        title: "Show me where I am, yo!"
+    }
 }).addTo(map);
 ```
 
 
+## Screenshot
+
+![screenshot](https://raw.github.com/domoritz/leaflet-locatecontrol/gh-pages/screenshot.png "Screenshot showing the locate control")
+
+
+## Users
+
+Sites that use this locate control:
+
+* [OpenStreetMap](http://www.openstreetmap.org/) on the start page
+* [MapBox](https://www.mapbox.com/mapbox.js/example/v1.0.0/leaflet-locatecontrol/)
+* [wheelmap.org](http://wheelmap.org/map)
+* [OpenMensa](http://openmensa.org/)
+* ...
+
+## Advanced Usage
+
 ### Methods
 
-You can call `start()` or `stop()` on the locate control object to set the location of page load for example.
+You can call `start()` or `stop()` on the locate control object to set the location on page load for example.
 
 ```js
 // create control and add to map
@@ -115,37 +137,17 @@ var lc = L.control.locate().addTo(map);
 lc.start();
 ```
 
-You can also use the helper functions to automatically stop following when the map is panned. See the example below.
-
-```js
-var lc = L.control.locate().addTo(map);
-map.on('dragstart', lc._stopFollowing, lc);
-```
-
-Alternatively, you can unload events when not following to avoid unnecessary events.
-
-```js
-map.on('startfollowing', function() {
-    map.on('dragstart', lc._stopFollowing, lc);
-}).on('stopfollowing', function() {
-    map.off('dragstart', lc._stopFollowing, lc);
-});
-```
-
-
 ### Events
 
-The locate control fires `startfollowing` and `stopfollowing` on the map object and passes `self` as data.
-
-You can also leverage the native Leaflet events `onlocationfound` and `onlocationerror` to handle when geolocation is successful or produces an error. You can find out more about these events in the [Leaflet documentation](http://leafletjs.com/examples/mobile.html#geolocation).
+You can leverage the native Leaflet events `onlocationfound` and `onlocationerror` to handle when geolocation is successful or produces an error. You can find out more about these events in the [Leaflet documentation](http://leafletjs.com/examples/mobile.html#geolocation).
 
 ### Extending
 
-To customize the behavior of the plugin, use L.extend to override `start`, `stop`, `drawMarker` and/or `removeMarker`. Please be aware that functions may change and customizations become incompatible.
+To customize the behavior of the plugin, use L.extend to override `start`, `stop`, `_drawMarker` and/or `_removeMarker`. Please be aware that functions may change and customizations become incompatible.
 
 ```js
 L.Control.MyLocate = L.Control.Locate.extend({
-   drawMarker: function() {
+   _drawMarker: function() {
      // override to customize the marker
    }
 });
@@ -168,22 +170,6 @@ map.addControl(L.control.locate({
 ```
 
 
-## Screenshot
-
-![screenshot](https://raw.github.com/domoritz/leaflet-locatecontrol/gh-pages/screenshot.png "Screenshot showing the locate control")
-
-
-## Users
-
-Sites that use this locate control:
-
-* [OpenStreetMap](http://www.openstreetmap.org/) on the start page
-* [MapBox](https://www.mapbox.com/mapbox.js/example/v1.0.0/leaflet-locatecontrol/)
-* [wheelmap.org](http://wheelmap.org/map)
-* [OpenMensa](http://openmensa.org/)
-* ...
-
-
 ## Developers
 
 Run the demo locally with `grunt serve` and then open [localhost:9000/demo/index.html](http://localhost:9000/demo/index.html).
@@ -194,6 +180,11 @@ To generate the minified JS and CSS files, use [grunt](http://gruntjs.com/gettin
 ## Making a release (only core developer)
 
 A new version is released with `npm run bump:minor`. Then push the new code with `git push && git push --tags` and publish to npm with `npm publish`.
+
+### Terms
+
+* **active**: After we called `map.locate()` and before `map.stopLocate()`. Any time, the map can fire the `locationfound` or `locationerror` events.
+* **following**: Following refers to whether the map zooms and pans automatically when a new location is found.
 
 
 ## Thanks
