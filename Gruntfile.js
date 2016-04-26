@@ -43,7 +43,7 @@ module.exports = function(grunt) {
         commitFiles: ['package.json', 'bower.json', 'dist/L.Control.Locate.css', 'dist/L.Control.Locate.mapbox.css', 'dist/L.Control.Locate.min.js'],
         push: false
       }
-    },
+    }
   });
 
   grunt.loadNpmTasks('grunt-contrib-uglify');
