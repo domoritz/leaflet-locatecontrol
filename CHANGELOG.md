@@ -10,6 +10,8 @@ Here we document breaking changes.
 * removed `stopFollowingOnDrag`, use `setView`
 * removed `startfollowing` and `startfollowing` events
 * changed a few internal methods
+* add `drawMarker`
+* small fixes
 
 ## **0.46.0**
 

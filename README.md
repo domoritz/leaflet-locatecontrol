@@ -5,7 +5,9 @@
 
 A useful control to geolocate the user with many options. Official [Leaflet](http://leafletjs.com/plugins.html#geolocation) and [MapBox plugin](https://www.mapbox.com/mapbox.js/example/v1.0.0/leaflet-locatecontrol/).
 
-Tested with [Leaflet](http://leafletjs.com/) 0.7 in Firefox, Webkit and mobile Webkit. Tested with [Font Awesome](https://fortawesome.github.io/Font-Awesome/) 4.3.0.
+Tested with [Leaflet](http://leafletjs.com/) 0.7 in Firefox, Webkit and mobile Webkit. Tested with [Font Awesome](https://fortawesome.github.io/Font-Awesome/) 4.5.
+
+Please check for [breaking changes in the changelog](https://github.com/domoritz/leaflet-locatecontrol/blob/gh-pages/CHANGELOG.md).
 
 
 ## Demo
@@ -77,10 +79,11 @@ Possible options are listed in the following table. More details are [in the cod
 |------------|-----------|-------------------|----------|
 | `position` | `string`  | Position of the control | `topleft` |
 | `layer` | [`ILayer`](http://leafletjs.com/reference.html#ilayer)  | The layer that the user's location should be drawn on. | a new layer |
-| `drawCircle` | `boolean`  | If set, a circle that shows the location accuracy is drawn. | `true` |
 | `setView` | `boolean`  or `string`  | Set the map view (zoom and pan) to the user's location as it updates. Options are `false`, `'once'`, `'always'`, `and 'untilPan'` | `untilPan` |
 | `keepCurrentZoomLevel` | `boolean`  | Only pan when setting the view. | `false` |
 | `clickBehavior` | `object`  | What to do when the user clicks on the control. Has two options `inView` and `outOfView`. Possible values are `stop` and `setView`. | `{inView: 'stop', outOfView: 'setView'}` |
+| `drawCircle` | `boolean`  | If set, a circle that shows the location accuracy is drawn. | `true` |
+| `drawMarker` | `boolean`  | If set, the marker at the users' location is drawn. | `true` |
 | `markerClass` | `class`  | he class to be used to create the marker. | `L.CircleMarker` |
 | `circleStyle` | [`Path options`](http://leafletjs.com/reference.html#path-options) | Accuracy circle style properties. | see code |
 | `markerStyle` | [`Path options`](http://leafletjs.com/reference.html#path-options) | Inner marker style properties. | see code |

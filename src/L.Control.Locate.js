@@ -32,8 +32,6 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             position: 'topleft',
             /** The layer that the user's location should be drawn on. By default creates a new layer. */
             layer: undefined,
-            /** If set, a circle that shows the location accuracy is drawn. */
-            drawCircle: true,
             /**
              * Automatically sets the map view (zoom and pan) to the user's location as it updates.
              * While the map is following the user's location, the control is in the `following` state,
@@ -64,6 +62,10 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
                 /** What should happen if the user clicks on the control while the location is outside the current view. */
                 outOfView: 'setView',
             },
+            /** If set, a circle that shows the location accuracy is drawn. */
+            drawCircle: true,
+            /** If set, the marker at the users' location is drawn. */
+            drawMarker: true,
             /** The class to be used to create the marker. For example L.CircleMarker or L.Marker */
             markerClass: L.CircleMarker,
             /** Accuracy circle style properties. */
@@ -270,10 +272,11 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
                     });
                 }
             }
+            this._drawMarker();
         },
 
         /**
-         * Draw the resulting marker on the map.
+         * Draw the marker and accuracy circle on the map.
          *
          * Uses the event retrieved from onLocationFound from the map.
          */
@@ -283,24 +286,16 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             }
 
             var radius = this._event.accuracy;
+            var latlng = this._event.latlng;
 
             // circle with the radius of the location's accuracy
-            var style, o;
             if (this.options.drawCircle) {
-                if (this._isFollowing()) {
-                    style = this.options.followCircleStyle;
-                } else {
-                    style = this.options.circleStyle;
-                }
+                var style = this._isFollowing() ? this.options.followCircleStyle : this.options.circleStyle;
 
                 if (!this._circle) {
-                    this._circle = L.circle(this._event.latlng, radius, style)
-                    .addTo(this._layer);
+                    this._circle = L.circle(latlng, radius, style).addTo(this._layer);
                 } else {
-                    this._circle.setLatLng(this._event.latlng).setRadius(radius);
-                    for (o in style) {
-                        this._circle.options[o] = style[o];
-                    }
+                    this._circle.setLatLng(latlng).setRadius(radius).setStyle(style);
                 }
             }
 
@@ -314,48 +309,21 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             }
 
             // small inner marker
-            var mStyle;
-            if (this._following) {
-                mStyle = this.options.followMarkerStyle;
-            } else {
-                mStyle = this.options.markerStyle;
-            }
+            if (this.options.drawMarker) {
+                var mStyle = this._isFollowing() ? this.options.followMarkerStyle : this.options.markerStyle;
 
-            if (!this._marker) {
-                this._marker = this._createMarker(this._event.latlng, mStyle).addTo(this._layer);
-            } else {
-                this._updateMarker(this._event.latlng, mStyle);
+                if (!this._marker) {
+                    this._marker = new this.options.markerClass(latlng, mStyle).addTo(this._layer);
+                } else {
+                    this._marker.setLatLng(latlng).setStyle(mStyle);
+                }
             }
 
             var t = this.options.strings.popup;
-            if (this.options.showPopup && t) {
+            if (this.options.showPopup && t && this._marker) {
                 this._marker
                     .bindPopup(L.Util.template(t, {distance: distance, unit: unit}))
-                    ._popup.setLatLng(this._event.latlng);
-            }
-        },
-
-        /**
-         * Creates the marker.
-         *
-         * Should return the base marker so it is possible to bind a pop-up if the
-         * option is activated.
-         *
-         * Used by _drawMarker, you can ignore it if you have overridden it.
-         */
-        _createMarker: function(latlng, mStyle) {
-            return new this.options.markerClass(latlng, mStyle);
-        },
-
-        /**
-         * Updates the marker with current coordinates.
-         *
-         * Used by _drawMarker, you can ignore it if you have overridden it.
-         */
-        _updateMarker: function(latlng, mStyle) {
-            this._marker.setLatLng(latlng);
-            for (var o in mStyle) {
-                this._marker.options[o] = mStyle[o];
+                    ._popup.setLatLng(latlng);
             }
         },
 
@@ -460,6 +428,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
         _onDrag: function() {
             this._userPanned = true;
             this._updateContainerStyle();
+            this._drawMarker();
         },
 
         /**

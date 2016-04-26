@@ -22,7 +22,8 @@
   },
   "scripts": {
     "build": "grunt",
-    "bump:minor": "grunt bump-only:minor && grunt && grunt bump-commit"
+    "bump:minor": "grunt bump-only:minor && grunt && grunt bump-commit",
+    "start": "grunt serve"
   },
   "devDependencies": {
     "grunt": "^1.0.1",
