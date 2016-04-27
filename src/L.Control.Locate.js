@@ -429,7 +429,9 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
         _onDrag: function() {
             this._userPanned = true;
             this._updateContainerStyle();
-            this._drawMarker();
+            if (this._event) {
+                this._drawMarker();
+            }
         },
 
         /**
