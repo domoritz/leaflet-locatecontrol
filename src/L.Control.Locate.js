@@ -262,7 +262,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
         setView: function() {
             if (this._isOutsideMapBounds()) {
                 this.options.onLocationOutsideMapBounds(this);
-            } else {
+            } else if (this._event) {
                 if (this.options.keepCurrentZoomLevel) {
                     this._map.panTo([this._event.latitude, this._event.longitude]);
                 } else {
@@ -281,49 +281,51 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
          * Uses the event retrieved from onLocationFound from the map.
          */
         _drawMarker: function() {
-            if (this._event.accuracy === undefined) {
-                this._event.accuracy = 0;
-            }
-
-            var radius = this._event.accuracy;
-            var latlng = this._event.latlng;
-
-            // circle with the radius of the location's accuracy
-            if (this.options.drawCircle) {
-                var style = this._isFollowing() ? this.options.followCircleStyle : this.options.circleStyle;
-
-                if (!this._circle) {
-                    this._circle = L.circle(latlng, radius, style).addTo(this._layer);
-                } else {
-                    this._circle.setLatLng(latlng).setRadius(radius).setStyle(style);
+            if (this._event) {
+                if (this._event.accuracy === undefined) {
+                    this._event.accuracy = 0;
                 }
-            }
 
-            var distance, unit;
-            if (this.options.metric) {
-                distance = radius.toFixed(0);
-                unit =  this.options.strings.metersUnit;
-            } else {
-                distance = (radius * 3.2808399).toFixed(0);
-                unit = this.options.strings.feetUnit;
-            }
+                var radius = this._event.accuracy;
+                var latlng = this._event.latlng;
 
-            // small inner marker
-            if (this.options.drawMarker) {
-                var mStyle = this._isFollowing() ? this.options.followMarkerStyle : this.options.markerStyle;
+                // circle with the radius of the location's accuracy
+                if (this.options.drawCircle) {
+                    var style = this._isFollowing() ? this.options.followCircleStyle : this.options.circleStyle;
 
-                if (!this._marker) {
-                    this._marker = new this.options.markerClass(latlng, mStyle).addTo(this._layer);
-                } else {
-                    this._marker.setLatLng(latlng).setStyle(mStyle);
+                    if (!this._circle) {
+                        this._circle = L.circle(latlng, radius, style).addTo(this._layer);
+                    } else {
+                        this._circle.setLatLng(latlng).setRadius(radius).setStyle(style);
+                    }
                 }
-            }
 
-            var t = this.options.strings.popup;
-            if (this.options.showPopup && t && this._marker) {
-                this._marker
-                    .bindPopup(L.Util.template(t, {distance: distance, unit: unit}))
-                    ._popup.setLatLng(latlng);
+                var distance, unit;
+                if (this.options.metric) {
+                    distance = radius.toFixed(0);
+                    unit =  this.options.strings.metersUnit;
+                } else {
+                    distance = (radius * 3.2808399).toFixed(0);
+                    unit = this.options.strings.feetUnit;
+                }
+
+                // small inner marker
+                if (this.options.drawMarker) {
+                    var mStyle = this._isFollowing() ? this.options.followMarkerStyle : this.options.markerStyle;
+
+                    if (!this._marker) {
+                        this._marker = new this.options.markerClass(latlng, mStyle).addTo(this._layer);
+                    } else {
+                        this._marker.setLatLng(latlng).setStyle(mStyle);
+                    }
+                }
+
+                var t = this.options.strings.popup;
+                if (this.options.showPopup && t && this._marker) {
+                    this._marker
+                        .bindPopup(L.Util.template(t, {distance: distance, unit: unit}))
+                        ._popup.setLatLng(latlng);
+                }
             }
         },
 
