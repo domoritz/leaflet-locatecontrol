@@ -171,7 +171,8 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
                 .on(this._link, 'dblclick', L.DomEvent.stopPropagation);
 
             this._resetVariables();
-            this._bindEvents();
+
+            this._map.on('unload', this._unload, this);
 
             return container;
         },
@@ -243,6 +244,10 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             if (!this._active) {
                 this._map.locate(this.options.locateOptions);
                 this._active = true;
+
+                // bind event listeners
+                this._map.on('locationfound', this._onLocationFound, this);
+                this._map.on('locationerror', this._onLocationError, this);
                 this._map.on('dragstart', this._onDrag, this);
             }
         },
@@ -255,6 +260,10 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
         _deactivate: function() {
             this._map.stopLocate();
             this._active = false;
+
+            // unbind event listeners
+            this._map.off('locationfound', this._onLocationFound, this);
+            this._map.off('locationerror', this._onLocationError, this);
             this._map.off('dragstart', this._onDrag, this);
         },
 
@@ -339,30 +348,12 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
         },
 
         /**
-         * Binds the actions to the map events.
-         */
-        _bindEvents: function() {
-            this._map.on('locationfound', this._onLocationFound, this);
-            this._map.on('locationerror', this._onLocationError, this);
-            this._map.on('unload', this._unload, this);
-        },
-
-        /**
-         * Opposite of _bindEvents.
-         */
-        _unbindEvents: function() {
-            this._map.off('locationfound', this._onLocationFound, this);
-            this._map.off('locationerror', this._onLocationError, this);
-            this._map.off('unload', this._unload, this);
-        },
-
-        /**
          * Unload the plugin and all event listeners.
          * Kind of the opposite of onAdd.
          */
         _unload: function() {
             this.stop();
-            this._unbindEvents();
+            this._map.off('unload', this._unload, this);
         },
 
         /**
@@ -424,12 +415,14 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
 
         /**
          * When the user drags. Need a separate even so we can bind and unbind even listeners.
-         * Make sure that this method is only called when the control is active.
          */
         _onDrag: function() {
-            this._userPanned = true;
-            this._updateContainerStyle();
-            this._drawMarker();
+            // only react to drags once we have a location
+            if (this._event) {
+                this._userPanned = true;
+                this._updateContainerStyle();
+                this._drawMarker();
+            }
         },
 
         /**
