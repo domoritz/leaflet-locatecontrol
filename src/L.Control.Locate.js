@@ -184,7 +184,10 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             this._justClicked = true;
             this._userPanned = false;
 
-            if (this._active && this._event !== undefined) {
+            if (this._active && !this._event) {
+                // click while requesting
+                this.stop();
+            } else if (this._active && this._event !== undefined) {
                 var behavior = this._map.getBounds().contains(this._event.latlng) ?
                     this.options.clickBehavior.inView : this.options.clickBehavior.outOfView;
                 switch (behavior) {
@@ -212,6 +215,11 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
 
             if (this._event) {
                 this._drawMarker(this._map);
+
+                // if we already have a location but the user clicked on the control
+                if (this.options.setView) {
+                    this.setView();
+                }
             }
             this._updateContainerStyle();
         },
