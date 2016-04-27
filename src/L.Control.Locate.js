@@ -243,6 +243,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             if (!this._active) {
                 this._map.locate(this.options.locateOptions);
                 this._active = true;
+                this._map.on('dragstart', this._onDrag, this);
             }
         },
 
@@ -254,6 +255,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
         _deactivate: function() {
             this._map.stopLocate();
             this._active = false;
+            this._map.off('dragstart', this._onDrag, this);
         },
 
         /**
@@ -342,7 +344,6 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
         _bindEvents: function() {
             this._map.on('locationfound', this._onLocationFound, this);
             this._map.on('locationerror', this._onLocationError, this);
-            this._map.on('dragstart', this._onDrag, this);
             this._map.on('unload', this._unload, this);
         },
 
@@ -352,7 +353,6 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
         _unbindEvents: function() {
             this._map.off('locationfound', this._onLocationFound, this);
             this._map.off('locationerror', this._onLocationError, this);
-            this._map.off('dragstart', this._onDrag, this);
             this._map.off('unload', this._unload, this);
         },
 
@@ -424,6 +424,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
 
         /**
          * When the user drags. Need a separate even so we can bind and unbind even listeners.
+         * Make sure that this method is only called when the control is active.
          */
         _onDrag: function() {
             this._userPanned = true;
@@ -450,8 +451,9 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
          * Check if location is in map bounds
          */
         _isOutsideMapBounds: function() {
-            if (this._event === undefined)
+            if (this._event === undefined) {
                 return false;
+            }
             return this._map.options.maxBounds &&
                 !this._map.options.maxBounds.contains(this._event.latlng);
         },
