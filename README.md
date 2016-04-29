@@ -124,6 +124,7 @@ Sites that use this locate control:
 * [MapBox](https://www.mapbox.com/mapbox.js/example/v1.0.0/leaflet-locatecontrol/)
 * [wheelmap.org](http://wheelmap.org/map)
 * [OpenMensa](http://openmensa.org/)
+* [Maps Marker Pro](https://www.mapsmarker.com) (WordPress plugin)
 * ...
 
 ## Advanced Usage
