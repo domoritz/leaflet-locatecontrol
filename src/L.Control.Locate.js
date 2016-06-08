@@ -334,7 +334,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
                 if (!this._marker) {
                     this._marker = new this.options.markerClass(latlng, mStyle).addTo(this._layer);
                 } else {
-                    this._marker.setLatLng(latlng).setStyle(mStyle);
+                    this._marker.setLatLng(latlng);
                 }
             }
 
