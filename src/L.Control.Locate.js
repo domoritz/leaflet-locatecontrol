@@ -62,6 +62,12 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
                 /** What should happen if the user clicks on the control while the location is outside the current view. */
                 outOfView: 'setView',
             },
+            /**
+             * If set, save the map bounds just before centering to the user's
+             * location. When control is disabled, set the view back to the
+             * bounds that were saved.
+             */
+            returnToPrevBounds: false,
             /** If set, a circle that shows the location accuracy is drawn. */
             drawCircle: true,
             /** If set, the marker at the users' location is drawn. */
@@ -196,9 +202,15 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
                         break;
                     case 'stop':
                         this.stop();
+                        if (this.options.returnToPrevBounds) {
+                          this._map.fitBounds(this._prevBounds);
+                        }
                         break;
                 }
             } else {
+                if (this.options.returnToPrevBounds) {
+                  this._prevBounds = this._map.getBounds();
+                }
                 this.start();
             }
 
