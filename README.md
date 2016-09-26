@@ -82,6 +82,7 @@ Possible options are listed in the following table. More details are [in the cod
 | `setView` | `boolean`  or `string`  | Set the map view (zoom and pan) to the user's location as it updates. Options are `false`, `'once'`, `'always'`, `and 'untilPan'` | `untilPan` |
 | `keepCurrentZoomLevel` | `boolean`  | Only pan when setting the view. | `false` |
 | `clickBehavior` | `object`  | What to do when the user clicks on the control. Has two options `inView` and `outOfView`. Possible values are `stop` and `setView`. | `{inView: 'stop', outOfView: 'setView'}` |
+| `returnToPrevBounds` | `boolean`  | If set, save the map bounds just before centering to the user's location. When control is disabled, set the view back to the bounds that were saved. | `false` |
 | `drawCircle` | `boolean`  | If set, a circle that shows the location accuracy is drawn. | `true` |
 | `drawMarker` | `boolean`  | If set, the marker at the users' location is drawn. | `true` |
 | `markerClass` | `class`  | he class to be used to create the marker. | `L.CircleMarker` |
