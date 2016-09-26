@@ -189,6 +189,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
         _onClick: function() {
             this._justClicked = true;
             this._userPanned = false;
+            this._prevBounds = null;
 
             if (this._active && !this._event) {
                 // click while requesting
