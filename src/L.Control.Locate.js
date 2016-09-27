@@ -163,6 +163,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
 
             this._layer = this.options.layer || new L.LayerGroup();
             this._layer.addTo(map);
+            this._event = undefined;
             this._prevBounds = null;
 
             this._link = L.DomUtil.create('a', 'leaflet-bar-part leaflet-bar-part-single', container);
