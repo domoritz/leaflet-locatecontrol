@@ -127,6 +127,7 @@ Sites that use this locate control:
 * [wheelmap.org](http://wheelmap.org/map)
 * [OpenMensa](http://openmensa.org/)
 * [Maps Marker Pro](https://www.mapsmarker.com) (WordPress plugin)
+* [Bikemap](https://jackdougherty.github.io/bikemapcode/)
 * ...
 
 ## Advanced Usage
