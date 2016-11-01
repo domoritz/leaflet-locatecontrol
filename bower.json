@@ -28,9 +28,5 @@
     "plugin"
   ],
   "license": "MIT",
-  "readmeFilename": "README.md",
-  "dependencies": {
-    "leaflet": "~0.7.7",
-    "font-awesome": "~4.5.0"
-  }
+  "readmeFilename": "README.md"
 }

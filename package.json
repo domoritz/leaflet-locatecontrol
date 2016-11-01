@@ -16,10 +16,6 @@
   ],
   "license": "MIT",
   "readmeFilename": "README.md",
-  "dependencies": {
-    "font-awesome": "^4.5.0",
-    "leaflet": "^0.7.7"
-  },
   "scripts": {
     "build": "grunt",
     "bump:minor": "grunt bump-only:minor && grunt && grunt bump-commit",
