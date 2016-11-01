@@ -23,9 +23,9 @@
   },
   "devDependencies": {
     "grunt": "^1.0.1",
-    "grunt-bump": "0.7.0",
+    "grunt-bump": "0.8.0",
     "grunt-contrib-sass": "^1.0.0",
-    "grunt-contrib-uglify": "^1.0.1",
+    "grunt-contrib-uglify": "^2.0.0",
     "grunt-serve": "^0.1.6"
   }
 }
