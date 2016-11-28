@@ -2,6 +2,14 @@
 
 Here we document breaking changes.
 
+## **0.57**
+
+* Apply marker style only to circle markers. Fixes #169
+
+## **0.54**
+
+* Support `flyTo`
+
 ## **0.50**
 
 * extended `setView` to support more options
