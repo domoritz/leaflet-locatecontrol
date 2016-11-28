@@ -88,7 +88,7 @@ Possible options are listed in the following table. More details are [in the cod
 | `drawMarker` | `boolean`  | If set, the marker at the users' location is drawn. | `true` |
 | `markerClass` | `class`  | he class to be used to create the marker. | `L.CircleMarker` |
 | `circleStyle` | [`Path options`](http://leafletjs.com/reference.html#path-options) | Accuracy circle style properties. | see code |
-| `markerStyle` | [`Path options`](http://leafletjs.com/reference.html#path-options) | Inner marker style properties. | see code |
+| `markerStyle` | [`Path options`](http://leafletjs.com/reference.html#path-options) | Inner marker style properties. Only works if your marker class supports `setStyle`. | see code |
 | `followCircleStyle` | [`Path options`](http://leafletjs.com/reference.html#path-options)  | Changes to the accuracy circle while following. Only need to provide changes. | `{}` |
 | `followMarkerStyle` | [`Path options`](http://leafletjs.com/reference.html#path-options)  | Changes to the inner marker while following. Only need to provide changes. | `{}` |
 | `icon` | `string`  | The CSS class for the icon. | `fa fa-map-marker` |
