@@ -2,9 +2,9 @@
 
 Here we document breaking changes.
 
-## **0.57**
+## **0.57, 0.58**
 
-* Apply marker style only to circle markers. Fixes #169
+* Apply marker style only to markers that support it. Fixes #169
 
 ## **0.54**
 
