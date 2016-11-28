@@ -22,7 +22,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
     }
 
     // attach your plugin to the global 'L' variable
-    if(typeof window !== 'undefined' && window.L){
+    if (typeof window !== 'undefined' && window.L){
         window.L.Control.Locate = factory(L);
     }
 } (function (L) {
@@ -84,7 +84,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
                 weight: 2,
                 opacity: 0.5
             },
-            /** Inner marker style properties. */
+            /** Inner marker style properties (if you use the default circle marker). */
             markerStyle: {
                 color: '#136AEC',
                 fillColor: '#2A93EE',
@@ -347,12 +347,16 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
 
             // small inner marker
             if (this.options.drawMarker) {
-                var mStyle = this._isFollowing() ? this.options.followMarkerStyle : this.options.markerStyle;
 
                 if (!this._marker) {
-                    this._marker = new this.options.markerClass(latlng, mStyle).addTo(this._layer);
+                    this._marker = new this.options.markerClass(latlng).addTo(this._layer);
                 } else {
-                    this._marker.setLatLng(latlng).setStyle(mStyle);
+                    this._marker.setLatLng(latlng);
+                }
+
+                if (this.options.markerClass === L.CircleMarker) {
+                    var mStyle = this._isFollowing() ? this.options.followMarkerStyle : this.options.markerStyle;
+                    this._marker.setStyle(mStyle);
                 }
             }
 
