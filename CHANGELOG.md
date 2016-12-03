@@ -2,6 +2,10 @@
 
 Here we document breaking changes.
 
+## **0.59**
+
+* Add `cacheLocation` option.
+
 ## **0.57, 0.58**
 
 * Apply marker style only to markers that support it. Fixes #169

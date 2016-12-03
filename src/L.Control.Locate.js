@@ -70,6 +70,11 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
              * bounds that were saved.
              */
             returnToPrevBounds: false,
+            /**
+             * Keep a cache of the location after the user deactivates the control. If set to false, the user has to wait
+             * until the locate API returns a new location before they see where they are again.
+             */
+            cacheLocation: true,
             /** If set, a circle that shows the location accuracy is drawn. */
             drawCircle: true,
             /** If set, the marker at the users' location is drawn. */
@@ -284,6 +289,10 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
         _deactivate: function() {
             this._map.stopLocate();
             this._active = false;
+
+            if (!this.options.cacheLocation) {
+                this._event = undefined;
+            }
 
             // unbind event listeners
             this._map.off('locationfound', this._onLocationFound, this);
