@@ -306,6 +306,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
         setView: function() {
             this._drawMarker();
             if (this._isOutsideMapBounds()) {
+                this._event = undefined;  // clear the current location so we can get back into the bounds
                 this.options.onLocationOutsideMapBounds(this);
             } else {
                 if (this.options.keepCurrentZoomLevel) {
