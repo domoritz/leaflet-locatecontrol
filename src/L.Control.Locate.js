@@ -174,7 +174,6 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             this._prevBounds = null;
 
             this._link = L.DomUtil.create('a', 'leaflet-bar-part leaflet-bar-part-single', container);
-            this._link.href = '#';
             this._link.title = this.options.strings.title;
             this._icon = L.DomUtil.create(this.options.iconElementTag, this.options.icon, this._link);
 
