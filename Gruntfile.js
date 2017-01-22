@@ -44,7 +44,11 @@ module.exports = function(grunt) {
           'package.json',
           'bower.json',
           'dist/L.Control.Locate.css',
+          'dist/L.Control.Locate.min.css',
+          'dist/L.Control.Locate.min.css.map',
           'dist/L.Control.Locate.mapbox.css',
+          'dist/L.Control.Locate.mapbox.min.css',
+          'dist/L.Control.Locate.mapbox.min.css.map',
           'dist/L.Control.Locate.min.js',
           'dist/L.Control.Locate.min.js.map'
         ],
