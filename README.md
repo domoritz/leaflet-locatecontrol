@@ -177,6 +177,17 @@ map.addControl(L.control.locate({
 }}));
 ```
 
+#### How do I enable high accuracy?
+
+To enable [high accuracy (GPS) mode](http://leafletjs.com/reference.html#map-enablehighaccuracy), set the `enableHighAccuracy` in `locateOptions`.
+
+```js
+map.addControl(L.control.locate({
+       locateOptions: {
+               enableHighAccuracy: true
+}}));
+```
+
 
 ## Developers
 
