@@ -116,9 +116,11 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             circlePadding: [0, 0],
             /** Use metric units. */
             metric: true,
-            /** This callback can be used in case you would like to override button creation behavior.
-                This is useful for DOM manipulation frameworks such as angular etc.
-                This function should return an object with HtmlElement for the button (link property) and the icon (icon property). */
+            /**
+             * This callback can be used in case you would like to override button creation behavior.
+             * This is useful for DOM manipulation frameworks such as angular etc.
+             * This function should return an object with HtmlElement for the button (link property) and the icon (icon property).
+             */
             createButtonCallback: function (container, options) {
                 var link = L.DomUtil.create('a', 'leaflet-bar-part leaflet-bar-part-single', container);
                 link.title = options.strings.title;
