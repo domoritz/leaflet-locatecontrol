@@ -96,6 +96,7 @@ Possible options are listed in the following table. More details are [in the cod
 | `iconLoading` | `string`  | The CSS class for the icon while loading. | `fa fa-spinner fa-spin` |
 | `iconElementTag` | `string`  | The element to be created for icons. | `span` |
 | `circlePadding` | `array`  | Padding around the accuracy circle. | `[0, 0]` |
+| `createButtonCallback` | `function`  | This callback can be used in case you would like to override button creation behavior. | see code |
 | `onLocationError` | `function`  | This even is called when the user's location is outside the bounds set on the map. | see code |
 | `onLocationOutsideMapBounds` | `function`  | Use metric units. | see code |
 | `showPopup` | `boolean`  | Display a pop-up when the user click on the inner marker. | `true` |
