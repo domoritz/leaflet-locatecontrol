@@ -130,6 +130,7 @@ Sites that use this locate control:
 * [OpenMensa](http://openmensa.org/)
 * [Maps Marker Pro](https://www.mapsmarker.com) (WordPress plugin)
 * [Bikemap](https://jackdougherty.github.io/bikemapcode/)
+* [MyRoutes](https://myroutes.io/)
 * ...
 
 ## Advanced Usage
