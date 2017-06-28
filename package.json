@@ -1,6 +1,6 @@
 {
   "name": "leaflet.locatecontrol",
-  "version": "0.61.0",
+  "version": "0.62.0",
   "homepage": "https://github.com/domoritz/leaflet-locatecontrol",
   "description": "A useful control to geolocate the user with many options. Used by osm.org and mapbox among many others.",
   "main": "src/L.Control.Locate.js",
