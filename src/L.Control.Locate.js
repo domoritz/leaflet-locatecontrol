@@ -26,6 +26,16 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
         window.L.Control.Locate = factory(L);
     }
 } (function (L) {
+    var LDomUtilApplyClassesMethod = function(method, element, classNames) {
+        classNames = classNames.split(' ');
+        classNames.forEach(function(className) {
+            L.DomUtil[method].call(this, element, className);
+        });
+    };
+
+    var addClasses = function(el, names) { LDomUtilApplyClassesMethod('addClass', el, names); };
+    var removeClasses = function(el, names) { LDomUtilApplyClassesMethod('removeClass', el, names); };
+
     var LocateControl = L.Control.extend({
         options: {
             /** Position of the control */
@@ -525,23 +535,23 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
          */
         _setClasses: function(state) {
             if (state == 'requesting') {
-                L.DomUtil.removeClasses(this._container, "active following");
-                L.DomUtil.addClasses(this._container, "requesting");
+                removeClasses(this._container, "active following");
+                addClasses(this._container, "requesting");
 
-                L.DomUtil.removeClasses(this._icon, this.options.icon);
-                L.DomUtil.addClasses(this._icon, this.options.iconLoading);
+                removeClasses(this._icon, this.options.icon);
+                addClasses(this._icon, this.options.iconLoading);
             } else if (state == 'active') {
-                L.DomUtil.removeClasses(this._container, "requesting following");
-                L.DomUtil.addClasses(this._container, "active");
+                removeClasses(this._container, "requesting following");
+                addClasses(this._container, "active");
 
-                L.DomUtil.removeClasses(this._icon, this.options.iconLoading);
-                L.DomUtil.addClasses(this._icon, this.options.icon);
+                removeClasses(this._icon, this.options.iconLoading);
+                addClasses(this._icon, this.options.icon);
             } else if (state == 'following') {
-                L.DomUtil.removeClasses(this._container, "requesting");
-                L.DomUtil.addClasses(this._container, "active following");
+                removeClasses(this._container, "requesting");
+                addClasses(this._container, "active following");
 
-                L.DomUtil.removeClasses(this._icon, this.options.iconLoading);
-                L.DomUtil.addClasses(this._icon, this.options.icon);
+                removeClasses(this._icon, this.options.iconLoading);
+                addClasses(this._icon, this.options.icon);
             }
         },
 
@@ -553,8 +563,8 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             L.DomUtil.removeClass(this._container, "active");
             L.DomUtil.removeClass(this._container, "following");
 
-            L.DomUtil.removeClasses(this._icon, this.options.iconLoading);
-            L.DomUtil.addClasses(this._icon, this.options.icon);
+            removeClasses(this._icon, this.options.iconLoading);
+            addClasses(this._icon, this.options.icon);
         },
 
         /**
@@ -576,20 +586,6 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
     L.control.locate = function (options) {
         return new L.Control.Locate(options);
     };
-
-    (function(){
-      // leaflet.js raises bug when trying to addClass / removeClass multiple classes at once
-      // Let's create a wrapper on it which fixes it.
-      var LDomUtilApplyClassesMethod = function(method, element, classNames) {
-        classNames = classNames.split(' ');
-        classNames.forEach(function(className) {
-            L.DomUtil[method].call(this, element, className);
-        });
-      };
-
-      L.DomUtil.addClasses = function(el, names) { LDomUtilApplyClassesMethod('addClass', el, names); };
-      L.DomUtil.removeClasses = function(el, names) { LDomUtilApplyClassesMethod('removeClass', el, names); };
-    })();
 
     return LocateControl;
 }, window));
