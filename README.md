@@ -42,15 +42,13 @@ The control is [available from JsDelivr CDN](https://www.jsdelivr.com/projects/l
 
 The control uses [Font Awesome](https://fortawesome.github.io/Font-Awesome/) for the icons and if you don't have it included yet, you can use the CSS from the CDN.
 
-Then include the CSS and JavaScript files.
-
-This example shows how to include font awesome from a CDN and the locate control files directly from github. In production, prefer using bower or the Mapbox or JsDelivr CDN.
+Then include the CSS and JavaScript files. In this example, we are using the JsDelivr CDN. Replace `[VERSION]` with the latest release number. 
 
 ```html
-<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
-<link rel="stylesheet" href="https://domoritz.github.io/leaflet-locatecontrol/dist/L.Control.Locate.min.css" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://domoritz.github.io/leaflet-locatecontrol@[VERSION]/dist/L.Control.Locate.min.css" />
 
-<script src="https://domoritz.github.io/leaflet-locatecontrol/dist/L.Control.Locate.min.js" charset="utf-8"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@[VERSION]/dist/L.Control.Locate.min.css" charset="utf-8"></script>
 ```
 
 
