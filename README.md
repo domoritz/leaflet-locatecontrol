@@ -42,7 +42,7 @@ The control is [available from JsDelivr CDN](https://www.jsdelivr.com/projects/l
 
 The control uses [Font Awesome](https://fortawesome.github.io/Font-Awesome/) for the icons and if you don't have it included yet, you can use the CSS from the CDN.
 
-Then include the CSS and JavaScript files. In this example, we are using the JsDelivr CDN. Replace `[VERSION]` with the latest release number. 
+Then include the CSS and JavaScript files. In this example, we are loading the [files from the JsDelivr CDN](https://www.jsdelivr.com/package/npm/leaflet.locatecontrol?path=dist). In the URLs below, replace `[VERSION]` with the latest release number. 
 
 ```html
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
