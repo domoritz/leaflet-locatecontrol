@@ -48,7 +48,7 @@ Then include the CSS and JavaScript files. In this example, we are loading the [
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="https://domoritz.github.io/leaflet-locatecontrol@[VERSION]/dist/L.Control.Locate.min.css" />
 
-<script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@[VERSION]/dist/L.Control.Locate.min.css" charset="utf-8"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@[VERSION]/dist/L.Control.Locate.min.js" charset="utf-8"></script>
 ```
 
 
