@@ -23,10 +23,10 @@
     "start": "grunt serve"
   },
   "devDependencies": {
-    "grunt": "^1.0.1",
+    "grunt": "^1.0.2",
     "grunt-bump": "0.8.0",
     "grunt-contrib-sass": "^1.0.0",
-    "grunt-contrib-uglify": "^3.0.1",
+    "grunt-contrib-uglify": "^3.3.0",
     "grunt-serve": "^0.1.6"
   }
 }
