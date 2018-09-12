@@ -52,14 +52,14 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
              *  - 'once': set the view when the location is first determined
              *  - 'always': always updates the map view when location changes.
              *              The map view follows the users location.
-             *  - 'untilPan': like 'always', except stops updating the
+             *  - 'untilPan': (default) like 'always', except stops updating the
              *                view if the user has manually panned the map.
              *                The map view follows the users location until she pans.
-             *  - 'untilPanOrZoom': (default) like 'always', except stops updating the
+             *  - 'untilPanOrZoom': like 'always', except stops updating the
              *                view if the user has manually panned the map.
              *                The map view follows the users location until she pans.
              */
-            setView: 'untilPanOrZoom',
+            setView: 'untilPan',
             /** Keep the current map zoom level when setting the view and only pan. */
             keepCurrentZoomLevel: false,
             /** Smooth pan and zoom to the location of the marker. Only works in Leaflet 1.0+. */
@@ -145,7 +145,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
                 alert(err.message);
             },
             /**
-             * This even is called when the user's location is outside the bounds set on the map.
+             * This event is called when the user's location is outside the bounds set on the map.
              * The event is called repeatedly when the location changes.
              */
             onLocationOutsideMapBounds: function(control) {
@@ -484,7 +484,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
         },
 
         /**
-         * When the user drags. Need a separate event so we can bind and unbind even listeners.
+         * When the user drags. Need a separate event so we can bind and unbind event listeners.
          */
         _onDrag: function() {
             // only react to drags once we have a location
@@ -496,7 +496,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
         },
 
         /**
-         * When the user zooms. Need a separate event so we can bind and unbind even listeners.
+         * When the user zooms. Need a separate event so we can bind and unbind event listeners.
          */
         _onZoom: function() {
             // only react to drags once we have a location
