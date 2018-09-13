@@ -51,10 +51,13 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
              *  - false: never updates the map view when location changes.
              *  - 'once': set the view when the location is first determined
              *  - 'always': always updates the map view when location changes.
-             *              The map view follows the users location.
+             *              The map view follows the user's location.
              *  - 'untilPan': (default) like 'always', except stops updating the
              *                view if the user has manually panned the map.
-             *                The map view follows the users location until she pans.
+             *                The map view follows the user's location until she pans.
+             *  - 'untilPanOrZoom': like 'always', except stops updating the
+             *                view if the user has manually panned the map.
+             *                The map view follows the user's location until she pans.
              */
             setView: 'untilPan',
             /** Keep the current map zoom level when setting the view and only pan. */
@@ -142,7 +145,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
                 alert(err.message);
             },
             /**
-             * This even is called when the user's location is outside the bounds set on the map.
+             * This event is called when the user's location is outside the bounds set on the map.
              * The event is called repeatedly when the location changes.
              */
             onLocationOutsideMapBounds: function(control) {
@@ -217,6 +220,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
         _onClick: function() {
             this._justClicked = true;
             this._userPanned = false;
+            this._userZoomed = false;
 
             if (this._active && !this._event) {
                 // click while requesting
@@ -298,6 +302,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
                 this._map.on('locationfound', this._onLocationFound, this);
                 this._map.on('locationerror', this._onLocationError, this);
                 this._map.on('dragstart', this._onDrag, this);
+                this._map.on('zoomstart', this._onZoom, this);
             }
         },
 
@@ -318,6 +323,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             this._map.off('locationfound', this._onLocationFound, this);
             this._map.off('locationerror', this._onLocationError, this);
             this._map.off('dragstart', this._onDrag, this);
+            this._map.off('zoomstart', this._onZoom, this);
         },
 
         /**
@@ -461,6 +467,11 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
                         this.setView();
                     }
                     break;
+                case 'untilPanOrZoom':
+                    if (!this._userPanned && !this._userZoomed) {
+                        this.setView();
+                    }
+                    break;
                 case 'always':
                     this.setView();
                     break;
@@ -473,12 +484,24 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
         },
 
         /**
-         * When the user drags. Need a separate even so we can bind and unbind even listeners.
+         * When the user drags. Need a separate event so we can bind and unbind event listeners.
          */
         _onDrag: function() {
             // only react to drags once we have a location
             if (this._event) {
                 this._userPanned = true;
+                this._updateContainerStyle();
+                this._drawMarker();
+            }
+        },
+
+        /**
+         * When the user zooms. Need a separate event so we can bind and unbind event listeners.
+         */
+        _onZoom: function() {
+            // only react to drags once we have a location
+            if (this._event) {
+                this._userZoomed = true;
                 this._updateContainerStyle();
                 this._drawMarker();
             }
@@ -496,6 +519,8 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
                 return true;
             } else if (this.options.setView === 'untilPan') {
                 return !this._userPanned;
+            } else if (this.options.setView === 'untilPanOrZoom') {
+                return !this._userPanned && !this._userZoomed;
             }
         },
 
@@ -580,6 +605,9 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
 
             // true if the user has panned the map after clicking the control
             this._userPanned = false;
+
+            // true if the user has zoomed the map after clicking the control
+            this._userZoomed = false;
         }
     });
 
