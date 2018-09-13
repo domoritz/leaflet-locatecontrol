@@ -2,6 +2,10 @@
 
 Here we document breaking changes.
 
+## **0.63**
+
+* Change default `setView` from `untilPan` to `untilPanOrZoom`.
+
 ## **0.59**
 
 * Add `cacheLocation` option.
