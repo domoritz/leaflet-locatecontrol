@@ -78,7 +78,7 @@ Possible options are listed in the following table. More details are [in the cod
 |------------|-----------|-------------------|----------|
 | `position` | `string`  | Position of the control | `topleft` |
 | `layer` | [`ILayer`](http://leafletjs.com/reference.html#ilayer)  | The layer that the user's location should be drawn on. | a new layer |
-| `setView` | `boolean`  or `string`  | Set the map view (zoom and pan) to the user's location as it updates. Options are `false`, `'once'`, `'always'`, `'untilPan'`, or [`'untilPanOrZoom'`](https://github.com/domoritz/leaflet-locatecontrol/issues/213) | `untilPan` |
+| `setView` | `boolean`  or `string`  | Set the map view (zoom and pan) to the user's location as it updates. Options are `false`, `'once'`, `'always'`, `'untilPan'`, or [`'untilPanOrZoom'`](https://github.com/domoritz/leaflet-locatecontrol/issues/213) | `'untilPan'` |
 | `flyTo` | `boolean` | Smooth pan and zoom to the location of the marker. Only works in Leaflet 1.0+. | `false` |
 | `keepCurrentZoomLevel` | `boolean`  | Only pan when setting the view. | `false` |
 | `clickBehavior` | `object`  | What to do when the user clicks on the control. Has two options `inView` and `outOfView`. Possible values are `stop` and `setView`. | `{inView: 'stop', outOfView: 'setView'}` |
