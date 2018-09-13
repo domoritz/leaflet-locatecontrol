@@ -52,14 +52,14 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
              *  - 'once': set the view when the location is first determined
              *  - 'always': always updates the map view when location changes.
              *              The map view follows the user's location.
-             *  - 'untilPan': (default) like 'always', except stops updating the
+             *  - 'untilPan': like 'always', except stops updating the
              *                view if the user has manually panned the map.
              *                The map view follows the user's location until she pans.
-             *  - 'untilPanOrZoom': like 'always', except stops updating the
+             *  - 'untilPanOrZoom': (default) like 'always', except stops updating the
              *                view if the user has manually panned the map.
              *                The map view follows the user's location until she pans.
              */
-            setView: 'untilPan',
+            setView: 'untilPanOrZoom',
             /** Keep the current map zoom level when setting the view and only pan. */
             keepCurrentZoomLevel: false,
             /** Smooth pan and zoom to the location of the marker. Only works in Leaflet 1.0+. */
