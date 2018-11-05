@@ -36,6 +36,114 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
     var addClasses = function(el, names) { LDomUtilApplyClassesMethod('addClass', el, names); };
     var removeClasses = function(el, names) { LDomUtilApplyClassesMethod('removeClass', el, names); };
 
+    /**
+     * Compatible with L.Circle but a true marker instead of a path
+     */
+    var LocationMarker = L.Marker.extend({
+
+        initialize: function (latlng, options) {
+            L.Util.setOptions(this, options);
+            this._latlng = latlng;
+            this.createIcon();
+        },
+
+        /**
+         * Create a styled circle location marker
+         */
+        createIcon: function() {
+
+            var opt = this.options;
+
+            var style = '';
+            if (opt.color) {
+                style += 'stroke:'+opt.color+';';
+            }
+            if (opt.weight) {
+                style += 'stroke-width:'+opt.weight+';';
+            }
+            if (opt.fillColor) {
+                style += 'fill:'+opt.fillColor+';';
+            }
+            if (opt.fillOpacity) {
+                style += 'fill-opacity:'+opt.fillOpacity+';';
+            }
+            if (opt.opacity) {
+                style += 'opacity:'+opt.opacity+';';
+            }
+
+            var icon = this._getIconSVG(opt, style);
+
+            this._locationIcon = L.divIcon({
+                className: icon.className,
+                html: icon.svg,
+                iconSize: [icon.w,icon.h],
+            });
+
+            this.setIcon(this._locationIcon);
+        },
+
+        /**
+         * Return the raw svg for the shape
+         *
+         * Split so can be easily overridden
+         */
+        _getIconSVG: function(options, style) {
+            var r = options.radius;
+            var w = options.weight;
+            var s = r + w;
+            var s2 = s * 2;
+            var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="'+s2+'" height="'+s2+'" version="1.1" viewBox="-'+s+' -'+s+' '+s2+' '+s2+'">' +
+            '<circle r="'+r+'" style="'+style+'" />' +
+            '</svg>';
+            return {
+                className: 'leafet-control-locate-location',
+                svg: svg,
+                w: s2,
+                h: s2
+            };
+        },
+
+        setStyle: function(style) {
+            L.Util.setOptions(this, style);
+            this.createIcon();
+        }
+    });
+
+    var CompassMarker = LocationMarker.extend({
+
+        initialize: function (latlng, heading, options) {
+            L.Util.setOptions(this, options);
+            this._latlng = latlng;
+            this._heading = heading;
+            this.createIcon();
+        },
+
+        setHeading: function(heading) {
+            this._heading = heading;
+        },
+
+        /**
+         * Create a styled arrow compass marker
+         */
+        _getIconSVG: function(options, style) {
+            var r = options.radius;
+            var w = (options.width + options.weight);
+            var h = (r+options.depth + options.weight)*2;
+            var path = 'M0,0 l'+(options.width/2)+','+options.depth+' l-'+(w)+',0 z';
+            var svgstyle = 'transform: rotate('+this._heading+'deg)';
+            var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="'+(w)+'" height="'+h+'" version="1.1" viewBox="-'+(w/2)+' 0 '+w+' '+h+'" style="'+svgstyle+'">'+
+            '<path d="'+path+'" style="'+style+'" />'+
+            '</svg>';
+            return {
+                className: 'leafet-control-locate-heading',
+                svg: svg,
+                w: w,
+                h: h
+            };
+        },
+    });
+
+
     var LocateControl = L.Control.extend({
         options: {
             /** Position of the control */
@@ -92,24 +200,41 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             drawCircle: true,
             /** If set, the marker at the users' location is drawn. */
             drawMarker: true,
+            /** If set and supported then show the compass heading */
+            showCompass: true,
             /** The class to be used to create the marker. For example L.CircleMarker or L.Marker */
-            markerClass: L.CircleMarker,
-            /** Accuracy circle style properties. */
+            markerClass: LocationMarker,
+            /** The class us be used to create the compass bearing arrow */
+            compassClass: CompassMarker,
+            /** Accuracy circle style properties. NOTE these styles should match the css animations styles */
             circleStyle: {
-                color: '#136AEC',
-                fillColor: '#136AEC',
+                className:   'leaflet-control-locate-circle',
+                color:       '#136AEC',
+                fillColor:   '#136AEC',
                 fillOpacity: 0.15,
-                weight: 2,
-                opacity: 0.5
+                weight:      1,
+                opacity:     0.2
             },
             /** Inner marker style properties. Only works if your marker class supports `setStyle`. */
             markerStyle: {
-                color: '#136AEC',
-                fillColor: '#2A93EE',
-                fillOpacity: 0.7,
-                weight: 2,
-                opacity: 0.9,
-                radius: 5
+                className:   'leaflet-control-locate-marker',
+                color:       '#fff',
+                fillColor:   '#2A93EE',
+                fillOpacity: 1,
+                weight:      3,
+                opacity:     1,
+                radius:      9
+            },
+            /** Compass */
+            compassStyle: {
+                fillColor:   '#2A93EE',
+                fillOpacity: 1,
+                weight:      0,
+                color:       '#fff',
+                opacity:     1,
+                radius:      9, // How far is the arrow is from the center of of the marker
+                width:       9, // Width of the arrow
+                depth:       6  // Length of the arrow
             },
             /**
              * Changes to accuracy circle and inner marker while following.
@@ -120,6 +245,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
                 // color: '#FFA500',
                 // fillColor: '#FFB000'
             },
+            followCompassStyle: {},
             /** The CSS class for the icon. For example fa-location-arrow or fa-map-marker */
             icon: 'fa fa-map-marker',
             iconLoading: 'fa fa-spinner fa-spin',
@@ -183,6 +309,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             // extend the follow marker style and circle from the normal style
             this.options.followMarkerStyle = L.extend({}, this.options.markerStyle, this.options.followMarkerStyle);
             this.options.followCircleStyle = L.extend({}, this.options.circleStyle, this.options.followCircleStyle);
+            this.options.followCompassStyle = L.extend({}, this.options.compassStyle, this.options.followCompassStyle);
         },
 
         /**
@@ -195,6 +322,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             this._layer = this.options.layer || new L.LayerGroup();
             this._layer.addTo(map);
             this._event = undefined;
+            this._compassHeading = null;
             this._prevBounds = null;
 
             var linkAndIcon = this.options.createButtonCallback(container, this.options);
@@ -303,6 +431,14 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
                 this._map.on('locationerror', this._onLocationError, this);
                 this._map.on('dragstart', this._onDrag, this);
                 this._map.on('zoomstart', this._onZoom, this);
+                this._map.on('zoomend', this._onZoomEnd, this);
+                if (this.options.showCompass) {
+                    if ('ondeviceorientationabsolute' in window) {
+                        L.DomEvent.on(window, 'deviceorientationabsolute', this._onDeviceOrientation, this);
+                    } else if ('ondeviceorientation' in window) {
+                        L.DomEvent.on(window, 'deviceorientation', this._onDeviceOrientation, this);
+                    }
+                }
             }
         },
 
@@ -324,6 +460,15 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             this._map.off('locationerror', this._onLocationError, this);
             this._map.off('dragstart', this._onDrag, this);
             this._map.off('zoomstart', this._onZoom, this);
+            this._map.off('zoomend', this._onZoomEnd, this);
+            if (this.options.showCompass) {
+                this._compassHeading = null;
+                if ('ondeviceorientationabsolute' in window) {
+                    L.DomEvent.off(window, 'deviceorientationabsolute', this._onDeviceOrientation, this);
+                } else if ('ondeviceorientation' in window) {
+                    L.DomEvent.off(window, 'deviceorientation', this._onDeviceOrientation, this);
+                }
+            }
         },
 
         /**
@@ -345,6 +490,33 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
                         maxZoom: this.options.locateOptions.maxZoom
                     });
                 }
+            }
+        },
+
+        /**
+         *
+         */
+        _drawCompass: function() {
+
+            var latlng = this._event.latlng;
+
+            if (this.options.showCompass && latlng && this._compassHeading !== null) {
+                var cStyle = this._isFollowing() ? this.options.followCompassStyle : this.options.compassStyle;
+                if (!this._compass) {
+                    this._compass = new this.options.compassClass(latlng, this._compassHeading, cStyle).addTo(this._layer);
+                } else {
+                    this._compass.setLatLng(latlng);
+                    this._compass.setHeading(this._compassHeading);
+                    // If the compassClass can be updated with setStyle, update it.
+                    if (this._compass.setStyle) {
+                        this._compass.setStyle(cStyle);
+                    }
+                }
+                // 
+            }
+            if (this._compass && (!this.options.showCompass || this._compassHeading === null)) {
+                this._compass.removeFrom(this._layer);
+                this._compass = null;
             }
         },
 
@@ -395,9 +567,16 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
                 }
             }
 
+            this._drawCompass();
+
             var t = this.options.strings.popup;
             if (this.options.showPopup && t && this._marker) {
                 this._marker
+                    .bindPopup(L.Util.template(t, {distance: distance, unit: unit}))
+                    ._popup.setLatLng(latlng);
+            }
+            if (this.options.showPopup && t && this._compass) {
+                this._compass
                     .bindPopup(L.Util.template(t, {distance: distance, unit: unit}))
                     ._popup.setLatLng(latlng);
             }
@@ -419,6 +598,45 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
         _unload: function() {
             this.stop();
             this._map.off('unload', this._unload, this);
+        },
+
+        /**
+         * Sets the compass heading
+         */
+        _setCompassHeading: function(angle) {
+            if (!isNaN(parseFloat(angle)) && isFinite(angle)) {
+                angle = Math.round(angle);
+
+                this._compassHeading = angle;
+                L.Util.requestAnimFrame(this._drawCompass, this);
+            } else {
+                this._compassHeading = null;
+            }
+        },
+
+        /**
+         * If the compass fails calibration just fail safely and remove the compass
+         */
+        _onCompassNeedsCalibration: function() {
+            this._setCompassHeading();
+        },
+
+        /**
+         * Process and normalise compass events
+         */
+        _onDeviceOrientation: function(e) {
+
+            if (!this._active) {
+                return;
+            }
+
+            if (e.webkitCompassHeading) {
+                // iOS
+                this._setCompassHeading(e.webkitCompassHeading);
+            } else if (e.absolute && e.alpha) {
+                // Android
+                this._setCompassHeading(360 - e.alpha)
+            }
         },
 
         /**
@@ -504,6 +722,15 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
                 this._userZoomed = true;
                 this._updateContainerStyle();
                 this._drawMarker();
+            }
+        },
+
+        /**
+         * After a zoom ends update the compass
+         */
+        _onZoomEnd: function() {
+            if (this._event) {
+                this._drawCompass();
             }
         },
 

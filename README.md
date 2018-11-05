@@ -84,13 +84,17 @@ Possible options are listed in the following table. More details are [in the cod
 | `clickBehavior` | `object`  | What to do when the user clicks on the control. Has two options `inView` and `outOfView`. Possible values are `stop` and `setView`. | `{inView: 'stop', outOfView: 'setView'}` |
 | `returnToPrevBounds` | `boolean`  | If set, save the map bounds just before centering to the user's location. When control is disabled, set the view back to the bounds that were saved. | `false` |
 | `cacheLocation` | `boolean` | Keep a cache of the location after the user deactivates the control. If set to false, the user has to wait until the locate API returns a new location before they see where they are again. |
+| `showCompass` | `boolean` | Show the compass bearing on top of the location marker | `true` |
 | `drawCircle` | `boolean`  | If set, a circle that shows the location accuracy is drawn. | `true` |
 | `drawMarker` | `boolean`  | If set, the marker at the users' location is drawn. | `true` |
-| `markerClass` | `class`  | he class to be used to create the marker. | `L.CircleMarker` |
+| `markerClass` | `class`  | The class to be used to create the marker. | `LocationMarker` |
+| `compassClass` | `class`  | The class to be used to create the marker. | `CompassMarker` |
 | `circleStyle` | [`Path options`](http://leafletjs.com/reference.html#path-options) | Accuracy circle style properties. | see code |
 | `markerStyle` | [`Path options`](http://leafletjs.com/reference.html#path-options) | Inner marker style properties. Only works if your marker class supports `setStyle`. | see code |
+| `compassStyle` | [`Path options`](http://leafletjs.com/reference.html#path-options) | Triangle compass heading marker style properties. Only works if your marker class supports `setStyle`. | see code |
 | `followCircleStyle` | [`Path options`](http://leafletjs.com/reference.html#path-options)  | Changes to the accuracy circle while following. Only need to provide changes. | `{}` |
 | `followMarkerStyle` | [`Path options`](http://leafletjs.com/reference.html#path-options)  | Changes to the inner marker while following. Only need to provide changes. | `{}` |
+| `followCompassStyle` | [`Path options`](http://leafletjs.com/reference.html#path-options)  | Changes to the compass marker while following. Only need to provide changes. | `{}` |
 | `icon` | `string`  | The CSS class for the icon. | `fa fa-map-marker` |
 | `iconLoading` | `string`  | The CSS class for the icon while loading. | `fa fa-spinner fa-spin` |
 | `iconElementTag` | `string`  | The element to be created for icons. | `span` |
