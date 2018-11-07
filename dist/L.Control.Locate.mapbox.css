@@ -11,6 +11,24 @@
   color: #FC8428;
 }
 
+.leafet-control-locate-location circle {
+  animation: leaflet-control-locate-throb 4s ease infinite;
+}
+
+@keyframes leaflet-control-locate-throb {
+  0% {
+    r: 9;
+    stroke-width: 1;
+  }
+  50% {
+    r: 7;
+    stroke-width: 3;
+  }
+  100% {
+    r: 9;
+    stroke-width: 1;
+  }
+}
 /* Mapbox specific adjustments */
 .leaflet-control-locate a {
   padding: 3px 0 0 8px;
