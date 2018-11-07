@@ -54,13 +54,22 @@ module.exports = function(grunt) {
         ],
         push: false
       }
+    },
+    connect: {
+      server: {
+        options: {
+          port: 9000,
+          protocol: 'https',
+          keepalive: true
+        }
+      }
     }
   });
 
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-bump');
-  grunt.loadNpmTasks('grunt-serve');
+  grunt.loadNpmTasks('grunt-contrib-connect');
 
   // Default task(s).
   grunt.registerTask('default', ['uglify', 'sass']);

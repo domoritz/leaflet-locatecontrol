@@ -40,7 +40,6 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
      * Compatible with L.Circle but a true marker instead of a path
      */
     var LocationMarker = L.Marker.extend({
-
         initialize: function (latlng, options) {
             L.Util.setOptions(this, options);
             this._latlng = latlng;
@@ -51,23 +50,23 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
          * Create a styled circle location marker
          */
         createIcon: function() {
-
             var opt = this.options;
 
             var style = '';
-            if (opt.color) {
+
+            if (opt.color !== undefined) {
                 style += 'stroke:'+opt.color+';';
             }
-            if (opt.weight) {
+            if (opt.weight !== undefined) {
                 style += 'stroke-width:'+opt.weight+';';
             }
-            if (opt.fillColor) {
+            if (opt.fillColor !== undefined) {
                 style += 'fill:'+opt.fillColor+';';
             }
-            if (opt.fillOpacity) {
+            if (opt.fillOpacity !== undefined) {
                 style += 'fill-opacity:'+opt.fillOpacity+';';
             }
-            if (opt.opacity) {
+            if (opt.opacity !== undefined) {
                 style += 'opacity:'+opt.opacity+';';
             }
 
@@ -110,7 +109,6 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
     });
 
     var CompassMarker = LocationMarker.extend({
-
         initialize: function (latlng, heading, options) {
             L.Util.setOptions(this, options);
             this._latlng = latlng;
@@ -212,8 +210,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
                 color:       '#136AEC',
                 fillColor:   '#136AEC',
                 fillOpacity: 0.15,
-                weight:      1,
-                opacity:     0.2
+                weight:      0
             },
             /** Inner marker style properties. Only works if your marker class supports `setStyle`. */
             markerStyle: {
@@ -497,7 +494,6 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
          *
          */
         _drawCompass: function() {
-
             var latlng = this._event.latlng;
 
             if (this.options.showCompass && latlng && this._compassHeading !== null) {
@@ -625,7 +621,6 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
          * Process and normalise compass events
          */
         _onDeviceOrientation: function(e) {
-
             if (!this._active) {
                 return;
             }
