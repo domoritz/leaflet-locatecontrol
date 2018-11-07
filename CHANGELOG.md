@@ -2,6 +2,14 @@
 
 Here we document breaking changes.
 
+## **0.64**
+
+Thanks to @brendanheywood for the updates! 
+
+* Add support for heading.
+* Modernize style. Breathing location marker.
+* Use Leaflet marker.
+
 ## **0.63**
 
 * Change default `setView` from `untilPan` to `untilPanOrZoom`.
