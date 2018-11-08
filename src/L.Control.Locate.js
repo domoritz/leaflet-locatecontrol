@@ -168,6 +168,19 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             setView: 'untilPanOrZoom',
             /** Keep the current map zoom level when setting the view and only pan. */
             keepCurrentZoomLevel: false,
+            /**
+             * This callback can be used to override the viewport tracking
+             * This function should return a LatLngBounds object.
+             *
+             * For example to extend the viewport to ensure that a particular LatLng is visible:
+             *
+             * getLocationBounds: function(locationEvent) {
+             *    return locationEvent.bounds.extend([-33.873085, 151.219273]);
+             * },
+             */
+            getLocationBounds: function (locationEvent) {
+                return locationEvent.bounds;
+            },
             /** Smooth pan and zoom to the location of the marker. Only works in Leaflet 1.0+. */
             flyTo: false,
             /**
@@ -482,7 +495,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
                     f.bind(this._map)([this._event.latitude, this._event.longitude]);
                 } else {
                     var f = this.options.flyTo ? this._map.flyToBounds : this._map.fitBounds;
-                    f.bind(this._map)(this._event.bounds, {
+                    f.bind(this._map)(this.options.getLocationBounds(this._event), {
                         padding: this.options.circlePadding,
                         maxZoom: this.options.locateOptions.maxZoom
                     });
