@@ -83,7 +83,7 @@ Possible options are listed in the following table. More details are [in the cod
 | `keepCurrentZoomLevel` | `boolean`  | Only pan when setting the view. | `false` |
 | `clickBehavior` | `object`  | What to do when the user clicks on the control. Has two options `inView` and `outOfView`. Possible values are `stop` and `setView`. | `{inView: 'stop', outOfView: 'setView'}` |
 | `returnToPrevBounds` | `boolean`  | If set, save the map bounds just before centering to the user's location. When control is disabled, set the view back to the bounds that were saved. | `false` |
-| `cacheLocation` | `boolean` | Keep a cache of the location after the user deactivates the control. If set to false, the user has to wait until the locate API returns a new location before they see where they are again. |
+| `cacheLocation` | `boolean` | Keep a cache of the location after the user deactivates the control. If set to false, the user has to wait until the locate API returns a new location before they see where they are again. | `true` |
 | `showCompass` | `boolean` | Show the compass bearing on top of the location marker | `true` |
 | `drawCircle` | `boolean`  | If set, a circle that shows the location accuracy is drawn. | `true` |
 | `drawMarker` | `boolean`  | If set, the marker at the users' location is drawn. | `true` |
