@@ -495,10 +495,17 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
                     f.bind(this._map)([this._event.latitude, this._event.longitude]);
                 } else {
                     var f = this.options.flyTo ? this._map.flyToBounds : this._map.fitBounds;
+                    // Ignore zoom events while setting the viewport as these would stop following
+                    this._ignoreEvent = true;
                     f.bind(this._map)(this.options.getLocationBounds(this._event), {
                         padding: this.options.circlePadding,
                         maxZoom: this.options.locateOptions.maxZoom
                     });
+                    L.Util.requestAnimFrame(function(){
+                        // Wait until after the next animFrame because the flyTo can be async
+                        this._ignoreEvent = false;
+                    }, this);
+
                 }
             }
         },
@@ -714,7 +721,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
          */
         _onDrag: function() {
             // only react to drags once we have a location
-            if (this._event) {
+            if (this._event && !this._ignoreEvent) {
                 this._userPanned = true;
                 this._updateContainerStyle();
                 this._drawMarker();
@@ -726,7 +733,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
          */
         _onZoom: function() {
             // only react to drags once we have a location
-            if (this._event) {
+            if (this._event && !this._ignoreEvent) {
                 this._userZoomed = true;
                 this._updateContainerStyle();
                 this._drawMarker();
