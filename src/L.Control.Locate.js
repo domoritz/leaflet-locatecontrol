@@ -423,6 +423,15 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
         },
 
         /**
+         * Keep the control active but stop following the location
+         */
+        stopFollowing: function() {
+            this._userPanned = true;
+            this._updateContainerStyle();
+            this._drawMarker();
+        },
+
+        /**
          * This method launches the location engine.
          * It is called before the marker is updated,
          * event if it does not mean that the event will be ready.
