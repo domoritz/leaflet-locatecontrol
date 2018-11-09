@@ -195,6 +195,11 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
                 inView: 'stop',
                 /** What should happen if the user clicks on the control while the location is outside the current view. */
                 outOfView: 'setView',
+                /**
+                 * What should happen if the user clicks on the control while the location is within the current view
+                 * and we could be following but are not. Defaults to a special value which inherits from 'inView';
+                 */
+                inViewNotFollowing: 'inView',
             },
             /**
              * If set, save the map bounds just before centering to the user's
@@ -357,6 +362,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
          */
         _onClick: function() {
             this._justClicked = true;
+            var wasFollowing =  this._isFollowing();
             this._userPanned = false;
             this._userZoomed = false;
 
@@ -364,8 +370,17 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
                 // click while requesting
                 this.stop();
             } else if (this._active && this._event !== undefined) {
-                var behavior = this._map.getBounds().contains(this._event.latlng) ?
-                    this.options.clickBehavior.inView : this.options.clickBehavior.outOfView;
+                var behaviors = this.options.clickBehavior;
+                var behavior = behaviors.outOfView;
+                if (this._map.getBounds().contains(this._event.latlng)) {
+                    behavior = wasFollowing ? behaviors.inView : behaviors.inViewNotFollowing;
+                }
+
+                // Allow inheriting from another behavior
+                if (behaviors[behavior]) {
+                    behavior = behaviors[behavior];
+                }
+
                 switch (behavior) {
                     case 'setView':
                         this.setView();
