@@ -151,6 +151,8 @@ var lc = L.control.locate().addTo(map);
 lc.start();
 ```
 
+You can keep the plugin active but stop following using `lc.stopFollowing()`.
+
 ### Events
 
 You can leverage the native Leaflet events `onlocationfound` and `onlocationerror` to handle when geolocation is successful or produces an error. You can find out more about these events in the [Leaflet documentation](http://leafletjs.com/examples/mobile.html#geolocation).
