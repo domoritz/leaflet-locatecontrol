@@ -95,7 +95,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             '<circle r="'+r+'" style="'+style+'" />' +
             '</svg>';
             return {
-                className: 'leafet-control-locate-location',
+                className: 'leaflet-control-locate-location',
                 svg: svg,
                 w: s2,
                 h: s2
