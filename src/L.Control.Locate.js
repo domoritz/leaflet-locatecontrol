@@ -774,7 +774,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
 
             if (this._event && !this._ignoreEvent) {
                 // If we have zoomed in and out and ended up sideways treat it as a pan
-                if (!this._map.getBounds().pad(-.3).contains(this._marker.getLatLng())) {
+                if (this._marker && !this._map.getBounds().pad(-.3).contains(this._marker.getLatLng())) {
                     this._userPanned = true;
                     this._updateContainerStyle();
                     this._drawMarker();
