@@ -28,8 +28,7 @@ module.exports = function(grunt) {
       },
       uncompressed: {
         options: {
-          style: 'expanded',
-          sourcemap: 'none'
+          style: 'expanded'
         },
         files: {
           'dist/L.Control.Locate.css': 'src/L.Control.Locate.scss',
