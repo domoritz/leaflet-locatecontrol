@@ -538,6 +538,10 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
          *
          */
         _drawCompass: function() {
+            if (!this._event) {
+                return;
+            }
+
             var latlng = this._event.latlng;
 
             if (this.options.showCompass && latlng && this._compassHeading !== null) {
