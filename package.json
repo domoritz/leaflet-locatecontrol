@@ -1,6 +1,6 @@
 {
   "name": "leaflet.locatecontrol",
-  "version": "0.66.1",
+  "version": "0.66.2",
   "homepage": "https://github.com/domoritz/leaflet-locatecontrol",
   "description": "A useful control to geolocate the user with many options. Used by osm.org and mapbox among many others.",
   "main": "src/L.Control.Locate.js",
@@ -25,8 +25,8 @@
   "devDependencies": {
     "grunt": "^1.0.3",
     "grunt-bump": "0.8.0",
+    "grunt-contrib-connect": "^2.0.0",
     "grunt-contrib-sass": "^1.0.0",
-    "grunt-contrib-uglify": "^4.0.0",
-    "grunt-contrib-connect": "^2.0.0"
+    "grunt-contrib-uglify": "^4.0.0"
   }
 }
