@@ -11,7 +11,7 @@
   color: #FC8428;
 }
 
-.leafet-control-locate-location circle {
+.leaflet-control-locate-location circle {
   animation: leaflet-control-locate-throb 4s ease infinite;
 }
 
