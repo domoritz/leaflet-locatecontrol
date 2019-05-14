@@ -133,7 +133,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             '<path d="'+path+'" style="'+style+'" />'+
             '</svg>';
             return {
-                className: 'leafet-control-locate-heading',
+                className: 'leaflet-control-locate-heading',
                 svg: svg,
                 w: w,
                 h: h
