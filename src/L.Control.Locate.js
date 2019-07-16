@@ -514,7 +514,10 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
                 this._event = undefined;  // clear the current location so we can get back into the bounds
                 this.options.onLocationOutsideMapBounds(this);
             } else {
-                if (this.options.keepCurrentZoomLevel) {
+                if (this.options.keepCurrentZoomLevel && (
+                    typeof this.options.keepCurrentZoomLevel == "boolean" ||
+                    (typeof this.options.keepCurrentZoomLevel == "object" && this._map.getZoom() <= this.options.keepCurrentZoomLevel[1] && this._map.getZoom() >= this.options.keepCurrentZoomLevel[0])
+                )) {
                     var f = this.options.flyTo ? this._map.flyTo : this._map.panTo;
                     f.bind(this._map)([this._event.latitude, this._event.longitude]);
                 } else {
