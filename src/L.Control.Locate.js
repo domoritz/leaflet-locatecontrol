@@ -480,7 +480,6 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
                         };
                         if (DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === 'function') {
                             DeviceOrientationEvent.requestPermission().then(function (permissionState) {
-                                deviceorientation();
                                 if (permissionState === 'granted') {
                                     deviceorientation();
                                 }
