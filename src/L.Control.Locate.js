@@ -468,15 +468,10 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
                 this._map.on('zoomend', this._onZoomEnd, this);
                 if (this.options.showCompass) {
                     var oriAbs = 'ondeviceorientationabsolute' in window;
-                    var oriStd = 'ondeviceorientation' in window;
-                    if (oriAbs || oriStd) {
+                    if (oriAbs || ('ondeviceorientation' in window)) {
                         var _this = this;
                         var deviceorientation = function () {
-                            if (oriAbs) {
-                                L.DomEvent.on(window, 'deviceorientationabsolute', _this._onDeviceOrientation, _this);
-                            } else if (oriStd) {
-                                L.DomEvent.on(window, 'deviceorientation', _this._onDeviceOrientation, _this);
-                            }
+                            L.DomEvent.on(window, oriAbs ? 'deviceorientationabsolute' : 'deviceorientation', _this._onDeviceOrientation, _this);
                         };
                         if (DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === 'function') {
                             DeviceOrientationEvent.requestPermission().then(function (permissionState) {
