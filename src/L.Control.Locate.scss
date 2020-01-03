@@ -20,7 +20,7 @@
 }
 
 @keyframes leaflet-control-locate-throb {
-    0% { r: 9; stroke-width: 1; }
-   50% { r: 7; stroke-width: 3; }
-  100% { r: 9; stroke-width: 1; }
+    0% { stroke-width: 1; }
+   50% { stroke-width: 3; transform: scale(0.8,0.8); }
+  100% { stroke-width: 1; }
 }
