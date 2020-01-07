@@ -625,14 +625,23 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             this._drawCompass();
 
             var t = this.options.strings.popup;
+            function getPopupText() {
+                if (typeof t === 'string') {
+                    return L.Util.template(t, {distance: distance, unit: unit});
+                } else if (typeof t === 'function') {
+                    return t({distance: distance, unit: unit});
+                } else {
+                    return t;
+                }
+            }
             if (this.options.showPopup && t && this._marker) {
                 this._marker
-                    .bindPopup(L.Util.template(t, {distance: distance, unit: unit}))
+                    .bindPopup(getPopupText())
                     ._popup.setLatLng(latlng);
             }
             if (this.options.showPopup && t && this._compass) {
                 this._compass
-                    .bindPopup(L.Util.template(t, {distance: distance, unit: unit}))
+                    .bindPopup(getPopupText())
                     ._popup.setLatLng(latlng);
             }
         },
