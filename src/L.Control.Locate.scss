@@ -7,10 +7,10 @@
   }
   &.active {
     a {
-      color: #2074B6;
+      color: #2074b6;
     }
     &.following a {
-      color: #FC8428;
+      color: #fc8428;
     }
   }
 }
@@ -20,7 +20,14 @@
 }
 
 @keyframes leaflet-control-locate-throb {
-    0% { stroke-width: 1; }
-   50% { stroke-width: 3; transform: scale(0.8,0.8); }
-  100% { stroke-width: 1; }
+  0% {
+    stroke-width: 1;
+  }
+  50% {
+    stroke-width: 3;
+    transform: scale(0.8, 0.8);
+  }
+  100% {
+    stroke-width: 1;
+  }
 }

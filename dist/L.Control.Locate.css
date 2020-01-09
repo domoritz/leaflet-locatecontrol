@@ -5,10 +5,10 @@
   cursor: pointer;
 }
 .leaflet-control-locate.active a {
-  color: #2074B6;
+  color: #2074b6;
 }
 .leaflet-control-locate.active.following a {
-  color: #FC8428;
+  color: #fc8428;
 }
 
 .leaflet-control-locate-location circle {
@@ -21,7 +21,7 @@
   }
   50% {
     stroke-width: 3;
-    transform: scale(0.8,0.8);
+    transform: scale(0.8, 0.8);
   }
   100% {
     stroke-width: 1;
