@@ -2,6 +2,14 @@
 
 Here we document breaking changes.
 
+## **0.70**
+
+* Use scaling instead of setting r via CSS as it's not allowed in the SVG 1.1 specification. Thanks to @KristjanESPERANTO.
+
+## **0.69**
+
+* Support functions for `strings.popup`. Thanks to @simon04.
+
 ## **0.64**
 
 Thanks to @brendanheywood for the updates! 
