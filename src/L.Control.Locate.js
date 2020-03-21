@@ -168,6 +168,8 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             setView: 'untilPanOrZoom',
             /** Keep the current map zoom level when setting the view and only pan. */
             keepCurrentZoomLevel: false,
+	    /** After activating the plugin by clicking on the icon, zoom to the selected zoom level, even when keepCurrentZoomLevel is true. Set to 'false' to disable this feature. */
+	    initialZoomLevel: false,
             /**
              * This callback can be used to override the viewport tracking
              * This function should return a LatLngBounds object.
@@ -525,6 +527,10 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
                 this._event = undefined;  // clear the current location so we can get back into the bounds
                 this.options.onLocationOutsideMapBounds(this);
             } else {
+		if (this._justClicked && this.options.initialZoomLevel !== false) {
+                    var f = this.options.flyTo ? this._map.flyTo : this._map.setView;
+                    f.bind(this._map)([this._event.latitude, this._event.longitude], this.options.initialZoomLevel);
+		} else
                 if (this.options.keepCurrentZoomLevel) {
                     var f = this.options.flyTo ? this._map.flyTo : this._map.panTo;
                     f.bind(this._map)([this._event.latitude, this._event.longitude]);
