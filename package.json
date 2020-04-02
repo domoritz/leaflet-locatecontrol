@@ -23,7 +23,7 @@
     "start": "grunt connect"
   },
   "devDependencies": {
-    "grunt": "^1.0.4",
+    "grunt": "^1.1.0",
     "grunt-bump": "0.8.0",
     "grunt-contrib-connect": "^2.1.0",
     "grunt-contrib-sass": "^1.0.0",
