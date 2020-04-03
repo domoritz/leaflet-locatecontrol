@@ -13,7 +13,7 @@ Please check for [breaking changes in the changelog](https://github.com/domoritz
 
 ## Demo
 
-Check out the demo at http://domoritz.github.io/leaflet-locatecontrol/demo/
+Check out the demo at http://domoritz.github.io/leaflet-locatecontrol/demo/ and https://www.domoritz.de/leaflet-locatecontrol/demo_mapbox/.
 
 
 ## Basic Usage
