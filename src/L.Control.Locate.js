@@ -355,7 +355,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
                 .on(this._link, 'dblclick', L.DomEvent.stopPropagation)
                 .on(this._link, 'keyup', L.DomEvent.stopPropagation)
                 .on(this._link, 'keyup', L.DomEvent.preventDefault)
-                .on(this._link, 'keyup', this._onButtonAction, this)
+                .on(this._link, 'keyup', this._onButtonAction, this);
 
             this._resetVariables();
 
