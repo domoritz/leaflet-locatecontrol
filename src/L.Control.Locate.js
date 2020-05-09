@@ -280,6 +280,8 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             createButtonCallback: function (container, options) {
                 var link = L.DomUtil.create('a', 'leaflet-bar-part leaflet-bar-part-single', container);
                 link.title = options.strings.title;
+                link.role = 'button';
+                link.href = '#';
                 var icon = L.DomUtil.create(options.iconElementTag, options.icon, link);
                 return { link: link, icon: icon };
             },
