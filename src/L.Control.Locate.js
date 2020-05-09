@@ -280,7 +280,6 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             createButtonCallback: function (container, options) {
                 var link = L.DomUtil.create('a', 'leaflet-bar-part leaflet-bar-part-single', container);
                 link.title = options.strings.title;
-                link.tabIndex=0;
                 var icon = L.DomUtil.create(options.iconElementTag, options.icon, link);
                 return { link: link, icon: icon };
             },
@@ -351,11 +350,8 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             L.DomEvent
                 .on(this._link, 'click', L.DomEvent.stopPropagation)
                 .on(this._link, 'click', L.DomEvent.preventDefault)
-                .on(this._link, 'click', this._onButtonAction, this)
-                .on(this._link, 'dblclick', L.DomEvent.stopPropagation)
-                .on(this._link, 'keyup', L.DomEvent.stopPropagation)
-                .on(this._link, 'keyup', L.DomEvent.preventDefault)
-                .on(this._link, 'keyup', this._onButtonAction, this);
+                .on(this._link, 'click', this._onClick, this)
+                .on(this._link, 'dblclick', L.DomEvent.stopPropagation);
 
             this._resetVariables();
 
@@ -365,51 +361,49 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
         },
 
         /**
-         * This method is called when the user takes action on the control.
+         * This method is called when the user clicks on the control.
          */
-        _onButtonAction: function(e) {
-            if (e.type === 'click' || e.key === "Enter" ){
-                this._justClicked = true;
-                var wasFollowing =  this._isFollowing();
-                this._userPanned = false;
-                this._userZoomed = false;
-    
-                if (this._active && !this._event) {
-                    // click while requesting
-                    this.stop();
-                } else if (this._active && this._event !== undefined) {
-                    var behaviors = this.options.clickBehavior;
-                    var behavior = behaviors.outOfView;
-                    if (this._map.getBounds().contains(this._event.latlng)) {
-                        behavior = wasFollowing ? behaviors.inView : behaviors.inViewNotFollowing;
-                    }
-    
-                    // Allow inheriting from another behavior
-                    if (behaviors[behavior]) {
-                        behavior = behaviors[behavior];
-                    }
-    
-                    switch (behavior) {
-                        case 'setView':
-                            this.setView();
-                            break;
-                        case 'stop':
-                            this.stop();
-                            if (this.options.returnToPrevBounds) {
-                                var f = this.options.flyTo ? this._map.flyToBounds : this._map.fitBounds;
-                                f.bind(this._map)(this._prevBounds);
-                            }
-                            break;
-                    }
-                } else {
-                    if (this.options.returnToPrevBounds) {
-                      this._prevBounds = this._map.getBounds();
-                    }
-                    this.start();
+        _onClick: function() {
+            this._justClicked = true;
+            var wasFollowing =  this._isFollowing();
+            this._userPanned = false;
+            this._userZoomed = false;
+
+            if (this._active && !this._event) {
+                // click while requesting
+                this.stop();
+            } else if (this._active && this._event !== undefined) {
+                var behaviors = this.options.clickBehavior;
+                var behavior = behaviors.outOfView;
+                if (this._map.getBounds().contains(this._event.latlng)) {
+                    behavior = wasFollowing ? behaviors.inView : behaviors.inViewNotFollowing;
                 }
-    
-                this._updateContainerStyle();
+
+                // Allow inheriting from another behavior
+                if (behaviors[behavior]) {
+                    behavior = behaviors[behavior];
+                }
+
+                switch (behavior) {
+                    case 'setView':
+                        this.setView();
+                        break;
+                    case 'stop':
+                        this.stop();
+                        if (this.options.returnToPrevBounds) {
+                            var f = this.options.flyTo ? this._map.flyToBounds : this._map.fitBounds;
+                            f.bind(this._map)(this._prevBounds);
+                        }
+                        break;
+                }
+            } else {
+                if (this.options.returnToPrevBounds) {
+                  this._prevBounds = this._map.getBounds();
+                }
+                this.start();
             }
+
+            this._updateContainerStyle();
         },
 
         /**
