@@ -349,11 +349,16 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             this._link = linkAndIcon.link;
             this._icon = linkAndIcon.icon;
 
-            L.DomEvent
-                .on(this._link, 'click', L.DomEvent.stopPropagation)
-                .on(this._link, 'click', L.DomEvent.preventDefault)
-                .on(this._link, 'click', this._onClick, this)
-                .on(this._link, 'dblclick', L.DomEvent.stopPropagation);
+            L.DomEvent.on(
+              this._link,
+              "click",
+              function (ev) {
+                L.DomEvent.stopPropagation(ev);
+                L.DomEvent.preventDefault(ev);
+                this._onClick();
+              },
+              this
+            ).on(this._link, "dblclick", L.DomEvent.stopPropagation);
 
             this._resetVariables();
 
@@ -374,7 +379,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             if (this._active && !this._event) {
                 // click while requesting
                 this.stop();
-            } else if (this._active && this._event !== undefined) {
+            } else if (this._active) {
                 var behaviors = this.options.clickBehavior;
                 var behavior = behaviors.outOfView;
                 if (this._map.getBounds().contains(this._event.latlng)) {
