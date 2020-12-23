@@ -26,6 +26,6 @@ var map = new L.Map('map', {
 // on a production site, omit the "lc = "!
 lc = L.control.locate({
     strings: {
-        title: "Show me where I am, yo!"
+        title: "Show me where I am, yo!",
     }
 }).addTo(map);

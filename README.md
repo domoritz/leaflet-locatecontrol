@@ -105,7 +105,7 @@ Possible options are listed in the following table. More details are [in the cod
 | `onLocationError` | `function`  | This even is called when the user's location is outside the bounds set on the map. | see code |
 | `onLocationOutsideMapBounds` | `function`  | Use metric units. | see code |
 | `showPopup` | `boolean`  | Display a pop-up when the user click on the inner marker. | `true` |
-| `strings` | `object`  | Strings used in the control. Options are `title`, `metersUnit`, `feetUnit`, `popup`, and `outsideMapBoundsMsg` | see code |
+| `strings` | `object`  | Strings used in the control. Options are `title`, `metersUnit`, `feetUnit`, `popup`, `buttonText`, and `outsideMapBoundsMsg` | see code |
 | `strings.popup` | `string` or `function`  | The string shown as popup. May contain the placeholders `{distance}` and `{unit}`. If this option is specified as function, it will be executed with a single parameter `{distance, unit}` and expected to return a string. | see code |
 | `locateOptions` | [`Locate options`](http://leafletjs.com/reference.html#map-locate-options)  | The default options passed to leaflets locate method. | see code |
 

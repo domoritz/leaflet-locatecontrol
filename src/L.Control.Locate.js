@@ -282,7 +282,13 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
                 link.title = options.strings.title;
                 link.role = 'button';
                 link.href = '#';
-                var icon = L.DomUtil.create(options.iconElementTag, options.icon, link);
+                var icon;
+                if(options.strings.buttonText) {
+                    link.text = options.strings.buttonText
+                }else{
+                    icon = L.DomUtil.create(options.iconElementTag, options.icon, link);
+                }
+                
                 return { link: link, icon: icon };
             },
             /** This event is called in case of any location error that is not a time out error. */

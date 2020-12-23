@@ -4,6 +4,10 @@
     font-size: 1.4em;
     color: #444;
     cursor: pointer;
+    width: fit-content !important;
+    min-width: 30px !important;
+    min-height: 30px !important;
+    padding: 2px 5px;
   }
   &.active {
     a {
