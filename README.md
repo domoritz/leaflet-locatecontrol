@@ -5,7 +5,7 @@
 
 A useful control to geolocate the user with many options. Official [Leaflet](http://leafletjs.com/plugins.html#geolocation) and [MapBox plugin](https://www.mapbox.com/mapbox.js/example/v1.0.0/leaflet-locatecontrol/).
 
-Tested with [Leaflet](http://leafletjs.com/) 1.7 in Firefox, Chrome, and Safari. Tested with [Font Awesome](https://fortawesome.github.io/Font-Awesome/) 4.7.
+Tested with [Leaflet](http://leafletjs.com/) 1.7.0 in Firefox, Chrome, and Safari (1.7.1 does not work; see FAQ below). Tested with [Font Awesome](https://fortawesome.github.io/Font-Awesome/) 4.7.
 
 Please check for [breaking changes in the changelog](https://github.com/domoritz/leaflet-locatecontrol/blob/gh-pages/CHANGELOG.md).
 
@@ -44,7 +44,7 @@ The control uses [Font Awesome](https://fortawesome.github.io/Font-Awesome/) for
 Then include the CSS and JavaScript files. In this example, we are loading the [files from the JsDelivr CDN](https://www.jsdelivr.com/package/npm/leaflet.locatecontrol?path=dist). In the URLs below, replace `[VERSION]` with the latest release number or remove `@[VERSION]` to always use the latest version. 
 
 ```html
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@[VERSION]/dist/L.Control.Locate.min.css" />
 
 <script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@[VERSION]/dist/L.Control.Locate.min.js" charset="utf-8"></script>
@@ -197,12 +197,23 @@ map.addControl(L.control.locate({
 }}));
 ```
 
+#### Safari does not work with Leaflet 1.7.1
+
+This is a bug in Leaflet. Disable tap to fix it for now. See [this issue](https://github.com/Leaflet/Leaflet/issues/7255) for details.
+
+```js
+var map = new L.Map('map', {
+    tap: false,
+	...
+});
+```
+
 
 ## Developers
 
 Run the demo locally with `grunt serve` and then open [localhost:9000/demo/index.html](http://localhost:9000/demo/index.html).
 
-To generate the minified JS and CSS files, use [grunt](http://gruntjs.com/getting-started) and run `grunt`. However, don't include new minified files or a new version as part of a pull request.
+To generate the minified JS and CSS files, use [grunt](http://gruntjs.com/getting-started) and run `grunt`. However, don't include new minified files or a new version as part of a pull request. If you need SASS, install it with `brew install sass/sass/sass`.
 
 
 ## Making a release (only core developer)
