@@ -468,7 +468,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
         _activate: function() {
             if (!this._active) {
                 this._map.locate(this.options.locateOptions);
-                this._map.fire('locatestart', this);
+                this._map.fire('locateactivate', this);
                 this._active = true;
 
                 // bind event listeners
@@ -505,7 +505,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
          */
         _deactivate: function() {
             this._map.stopLocate();
-            this._map.fire('locatestop', this);
+            this._map.fire('locatedeactivate', this);
             this._active = false;
 
             if (!this.options.cacheLocation) {
