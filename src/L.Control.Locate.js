@@ -268,6 +268,8 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             iconLoading: 'fa fa-spinner fa-spin',
             /** The element to be created for icons. For example span or i */
             iconElementTag: 'span',
+            /** The element to be created for the text. For example small or span */
+            textElementTag: 'small',
             /** Padding around the accuracy circle. */
             circlePadding: [0, 0],
             /** Use metric units. */
@@ -283,6 +285,14 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
                 link.role = 'button';
                 link.href = '#';
                 var icon = L.DomUtil.create(options.iconElementTag, options.icon, link);
+
+                if(options.strings.text !== undefined) {
+                    link.classList.add('leaflet-locate-text-active');
+                    var text = L.DomUtil.create(options.textElementTag, 'leaflet-locate-text', link);
+                    text.textContent = '\xa0' + options.strings.text;
+                    link.parentNode.style.display = "flex";
+                }
+                
                 return { link: link, icon: icon };
             },
             /** This event is called in case of any location error that is not a time out error. */

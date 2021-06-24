@@ -15,6 +15,15 @@
   }
 }
 
+.leaflet-touch .leaflet-bar .leaflet-locate-text-active  {
+  width: 100%;
+  max-width: 200px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  padding: 0 10px;
+}
+
 .leaflet-control-locate-location circle {
   animation: leaflet-control-locate-throb 4s ease infinite;
 }
