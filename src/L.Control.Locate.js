@@ -286,7 +286,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
                 link.href = '#';
                 var icon = L.DomUtil.create(options.iconElementTag, options.icon, link);
 
-                if(options.strings.text !== undefined) {
+                if (options.strings.text !== undefined) {
                     var text = L.DomUtil.create(options.textElementTag, 'leaflet-locate-text', link);
                     text.textContent = '\xa0' + options.strings.text;
 		    link.classList.add('leaflet-locate-text-active');
