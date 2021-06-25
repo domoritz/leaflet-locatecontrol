@@ -213,7 +213,7 @@ var map = new L.Map('map', {
 
 ## Developers
 
-Run the demo locally with `grunt connect` and then open [localhost:9000/demo/index.html](http://localhost:9000/demo/index.html).
+Run the demo locally with `yarn start` or `npm run start` and then open [localhost:9000/demo/index.html](http://localhost:9000/demo/index.html).
 
 To generate the minified JS and CSS files, use [grunt](http://gruntjs.com/getting-started) and run `grunt`. However, don't include new minified files or a new version as part of a pull request. If you need SASS, install it with `brew install sass/sass/sass`.
 
