@@ -284,13 +284,16 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
                 link.title = options.strings.title;
                 link.role = 'button';
                 link.href = '#';
-                var icon = L.DomUtil.create(options.iconElementTag, 'leaflet-locate-icon ' + options.icon, link);
+                var icon = L.DomUtil.create(options.iconElementTag, options.icon, link);
 
                 if (options.strings.text !== undefined) {
                     var text = L.DomUtil.create(options.textElementTag, 'leaflet-locate-text', link);
                     text.textContent = options.strings.text;
 		            link.classList.add('leaflet-locate-text-active');
                     link.parentNode.style.display = "flex";
+                    if(options.icon.length > 0) {
+                        icon.classList.add('leaflet-locate-icon');
+                    }
                 }
                 
                 return { link: link, icon: icon };

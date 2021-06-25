@@ -16,6 +16,7 @@
 }
 
 .leaflet-touch .leaflet-bar .leaflet-locate-text-active  {
+  $p: &;
   width: 100%;
   max-width: 200px;
   text-overflow: ellipsis;
@@ -23,7 +24,7 @@
   overflow: hidden;
   padding: 0 10px;
   .leaflet-locate-icon {
-    padding: 0 5px 0 0;
+      padding: 0 5px 0 0;
   }
 }
 
