@@ -123,7 +123,6 @@ var lc = L.control.locate({
 ## Screenshot
 
 ![screenshot](https://raw.github.com/domoritz/leaflet-locatecontrol/gh-pages/screenshot.png "Screenshot showing the locate control")
-![screenshot](https://raw.github.com/domoritz/leaflet-locatecontrol/gh-pages/screenshot-text.png "Screenshot showing a text on the locate control")
 
 
 ## Users
