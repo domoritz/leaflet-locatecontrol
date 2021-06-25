@@ -22,6 +22,9 @@
   white-space: nowrap;
   overflow: hidden;
   padding: 0 10px;
+  .leaflet-locate-icon {
+    padding: 0 5px 0 0;
+  }
 }
 
 .leaflet-control-locate-location circle {
