@@ -12,7 +12,7 @@ Please check for [breaking changes in the changelog](https://github.com/domoritz
 
 ## Demo
 
-Check out the demo at http://domoritz.github.io/leaflet-locatecontrol/demo/ and https://www.domoritz.de/leaflet-locatecontrol/demo_mapbox/.
+Check out the demo at https://domoritz.github.io/leaflet-locatecontrol/demo/ and https://www.domoritz.de/leaflet-locatecontrol/demo_mapbox/.
 
 
 ## Basic Usage
@@ -104,7 +104,7 @@ Possible options are listed in the following table. More details are [in the cod
 | `onLocationError` | `function`  | This even is called when the user's location is outside the bounds set on the map. | see code |
 | `onLocationOutsideMapBounds` | `function`  | Use metric units. | see code |
 | `showPopup` | `boolean`  | Display a pop-up when the user click on the inner marker. | `true` |
-| `strings` | `object`  | Strings used in the control. Options are `title`, `metersUnit`, `feetUnit`, `popup`, and `outsideMapBoundsMsg` | see code |
+| `strings` | `object`  | Strings used in the control. Options are `title`, `text`, `metersUnit`, `feetUnit`, `popup` and `outsideMapBoundsMsg` | see code |
 | `strings.popup` | `string` or `function`  | The string shown as popup. May contain the placeholders `{distance}` and `{unit}`. If this option is specified as function, it will be executed with a single parameter `{distance, unit}` and expected to return a string. | see code |
 | `locateOptions` | [`Locate options`](http://leafletjs.com/reference.html#map-locate-options)  | The default options passed to leaflets locate method. | see code |
 
@@ -213,7 +213,7 @@ var map = new L.Map('map', {
 
 ## Developers
 
-Run the demo locally with `grunt serve` and then open [localhost:9000/demo/index.html](http://localhost:9000/demo/index.html).
+Run the demo locally with `yarn start` or `npm run start` and then open [localhost:9000/demo/index.html](http://localhost:9000/demo/index.html).
 
 To generate the minified JS and CSS files, use [grunt](http://gruntjs.com/getting-started) and run `grunt`. However, don't include new minified files or a new version as part of a pull request. If you need SASS, install it with `brew install sass/sass/sass`.
 
