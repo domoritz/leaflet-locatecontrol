@@ -563,7 +563,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
                     this._ignoreEvent = true;
                     f.bind(this._map)(this.options.getLocationBounds(this._event), {
                         padding: this.options.circlePadding,
-                        maxZoom: this.options.locateOptions.maxZoom
+                        maxZoom: this.options.initialZoomLevel || this.options.locateOptions.maxZoom
                     });
                     L.Util.requestAnimFrame(function(){
                         // Wait until after the next animFrame because the flyTo can be async
