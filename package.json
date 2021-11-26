@@ -27,6 +27,7 @@
     "grunt-bump": "0.8.0",
     "grunt-contrib-connect": "^3.0.0",
     "grunt-contrib-sass": "^2.0.0",
-    "grunt-contrib-uglify": "^5.0.1"
+    "grunt-contrib-uglify": "^5.0.1",
+    "sass": "^1.43.5"
   }
 }
