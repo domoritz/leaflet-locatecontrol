@@ -5,7 +5,7 @@
 
 A useful control to geolocate the user with many options. Official [Leaflet](http://leafletjs.com/plugins.html#geolocation) and [MapBox plugin](https://www.mapbox.com/mapbox.js/example/v1.0.0/leaflet-locatecontrol/).
 
-Tested with [Leaflet](http://leafletjs.com/) 1.7.0 in Firefox, Chrome, and Safari (1.7.1 does not work; see FAQ below). Tested with [Font Awesome](https://fortawesome.github.io/Font-Awesome/) 4.7.
+Tested with [Leaflet](http://leafletjs.com/) 1.7.0 in Firefox, Chrome, and Safari (1.7.1 does not work; see FAQ below).
 
 Please check for [breaking changes in the changelog](https://github.com/domoritz/leaflet-locatecontrol/blob/gh-pages/CHANGELOG.md).
 
@@ -39,14 +39,10 @@ The control is [available from JsDelivr CDN](https://www.jsdelivr.com/projects/l
 
 #### Add the JavaScript and CSS files
 
-The control uses [Font Awesome](https://fortawesome.github.io/Font-Awesome/) for the icons and if you don't have it included yet, you can use the CSS from the CDN.
-
 Then include the CSS and JavaScript files. In this example, we are loading the [files from the JsDelivr CDN](https://www.jsdelivr.com/package/npm/leaflet.locatecontrol?path=dist). In the URLs below, replace `[VERSION]` with the latest release number or remove `@[VERSION]` to always use the latest version. 
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@[VERSION]/dist/L.Control.Locate.min.css" />
-
 <script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@[VERSION]/dist/L.Control.Locate.min.js" charset="utf-8"></script>
 ```
 
@@ -95,8 +91,8 @@ Possible options are listed in the following table. More details are [in the cod
 | `followCircleStyle` | [`Path options`](http://leafletjs.com/reference.html#path-options)  | Changes to the accuracy circle while following. Only need to provide changes. | `{}` |
 | `followMarkerStyle` | [`Path options`](http://leafletjs.com/reference.html#path-options)  | Changes to the inner marker while following. Only need to provide changes. | `{}` |
 | `followCompassStyle` | [`Path options`](http://leafletjs.com/reference.html#path-options)  | Changes to the compass marker while following. Only need to provide changes. | `{}` |
-| `icon` | `string`  | The CSS class for the icon. | `fa fa-map-marker` |
-| `iconLoading` | `string`  | The CSS class for the icon while loading. | `fa fa-spinner fa-spin` |
+| `icon` | `string`  | The CSS class for the icon. | `leaflet-control-locate-location-arrow` |
+| `iconLoading` | `string`  | The CSS class for the icon while loading. | `leaflet-control-locate-spinner` |
 | `iconElementTag` | `string`  | The element to be created for icons. | `span` |
 | `circlePadding` | `array`  | Padding around the accuracy circle. | `[0, 0]` |
 | `createButtonCallback` | `function`  | This callback can be used in case you would like to override button creation behavior. | see code |
@@ -236,3 +232,5 @@ To all [contributors](https://github.com/domoritz/leaflet-locatecontrol/contribu
 ## License
 
 MIT
+
+SVG icons from [Font Awesome v5.15.4](https://github.com/FortAwesome/Font-Awesome/releases/tag/5.15.4): [Creative Commons Attribution 4.0](https://fontawesome.com/license/free)
