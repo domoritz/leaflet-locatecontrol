@@ -282,20 +282,20 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
             createButtonCallback(container, options) {
                 const link = L.DomUtil.create('a', 'leaflet-bar-part leaflet-bar-part-single', container);
                 link.title = options.strings.title;
-                link.role = 'button';
                 link.href = '#';
+                link.setAttribute('role', 'button');
                 const icon = L.DomUtil.create(options.iconElementTag, options.icon, link);
 
                 if (options.strings.text !== undefined) {
                     const text = L.DomUtil.create(options.textElementTag, 'leaflet-locate-text', link);
                     text.textContent = options.strings.text;
-              link.classList.add('leaflet-locate-text-active');
+                    link.classList.add('leaflet-locate-text-active');
                     link.parentNode.style.display = "flex";
                     if (options.icon.length > 0) {
                         icon.classList.add('leaflet-locate-icon');
                     }
                 }
-                
+
                 return { link, icon };
             },
             /** This event is called in case of any location error that is not a time out error. */
@@ -595,7 +595,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
                         this._compass.setStyle(cStyle);
                     }
                 }
-                // 
+                //
             }
             if (this._compass && (!this.options.showCompass || this._compassHeading === null)) {
                 this._compass.removeFrom(this._layer);
