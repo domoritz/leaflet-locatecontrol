@@ -132,6 +132,7 @@ Sites that use this locate control:
 * [Maps Marker Pro](https://www.mapsmarker.com) (WordPress plugin)
 * [Bikemap](https://jackdougherty.github.io/bikemapcode/)
 * [MyRoutes](https://myroutes.io/)
+* [NearbyWiki](https://en.nearbywiki.org/)
 * ...
 
 ## Advanced Usage
