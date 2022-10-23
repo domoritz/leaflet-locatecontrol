@@ -16,7 +16,6 @@ var mapbox = new L.TileLayer(mapboxUrl, {
 });
 
 var map = new L.Map('map', {
-    tap: false, // ref https://github.com/Leaflet/Leaflet/issues/7255
     layers: [mapbox],
     center: [51.505, -0.09],
     zoom: 10,
