@@ -32,8 +32,8 @@
     "grunt-bump": "0.8.0",
     "grunt-contrib-connect": "^3.0.0",
     "grunt-contrib-sass": "^2.0.0",
-    "grunt-contrib-uglify": "^5.2.1",
+    "grunt-contrib-uglify": "^5.2.2",
     "prettier": "^2.7.1",
-    "sass": "^1.51.0"
+    "sass": "^1.55.0"
   }
 }
