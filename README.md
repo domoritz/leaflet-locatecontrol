@@ -5,7 +5,7 @@
 
 A useful control to geolocate the user with many options. Official [Leaflet](http://leafletjs.com/plugins.html#geolocation) and [MapBox plugin](https://www.mapbox.com/mapbox.js/example/v1.0.0/leaflet-locatecontrol/).
 
-Tested with [Leaflet](http://leafletjs.com/) 1.7.0 in Firefox, Chrome, and Safari (1.7.1 does not work; see FAQ below).
+Tested with [Leaflet](http://leafletjs.com/) 1.9.2 in Firefox, Chrome, and Safari.
 
 Please check for [breaking changes in the changelog](https://github.com/domoritz/leaflet-locatecontrol/blob/gh-pages/CHANGELOG.md).
 
@@ -201,9 +201,9 @@ map.addControl(L.control.locate({
 This is a bug in Leaflet. Disable tap to fix it for now. See [this issue](https://github.com/Leaflet/Leaflet/issues/7255) for details.
 
 ```js
-var map = new L.Map('map', {
+let map = new L.Map('map', {
     tap: false,
-	...
+    ...
 });
 ```
 

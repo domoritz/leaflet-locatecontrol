@@ -1,22 +1,21 @@
-var osmUrl='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-var osmAttrib='Map data © <a href="http://osm.org/copyright">OpenStreetMap</a> contributors';
-var osm = new L.TileLayer(osmUrl, {
+const osmUrl='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+const osmAttrib='Map data © <a href="http://osm.org/copyright">OpenStreetMap</a> contributors';
+let osm = new L.TileLayer(osmUrl, {
     attribution: osmAttrib,
     detectRetina: true
 });
 
 // please replace this with your own mapbox token!
-var token = 'pk.eyJ1IjoiZG9tb3JpdHoiLCJhIjoiY2s4a2d0OHp3MDFxMTNmcWoxdDVmdHF4MiJ9.y9-0BZCXJBpNBzEHxhFq1Q';
-var mapboxUrl = 'https://api.mapbox.com/styles/v1/mapbox/streets-v10/tiles/{z}/{x}/{y}@2x?access_token=' + token;
-var mapboxAttrib = 'Map data © <a href="http://osm.org/copyright">OpenStreetMap</a> contributors. Tiles from <a href="https://www.mapbox.com">Mapbox</a>.';
-var mapbox = new L.TileLayer(mapboxUrl, {
+const token = 'pk.eyJ1IjoiZG9tb3JpdHoiLCJhIjoiY2s4a2d0OHp3MDFxMTNmcWoxdDVmdHF4MiJ9.y9-0BZCXJBpNBzEHxhFq1Q';
+const mapboxUrl = 'https://api.mapbox.com/styles/v1/mapbox/streets-v10/tiles/{z}/{x}/{y}@2x?access_token=' + token;
+const mapboxAttrib = 'Map data © <a href="http://osm.org/copyright">OpenStreetMap</a> contributors. Tiles from <a href="https://www.mapbox.com">Mapbox</a>.';
+let mapbox = new L.TileLayer(mapboxUrl, {
   attribution: mapboxAttrib,
   tileSize: 512,
   zoomOffset: -1
 });
 
-var map = new L.Map('map', {
-    tap: false, // ref https://github.com/Leaflet/Leaflet/issues/7255
+let map = new L.Map('map', {
     layers: [mapbox],
     center: [51.505, -0.09],
     zoom: 10,
