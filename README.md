@@ -214,6 +214,13 @@ Run the demo locally with `yarn start` or `npm run start` and then open [localho
 
 To generate the minified JS and CSS files, use [grunt](http://gruntjs.com/getting-started) and run `grunt`. However, don't include new minified files or a new version as part of a pull request. If you need SASS, install it with `brew install sass/sass/sass`.
 
+## Prettify and linting
+
+Before a Pull Request please check the code style.
+
+Run `npm run lint` to check if there are code style or linting issues.
+
+Run `npm run:fix` to automatically fix style and linting issues.
 
 ## Making a release (only core developer)
 
