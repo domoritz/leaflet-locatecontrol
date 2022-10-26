@@ -20,14 +20,20 @@
     "build": "grunt",
     "bump:minor": "grunt bump-only:minor && grunt && grunt bump-commit",
     "bump:patch": "grunt bump-only:patch && grunt && grunt bump-commit",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
     "start": "grunt connect"
   },
   "devDependencies": {
+    "eslint": "^8.26.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
     "grunt": "^1.5.3",
     "grunt-bump": "0.8.0",
     "grunt-contrib-connect": "^3.0.0",
     "grunt-contrib-sass": "^2.0.0",
     "grunt-contrib-uglify": "^5.2.1",
+    "prettier": "^2.7.1",
     "sass": "^1.51.0"
   }
 }
