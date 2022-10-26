@@ -1,0 +1,16 @@
+{
+  "env": {
+    "browser": true,
+    "es2022": true
+  },
+  "extends": ["prettier"],
+  "parserOptions": {
+    "ecmaVersion": "latest"
+  },
+  "plugins": ["prettier"],
+  "root": true,
+  "ignorePatterns": ["*.min.js"],
+  "rules": {
+    "prettier/prettier": "error"
+  }
+}
