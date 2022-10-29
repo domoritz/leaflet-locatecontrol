@@ -67,7 +67,7 @@ L.control.locate(OPTIONS).addTo(map);
 
 Possible options are listed in the following table. More details are [in the code](https://github.com/domoritz/leaflet-locatecontrol/blob/gh-pages/src/L.Control.Locate.js#L31).
 
-
+<!-- prettier-ignore-start -->
 | Option     | Type      | Description       |  Default |
 |------------|-----------|-------------------|----------|
 | `position` | `string`  | Position of the control | `topleft` |
@@ -102,6 +102,7 @@ Possible options are listed in the following table. More details are [in the cod
 | `strings` | `object`  | Strings used in the control. Options are `title`, `text`, `metersUnit`, `feetUnit`, `popup` and `outsideMapBoundsMsg` | see code |
 | `strings.popup` | `string` or `function`  | The string shown as popup. May contain the placeholders `{distance}` and `{unit}`. If this option is specified as function, it will be executed with a single parameter `{distance, unit}` and expected to return a string. | see code |
 | `locateOptions` | [`Locate options`](http://leafletjs.com/reference.html#map-locate-options)  | The default options passed to leaflets locate method. | see code |
+<!-- prettier-ignore-end -->
 
 For example, to customize the position and the title, you could write
 
