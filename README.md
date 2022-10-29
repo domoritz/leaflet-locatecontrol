@@ -9,11 +9,10 @@ Tested with [Leaflet](http://leafletjs.com/) 1.9.2 and [Mapbox.js](https://docs.
 
 Please check for [breaking changes in the changelog](https://github.com/domoritz/leaflet-locatecontrol/blob/gh-pages/CHANGELOG.md).
 
-
 ## Demo
 
-Check out the demo at https://domoritz.github.io/leaflet-locatecontrol/demo/ and https://www.domoritz.de/leaflet-locatecontrol/demo_mapbox/.
-
+- [Demo with Leaflet](https://domoritz.github.io/leaflet-locatecontrol/demo/)
+- [Demo with Mapbox.js](https://domoritz.github.io/leaflet-locatecontrol/demo_mapbox/)
 
 ## Basic Usage
 
