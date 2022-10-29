@@ -2,13 +2,7 @@
 
 /* Mapbox specific adjustments */
 
-.leaflet-control-locate {
-  a {
-    padding: 3px 0 0 8px;
-  }
-  &.requesting {
-    a {
-      padding: 3px 0 0 4px;
-    }
-  }
+.leaflet-control-locate a .leaflet-control-locate-location-arrow,
+.leaflet-control-locate a .leaflet-control-locate-spinner {
+  margin: 5px;
 }
