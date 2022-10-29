@@ -5,7 +5,7 @@
 
 A useful control to geolocate the user with many options. Official [Leaflet](http://leafletjs.com/plugins.html#geolocation) and [MapBox plugin](https://www.mapbox.com/mapbox.js/example/v1.0.0/leaflet-locatecontrol/).
 
-Tested with [Leaflet](http://leafletjs.com/) 1.9.2 in Firefox, Chrome, and Safari.
+Tested with [Leaflet](http://leafletjs.com/) 1.9.2 and [Mapbox.js](https://docs.mapbox.com/mapbox.js/) 3.3.1 in Firefox, Chrome and Safari.
 
 Please check for [breaking changes in the changelog](https://github.com/domoritz/leaflet-locatecontrol/blob/gh-pages/CHANGELOG.md).
 
