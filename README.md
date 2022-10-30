@@ -24,7 +24,6 @@ tl;dr
 2. Include CSS and JavaScript files
 3. Initialize plugin
 
-
 #### Download JavaScript and CSS files
 
 For testing purposes and development, you can use the latest version directly from my repository.
@@ -35,16 +34,14 @@ You can also get the latest version of the plugin with [npm](https://www.npmjs.o
 
 The control is [available from JsDelivr CDN](https://www.jsdelivr.com/projects/leaflet.locatecontrol). If you don't need the latest version, you can use the [mapbox CDN](https://www.mapbox.com/mapbox.js/plugins/#leaflet-locatecontrol).
 
-
 #### Add the JavaScript and CSS files
 
-Then include the CSS and JavaScript files. In this example, we are loading the [files from the JsDelivr CDN](https://www.jsdelivr.com/package/npm/leaflet.locatecontrol?path=dist). In the URLs below, replace `[VERSION]` with the latest release number or remove `@[VERSION]` to always use the latest version. 
+Then include the CSS and JavaScript files. In this example, we are loading the [files from the JsDelivr CDN](https://www.jsdelivr.com/package/npm/leaflet.locatecontrol?path=dist). In the URLs below, replace `[VERSION]` with the latest release number or remove `@[VERSION]` to always use the latest version.
 
 ```html
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@[VERSION]/dist/L.Control.Locate.min.css" />
 <script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@[VERSION]/dist/L.Control.Locate.min.js" charset="utf-8"></script>
 ```
-
 
 #### Add the following snippet to your map initialization:
 
@@ -53,7 +50,6 @@ This snippet adds the control to the map. You can pass also pass a configuration
 ```js
 L.control.locate().addTo(map);
 ```
-
 
 ### Possible options
 
@@ -107,33 +103,33 @@ Possible options are listed in the following table. More details are [in the cod
 For example, to customize the position and the title, you could write
 
 ```js
-var lc = L.control.locate({
-    position: 'topright',
+var lc = L.control
+  .locate({
+    position: "topright",
     strings: {
-        title: "Show me where I am, yo!"
+      title: "Show me where I am, yo!"
     }
-}).addTo(map);
+  })
+  .addTo(map);
 ```
-
 
 ## Screenshot
 
 ![screenshot](https://raw.github.com/domoritz/leaflet-locatecontrol/gh-pages/screenshot.png "Screenshot showing the locate control")
 
-
 ## Users
 
 Sites that use this locate control:
 
-* [OpenStreetMap](http://www.openstreetmap.org/) on the start page
-* [MapBox](https://www.mapbox.com/mapbox.js/example/v1.0.0/leaflet-locatecontrol/)
-* [wheelmap.org](http://wheelmap.org/map)
-* [OpenMensa](http://openmensa.org/)
-* [Maps Marker Pro](https://www.mapsmarker.com) (WordPress plugin)
-* [Bikemap](https://jackdougherty.github.io/bikemapcode/)
-* [MyRoutes](https://myroutes.io/)
-* [NearbyWiki](https://en.nearbywiki.org/)
-* ...
+- [OpenStreetMap](http://www.openstreetmap.org/) on the start page
+- [MapBox](https://www.mapbox.com/mapbox.js/example/v1.0.0/leaflet-locatecontrol/)
+- [wheelmap.org](http://wheelmap.org/map)
+- [OpenMensa](http://openmensa.org/)
+- [Maps Marker Pro](https://www.mapsmarker.com) (WordPress plugin)
+- [Bikemap](https://jackdougherty.github.io/bikemapcode/)
+- [MyRoutes](https://myroutes.io/)
+- [NearbyWiki](https://en.nearbywiki.org/)
+- ...
 
 ## Advanced Usage
 
@@ -163,14 +159,13 @@ To customize the behavior of the plugin, use L.extend to override `start`, `stop
 
 ```js
 L.Control.MyLocate = L.Control.Locate.extend({
-   _drawMarker: function() {
-     // override to customize the marker
-   }
+  _drawMarker: function () {
+    // override to customize the marker
+  }
 });
 
 var lc = new L.Control.MyLocate();
 ```
-
 
 ### FAQ
 
@@ -179,10 +174,13 @@ var lc = new L.Control.MyLocate();
 Set the `maxZoom` in `locateOptions` (`keepCurrentZoomLevel` must not be set to true).
 
 ```js
-map.addControl(L.control.locate({
-       locateOptions: {
-               maxZoom: 10
-}}));
+map.addControl(
+  L.control.locate({
+    locateOptions: {
+      maxZoom: 10
+    }
+  })
+);
 ```
 
 #### How do I enable high accuracy?
@@ -190,10 +188,13 @@ map.addControl(L.control.locate({
 To enable [high accuracy (GPS) mode](http://leafletjs.com/reference.html#map-enablehighaccuracy), set the `enableHighAccuracy` in `locateOptions`.
 
 ```js
-map.addControl(L.control.locate({
-       locateOptions: {
-               enableHighAccuracy: true
-}}));
+map.addControl(
+  L.control.locate({
+    locateOptions: {
+      enableHighAccuracy: true
+    }
+  })
+);
 ```
 
 #### Safari does not work with Leaflet 1.7.1
@@ -206,7 +207,6 @@ let map = new L.Map('map', {
     ...
 });
 ```
-
 
 ## Developers
 
@@ -228,14 +228,12 @@ A new version is released with `npm run bump:minor`. Then push the new code with
 
 ### Terms
 
-* **active**: After we called `map.locate()` and before `map.stopLocate()`. Any time, the map can fire the `locationfound` or `locationerror` events.
-* **following**: Following refers to whether the map zooms and pans automatically when a new location is found.
-
+- **active**: After we called `map.locate()` and before `map.stopLocate()`. Any time, the map can fire the `locationfound` or `locationerror` events.
+- **following**: Following refers to whether the map zooms and pans automatically when a new location is found.
 
 ## Thanks
 
 To all [contributors](https://github.com/domoritz/leaflet-locatecontrol/contributors) and issue reporters.
-
 
 ## License
 
