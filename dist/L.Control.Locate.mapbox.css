@@ -1,4 +1,3 @@
-/* Compatible with Leaflet 0.7 */
 .leaflet-control-locate a {
   cursor: pointer;
 }
@@ -73,11 +72,9 @@
   }
 }
 /* Mapbox specific adjustments */
-.leaflet-control-locate a {
-  padding: 3px 0 0 8px;
-}
-.leaflet-control-locate.requesting a {
-  padding: 3px 0 0 4px;
+.leaflet-control-locate a .leaflet-control-locate-location-arrow,
+.leaflet-control-locate a .leaflet-control-locate-spinner {
+  margin: 5px;
 }
 
 /*# sourceMappingURL=L.Control.Locate.mapbox.css.map */
