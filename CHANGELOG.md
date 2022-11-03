@@ -2,6 +2,10 @@
 
 Here we document breaking changes.
 
+## **0.78**
+
+- Dark mode support.
+
 ## **0.70**
 
 - Use scaling instead of setting r via CSS as it's not allowed in the SVG 1.1 specification. Thanks to @KristjanESPERANTO.
