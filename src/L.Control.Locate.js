@@ -487,33 +487,35 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
      * this._active is true.
      */
     _activate() {
-      if (!this._active && this._map) {
-        this._map.locate(this.options.locateOptions);
-        this._map.fire("locateactivate", this);
-        this._active = true;
+      if (this._active || !this._map) {
+        return;
+      }
 
-        // bind event listeners
-        this._map.on("locationfound", this._onLocationFound, this);
-        this._map.on("locationerror", this._onLocationError, this);
-        this._map.on("dragstart", this._onDrag, this);
-        this._map.on("zoomstart", this._onZoom, this);
-        this._map.on("zoomend", this._onZoomEnd, this);
-        if (this.options.showCompass) {
-          const oriAbs = "ondeviceorientationabsolute" in window;
-          if (oriAbs || "ondeviceorientation" in window) {
-            const _this = this;
-            const deviceorientation = function () {
-              L.DomEvent.on(window, oriAbs ? "deviceorientationabsolute" : "deviceorientation", _this._onDeviceOrientation, _this);
-            };
-            if (DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === "function") {
-              DeviceOrientationEvent.requestPermission().then(function (permissionState) {
-                if (permissionState === "granted") {
-                  deviceorientation();
-                }
-              });
-            } else {
-              deviceorientation();
-            }
+      this._map.locate(this.options.locateOptions);
+      this._map.fire("locateactivate", this);
+      this._active = true;
+
+      // bind event listeners
+      this._map.on("locationfound", this._onLocationFound, this);
+      this._map.on("locationerror", this._onLocationError, this);
+      this._map.on("dragstart", this._onDrag, this);
+      this._map.on("zoomstart", this._onZoom, this);
+      this._map.on("zoomend", this._onZoomEnd, this);
+      if (this.options.showCompass) {
+        const oriAbs = "ondeviceorientationabsolute" in window;
+        if (oriAbs || "ondeviceorientation" in window) {
+          const _this = this;
+          const deviceorientation = function () {
+            L.DomEvent.on(window, oriAbs ? "deviceorientationabsolute" : "deviceorientation", _this._onDeviceOrientation, _this);
+          };
+          if (DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === "function") {
+            DeviceOrientationEvent.requestPermission().then(function (permissionState) {
+              if (permissionState === "granted") {
+                deviceorientation();
+              }
+            });
+          } else {
+            deviceorientation();
           }
         }
       }
@@ -525,28 +527,30 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
      * Override it to shutdown any functionalities you added on start.
      */
     _deactivate() {
-      if (this._active && this._map){
-        this._map.stopLocate();
-        this._map.fire("locatedeactivate", this);
-        this._active = false;
+      if (!this._active || !this._map) {
+        return;
+      }
 
-        if (!this.options.cacheLocation) {
-          this._event = undefined;
-        }
+      this._map.stopLocate();
+      this._map.fire("locatedeactivate", this);
+      this._active = false;
 
-        // unbind event listeners
-        this._map.off("locationfound", this._onLocationFound, this);
-        this._map.off("locationerror", this._onLocationError, this);
-        this._map.off("dragstart", this._onDrag, this);
-        this._map.off("zoomstart", this._onZoom, this);
-        this._map.off("zoomend", this._onZoomEnd, this);
-        if (this.options.showCompass) {
-          this._compassHeading = null;
-          if ("ondeviceorientationabsolute" in window) {
-            L.DomEvent.off(window, "deviceorientationabsolute", this._onDeviceOrientation, this);
-          } else if ("ondeviceorientation" in window) {
-            L.DomEvent.off(window, "deviceorientation", this._onDeviceOrientation, this);
-          }
+      if (!this.options.cacheLocation) {
+        this._event = undefined;
+      }
+
+      // unbind event listeners
+      this._map.off("locationfound", this._onLocationFound, this);
+      this._map.off("locationerror", this._onLocationError, this);
+      this._map.off("dragstart", this._onDrag, this);
+      this._map.off("zoomstart", this._onZoom, this);
+      this._map.off("zoomend", this._onZoomEnd, this);
+      if (this.options.showCompass) {
+        this._compassHeading = null;
+        if ("ondeviceorientationabsolute" in window) {
+          L.DomEvent.off(window, "deviceorientationabsolute", this._onDeviceOrientation, this);
+        } else if ("ondeviceorientation" in window) {
+          L.DomEvent.off(window, "deviceorientation", this._onDeviceOrientation, this);
         }
       }
     },
