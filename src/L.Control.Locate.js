@@ -487,7 +487,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
      * this._active is true.
      */
     _activate() {
-      if (!this._active) {
+      if (!this._active && this._map) {
         this._map.locate(this.options.locateOptions);
         this._map.fire("locateactivate", this);
         this._active = true;
@@ -525,26 +525,28 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
      * Override it to shutdown any functionalities you added on start.
      */
     _deactivate() {
-      this._map.stopLocate();
-      this._map.fire("locatedeactivate", this);
-      this._active = false;
+      if (this._active && this._map){
+        this._map.stopLocate();
+        this._map.fire("locatedeactivate", this);
+        this._active = false;
 
-      if (!this.options.cacheLocation) {
-        this._event = undefined;
-      }
+        if (!this.options.cacheLocation) {
+          this._event = undefined;
+        }
 
-      // unbind event listeners
-      this._map.off("locationfound", this._onLocationFound, this);
-      this._map.off("locationerror", this._onLocationError, this);
-      this._map.off("dragstart", this._onDrag, this);
-      this._map.off("zoomstart", this._onZoom, this);
-      this._map.off("zoomend", this._onZoomEnd, this);
-      if (this.options.showCompass) {
-        this._compassHeading = null;
-        if ("ondeviceorientationabsolute" in window) {
-          L.DomEvent.off(window, "deviceorientationabsolute", this._onDeviceOrientation, this);
-        } else if ("ondeviceorientation" in window) {
-          L.DomEvent.off(window, "deviceorientation", this._onDeviceOrientation, this);
+        // unbind event listeners
+        this._map.off("locationfound", this._onLocationFound, this);
+        this._map.off("locationerror", this._onLocationError, this);
+        this._map.off("dragstart", this._onDrag, this);
+        this._map.off("zoomstart", this._onZoom, this);
+        this._map.off("zoomend", this._onZoomEnd, this);
+        if (this.options.showCompass) {
+          this._compassHeading = null;
+          if ("ondeviceorientationabsolute" in window) {
+            L.DomEvent.off(window, "deviceorientationabsolute", this._onDeviceOrientation, this);
+          } else if ("ondeviceorientation" in window) {
+            L.DomEvent.off(window, "deviceorientation", this._onDeviceOrientation, this);
+          }
         }
       }
     },
