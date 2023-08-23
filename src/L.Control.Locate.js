@@ -258,7 +258,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
         weight: 0,
         color: "#fff",
         opacity: 1,
-        radius: 9, // How far is the arrow is from the center of of the marker
+        radius: 9, // How far is the arrow from the center of the marker
         width: 9, // Width of the arrow
         depth: 6 // Length of the arrow
       },
