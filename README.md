@@ -32,21 +32,27 @@ For production environments, use [Bower](http://bower.io/) and run `bower instal
 
 You can also get the latest version of the plugin with [npm](https://www.npmjs.org/). This plugin is available in the [npm repository](https://www.npmjs.org/package/leaflet.locatecontrol). Just run `npm install leaflet.locatecontrol`.
 
-```ts
-import 'leaflet.locatecontrol' // Import plugin
-import 'leaflet.locatecontrol/dist/L.Control.Locate.min.css' // Import styles
-import L from 'leaflet' // Import L from leaflet to start using the plugin
-```
-
 The control is [available from JsDelivr CDN](https://www.jsdelivr.com/projects/leaflet.locatecontrol). If you don't need the latest version, you can use the [mapbox CDN](https://www.mapbox.com/mapbox.js/plugins/#leaflet-locatecontrol).
 
 #### Add the JavaScript and CSS files
 
-Then include the CSS and JavaScript files. In this example, we are loading the [files from the JsDelivr CDN](https://www.jsdelivr.com/package/npm/leaflet.locatecontrol?path=dist). In the URLs below, replace `[VERSION]` with the latest release number or remove `@[VERSION]` to always use the latest version.
+Then include the CSS and JavaScript files. 
+
+##### With CDN
+
+In this example, we are loading the [files from the JsDelivr CDN](https://www.jsdelivr.com/package/npm/leaflet.locatecontrol?path=dist). In the URLs below, replace `[VERSION]` with the latest release number or remove `@[VERSION]` to always use the latest version.
 
 ```html
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@[VERSION]/dist/L.Control.Locate.min.css" />
 <script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@[VERSION]/dist/L.Control.Locate.min.js" charset="utf-8"></script>
+```
+
+##### With `npm`
+
+```ts
+import 'leaflet.locatecontrol' // Import plugin
+import 'leaflet.locatecontrol/dist/L.Control.Locate.min.css' // Import styles
+import L from 'leaflet' // Import L from leaflet to start using the plugin
 ```
 
 #### Add the following snippet to your map initialization:
