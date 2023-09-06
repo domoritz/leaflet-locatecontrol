@@ -32,6 +32,12 @@ For production environments, use [Bower](http://bower.io/) and run `bower instal
 
 You can also get the latest version of the plugin with [npm](https://www.npmjs.org/). This plugin is available in the [npm repository](https://www.npmjs.org/package/leaflet.locatecontrol). Just run `npm install leaflet.locatecontrol`.
 
+```ts
+import 'leaflet.locatecontrol' // Import plugin
+import 'leaflet.locatecontrol/dist/L.Control.Locate.min.css' // Import styles
+import L from 'leaflet' // Import L from leaflet to start using the plugin
+```
+
 The control is [available from JsDelivr CDN](https://www.jsdelivr.com/projects/leaflet.locatecontrol). If you don't need the latest version, you can use the [mapbox CDN](https://www.mapbox.com/mapbox.js/plugins/#leaflet-locatecontrol).
 
 #### Add the JavaScript and CSS files
