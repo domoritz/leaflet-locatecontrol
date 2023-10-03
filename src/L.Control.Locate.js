@@ -153,6 +153,9 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
 
   const LocateControl = L.Control.extend({
     options: {
+      /** function([lat,lng]) to be called when location is found.
+      if this is set, stop() is called when location is first found. */
+      callback: null,
       /** Position of the control */
       position: "topleft",
       /** The layer that the user's location should be drawn on. By default creates a new layer. */
@@ -345,6 +348,12 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
         } else {
           this.options[i] = options[i];
         }
+      }
+
+      this._loc_callback=null
+      if (options.callback) {
+        // set location callback
+        this._loc_callback=options.callback
       }
 
       // extend the follow marker style and circle from the normal style
@@ -756,7 +765,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
     /**
      * Stores the received event and updates the marker.
      */
-    _onLocationFound(e) {
+    async _onLocationFound(e) {
       // no need to do anything if the location has not changed
       if (this._event && this._event.latlng.lat === e.latlng.lat && this._event.latlng.lng === e.latlng.lng && this._event.accuracy === e.accuracy) {
         return;
@@ -768,9 +777,12 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
       }
 
       this._event = e;
-
       this._drawMarker();
       this._updateContainerStyle();
+      if (this._loc_callback && this._active) {
+        // call the location callback
+        this._loc_callback([e.latlng.lat, e.latlng.lng])
+      }
 
       switch (this.options.setView) {
         case "once":
@@ -797,6 +809,10 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
       }
 
       this._justClicked = false;
+      if (this.callback && !this.options.flyTo) {
+        this.stop()
+      }
+
     },
 
     /**
@@ -838,6 +854,10 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
           this._updateContainerStyle();
           this._drawMarker();
         }
+      }
+
+      if (this._loc_callback) {
+        this.stop()
       }
     },
 

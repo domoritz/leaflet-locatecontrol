@@ -36,7 +36,7 @@ The control is [available from JsDelivr CDN](https://www.jsdelivr.com/projects/l
 
 #### Add the JavaScript and CSS files
 
-Then include the CSS and JavaScript files. 
+Then include the CSS and JavaScript files.
 
 ##### With CDN
 
@@ -78,6 +78,7 @@ Possible options are listed in the following table. More details are [in the cod
 <!-- prettier-ignore-start -->
 | Option     | Type      | Description       |  Default |
 |------------|-----------|-------------------|----------|
+| `callback` | `function`  | function([lat,lng]) to be called when location is found. if this is set, `stop()` is called when location is first found. | `null` |
 | `position` | `string`  | Position of the control | `topleft` |
 | `layer` | [`ILayer`](http://leafletjs.com/reference.html#ilayer)  | The layer that the user's location should be drawn on. | a new layer |
 | `setView` | `boolean`  or `string`  | Set the map view (zoom and pan) to the user's location as it updates. Options are `false`, `'once'`, `'always'`, `'untilPan'`, or `'untilPanOrZoom'` | `'untilPanOrZoom'` |
