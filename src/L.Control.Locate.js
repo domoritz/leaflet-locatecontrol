@@ -351,9 +351,8 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
       }
 
       this._loc_callback=null
-      if (options.callback) {
-        // set location callback
-        this._loc_callback=options.callback
+      if (options.oneshot_callback) {
+        this._loc_callback=options.oneshot_callback
       }
 
       // extend the follow marker style and circle from the normal style
@@ -765,7 +764,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
     /**
      * Stores the received event and updates the marker.
      */
-    async _onLocationFound(e) {
+    _onLocationFound(e) {
       // no need to do anything if the location has not changed
       if (this._event && this._event.latlng.lat === e.latlng.lat && this._event.latlng.lng === e.latlng.lng && this._event.accuracy === e.accuracy) {
         return;
@@ -781,7 +780,7 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
       this._updateContainerStyle();
       if (this._loc_callback && this._active) {
         // call the location callback
-        this._loc_callback([e.latlng.lat, e.latlng.lng])
+        this._loc_callback(e.latlng)
       }
 
       switch (this.options.setView) {
