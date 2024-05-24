@@ -699,7 +699,10 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
      */
     _unload() {
       this.stop();
-      this._map.off("unload", this._unload, this);
+      // May become undefined during HMR
+      if (this._map) {
+        this._map.off("unload", this._unload, this);
+      }
     },
 
     /**
