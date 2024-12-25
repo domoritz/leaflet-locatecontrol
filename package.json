@@ -23,8 +23,8 @@
     "build": "grunt",
     "bump:minor": "grunt bump-only:minor && grunt && grunt bump-commit",
     "bump:patch": "grunt bump-only:patch && grunt && grunt bump-commit",
-    "lint": "eslint . && stylelint **/*.scss && npx prettier --check .",
-    "lint:fix": "eslint --fix . && stylelint --fix {**/style.css,**/*.scss} && npx prettier --write .",
+    "lint": "eslint && stylelint **/*.scss && prettier --check .",
+    "lint:fix": "eslint --fix && stylelint --fix {**/style.css,**/*.scss} && prettier --write .",
     "start": "grunt connect"
   },
   "devDependencies": {
