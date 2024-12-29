@@ -1,7 +1,7 @@
 import { Control, Layer, Map, ControlOptions, PathOptions, MarkerOptions, LocationEvent, LatLngBounds } from "leaflet";
 
-export type SetView = false | 'once' | 'always' | 'untilPan' | 'untilPanOrZoom';
-export type ClickBehavior = 'stop' | 'setView';
+export type SetView = false | "once" | "always" | "untilPan" | "untilPanOrZoom";
+export type ClickBehavior = "stop" | "setView";
 
 export interface StringsOptions {
   title?: string | undefined;
@@ -14,7 +14,7 @@ export interface StringsOptions {
 export interface ClickBehaviorOptions {
   inView?: ClickBehavior | undefined;
   outOfView?: ClickBehavior | undefined;
-  inViewNotFollowing?: ClickBehavior | 'inView' | undefined;
+  inViewNotFollowing?: ClickBehavior | "inView" | undefined;
 }
 
 export interface LocateOptions extends ControlOptions {
@@ -48,7 +48,7 @@ export interface LocateOptions extends ControlOptions {
   onLocationOutsideMapBounds?: ((control: LocateControl) => void) | undefined;
   showPopup?: boolean | undefined;
   strings?: StringsOptions | undefined;
-  locateOptions?: L.LocateOptions | undefined;
+  locateOptions?: LocateOptions | undefined;
 }
 
 export class LocateControl extends Control {

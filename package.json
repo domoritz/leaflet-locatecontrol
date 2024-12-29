@@ -24,8 +24,9 @@
     "build": "grunt",
     "bump:minor": "grunt bump-only:minor && grunt && grunt bump-commit",
     "bump:patch": "grunt bump-only:patch && grunt && grunt bump-commit",
-    "lint": "eslint . && stylelint **/*.scss && npx prettier --check .",
-    "lint:fix": "eslint --fix . && stylelint --fix {**/style.css,**/*.scss} && npx prettier --write .",
+    "lint": "eslint . && stylelint **/*.scss && prettier --check .",
+    "test": "tsc src/L.Control.Locate.d.ts",
+    "lint:fix": "eslint --fix . && stylelint --fix {**/style.css,**/*.scss} && prettier --write .",
     "start": "grunt connect"
   },
   "devDependencies": {
@@ -49,6 +50,7 @@
     "stylelint-config-prettier-scss": "^1.0.0",
     "stylelint-config-recommended-scss": "^14.1.0",
     "stylelint-prettier": "^5.0.2",
-    "stylelint-scss": "^6.8.1"
+    "stylelint-scss": "^6.8.1",
+    "typescript": "^5.7.2"
   }
 }
