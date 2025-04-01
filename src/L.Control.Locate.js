@@ -37,19 +37,19 @@ const LocationMarker = Marker.extend({
     let style = "";
 
     if (opt.color !== undefined) {
-      style += `stroke:${opt.color};`;
+      style += ` stroke="${opt.color}"`;
     }
     if (opt.weight !== undefined) {
-      style += `stroke-width:${opt.weight};`;
+      style += ` stroke-width="${opt.weight}"`;
     }
     if (opt.fillColor !== undefined) {
-      style += `fill:${opt.fillColor};`;
+      style += ` fill="${opt.fillColor}"`;
     }
     if (opt.fillOpacity !== undefined) {
-      style += `fill-opacity:${opt.fillOpacity};`;
+      style += ` fill-opacity="${opt.fillOpacity}"`;
     }
     if (opt.opacity !== undefined) {
-      style += `opacity:${opt.opacity};`;
+      style += ` opacity="${opt.opacity}"`;
     }
 
     const icon = this._getIconSVG(opt, style);
@@ -75,12 +75,7 @@ const LocationMarker = Marker.extend({
     const s2 = s * 2;
     const svg =
       `<svg xmlns="http://www.w3.org/2000/svg" width="${s2}" height="${s2}" version="1.1" viewBox="-${s} -${s} ${s2} ${s2}">` +
-      '<circle r="' +
-      r +
-      '" style="' +
-      style +
-      '" />' +
-      "</svg>";
+      `<circle r="${r}"${style} /></svg>`;
     return {
       className: "leaflet-control-locate-location",
       svg,
@@ -115,15 +110,9 @@ const CompassMarker = LocationMarker.extend({
     const w = options.width + options.weight;
     const h = (r + options.depth + options.weight) * 2;
     const path = `M0,0 l${options.width / 2},${options.depth} l-${w},0 z`;
-    const svgstyle = `transform: rotate(${this._heading}deg)`;
     const svg =
-      `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" version="1.1" viewBox="-${w / 2} 0 ${w} ${h}" style="${svgstyle}">` +
-      '<path d="' +
-      path +
-      '" style="' +
-      style +
-      '" />' +
-      "</svg>";
+      `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" version="1.1" viewBox="-${w / 2} 0 ${w} ${h}">` +
+      `<path d="${path}"${style} transform="rotate(${this._heading})" /></svg>`;
     return {
       className: "leaflet-control-locate-heading",
       svg,
