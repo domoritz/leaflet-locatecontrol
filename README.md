@@ -80,7 +80,7 @@ To customize the control, pass an object with your custom options to the locate 
 L.control.locate(OPTIONS).addTo(map);
 ```
 
-Possible options are listed in the following table. More details are [in the code](https://github.com/domoritz/leaflet-locatecontrol/blob/gh-pages/src/L.Control.Locate.js#L31).
+Possible options are listed in the following table. More details are [in the code](https://github.com/domoritz/leaflet-locatecontrol/blob/gh-pages/src/L.Control.Locate.js#L118).
 
 <!-- prettier-ignore-start -->
 | Option     | Type      | Description       |  Default |
