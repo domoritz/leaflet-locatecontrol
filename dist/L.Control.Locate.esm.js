@@ -104,8 +104,8 @@ const CompassMarker = LocationMarker.extend({
     const h = (r + options.depth + options.weight) * 2;
     const path = `M0,0 l${options.width / 2},${options.depth} l-${w},0 z`;
     const svg =
-      `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" version="1.1" viewBox="-${w / 2} 0 ${w} ${h}">` +
-      `<path d="${path}" ${style} transform="rotate(${this._heading})" /></svg>`;
+      `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" version="1.1" viewBox="-${w / 2} 0 ${w} ${h}" transform="rotate(${this._heading})">` +
+      `<path d="${path}" ${style} /></svg>`;
     return {
       className: "leaflet-control-locate-heading",
       svg,
