@@ -5,7 +5,7 @@ This file is part of the leaflet locate control. It is licensed under the MIT li
 You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
 */
 
-import { Control, Marker, setOptions, DivIcon, LayerGroup, Circle, DomEvent, Util as LeafletUtil } from "leaflet";
+import { Control, Marker, DivIcon, LayerGroup, Circle, DomEvent, Util as LeafletUtil } from "leaflet";
 
 const METERS_TO_FEET = 3.2808399;
 
@@ -71,7 +71,7 @@ function cloneOptions(options) {
  */
 const LocationMarker = Marker.extend({
   initialize(latlng, options) {
-    setOptions(this, options);
+    LeafletUtil.setOptions(this, options);
     this._latlng = latlng;
     this.createIcon();
   },
@@ -126,14 +126,14 @@ const LocationMarker = Marker.extend({
   },
 
   setStyle(style) {
-    setOptions(this, style);
+    LeafletUtil.setOptions(this, style);
     this.createIcon();
   }
 });
 
 const CompassMarker = LocationMarker.extend({
   initialize(latlng, heading, options) {
-    setOptions(this, options);
+    LeafletUtil.setOptions(this, options);
     this._latlng = latlng;
     this._heading = heading;
     this.createIcon();
@@ -398,9 +398,9 @@ const LocateControl = Control.extend({
     }
 
     // Follow styles inherit from base styles
-    Object.assign(this.options.followMarkerStyle, this.options.markerStyle, this.options.followMarkerStyle);
-    Object.assign(this.options.followCircleStyle, this.options.circleStyle, this.options.followCircleStyle);
-    Object.assign(this.options.followCompassStyle, this.options.compassStyle, this.options.followCompassStyle);
+    this.options.followMarkerStyle = { ...this.options.markerStyle, ...this.options.followMarkerStyle };
+    this.options.followCircleStyle = { ...this.options.circleStyle, ...this.options.followCircleStyle };
+    this.options.followCompassStyle = { ...this.options.compassStyle, ...this.options.followCompassStyle };
   },
 
   /**
@@ -420,16 +420,12 @@ const LocateControl = Control.extend({
     this._link = linkAndIcon.link;
     this._icon = linkAndIcon.icon;
 
-    DomEvent.on(
-      this._link,
-      "click",
-      function (ev) {
-        DomEvent.stopPropagation(ev);
-        DomEvent.preventDefault(ev);
-        this._onClick();
-      },
-      this
-    ).on(this._link, "dblclick", DomEvent.stopPropagation);
+    this._link.addEventListener("click", (ev) => {
+      ev.stopPropagation();
+      ev.preventDefault();
+      this._onClick();
+    });
+    this._link.addEventListener("dblclick", (ev) => ev.stopPropagation());
 
     this._resetVariables();
 
@@ -731,7 +727,7 @@ const LocateControl = Control.extend({
       if (this._circle) {
         this._circle.setLatLng(latlng).setRadius(accuracy).setStyle(style);
       } else {
-        const options = Object.assign({}, style, { radius: accuracy });
+        const options = { ...style, radius: accuracy };
         this._circle = new Circle(latlng, options).addTo(this._layer);
       }
     }
