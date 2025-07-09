@@ -470,23 +470,47 @@
       this._map.on("zoomstart", this._onZoom, this);
       this._map.on("zoomend", this._onZoomEnd, this);
       if (this.options.showCompass) {
-        const oriAbs = "ondeviceorientationabsolute" in window;
-        if (oriAbs || "ondeviceorientation" in window) {
-          const _this = this;
-          const deviceorientation = function () {
-            leaflet.DomEvent.on(window, oriAbs ? "deviceorientationabsolute" : "deviceorientation", _this._onDeviceOrientation, _this);
-          };
-          if (DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === "function") {
-            DeviceOrientationEvent.requestPermission().then(function (permissionState) {
-              if (permissionState === "granted") {
-                deviceorientation();
-              }
-            });
-          } else {
-            deviceorientation();
-          }
+    const oriAbs = "ondeviceorientationabsolute" in window;
+    const eventName = oriAbs ? "deviceorientationabsolute" : "deviceorientation";
+    const _this = this;
+
+    const tryRegisterDeviceOrientation = () => {
+      let received = false;
+
+      const handler = function (event) {
+        if (event && event.alpha !== null) {
+          received = true;
+          window.removeEventListener(eventName, handler);
+          _this._onDeviceOrientation(event);
         }
-      }
+      };
+
+      window.addEventListener(eventName, handler, { once: true });
+
+      // Fallback après 2 secondes si rien n’est reçu
+      setTimeout(() => {
+        if (!received) {
+          console.warn("[LocateControl] No orientation data received. Hiding compass.");
+          _this._hideCompass();
+        }
+      }, 2000);
+    };
+
+    if (typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission === "function") {
+      DeviceOrientationEvent.requestPermission()
+        .then(function (permissionState) {
+          if (permissionState === "granted") {
+            tryRegisterDeviceOrientation();
+          } else {
+            console.warn("[LocateControl] Orientation permission denied.");
+          }
+        })
+        .catch(console.error);
+    } else {
+      tryRegisterDeviceOrientation();
+    }
+  }
+
     },
 
     /**
@@ -583,6 +607,18 @@
         this._compass = null;
       }
     },
+
+    /**
+   * Masque la boussole si les données d’orientation ne sont pas disponibles
+   */
+  _hideCompass() {
+    if (this._compass) {
+      this._compass.removeFrom(this._layer);
+      this._compass = null;
+    }
+  },
+
+
 
     /**
      * Draw the marker and accuracy circle on the map.

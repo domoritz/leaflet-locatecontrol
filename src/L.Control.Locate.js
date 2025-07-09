@@ -22,7 +22,7 @@ const removeClasses = (el, names) => {
  * Compatible with Circle but a true marker instead of a path
  */
 const LocationMarker = Marker.extend({
-  initialize(latlng, options) {
+  initialize: function(latlng, options) {
     setOptions(this, options);
     this._latlng = latlng;
     this.createIcon();
@@ -31,7 +31,7 @@ const LocationMarker = Marker.extend({
   /**
    * Create a styled circle location marker
    */
-  createIcon() {
+  createIcon: function() {
     const opt = this.options;
 
     const style = [
@@ -61,7 +61,7 @@ const LocationMarker = Marker.extend({
    *
    * Split so can be easily overridden
    */
-  _getIconSVG(options, style) {
+  _getIconSVG: function(options, style) {
     const r = options.radius;
     const w = options.weight;
     const s = r + w;
@@ -77,7 +77,7 @@ const LocationMarker = Marker.extend({
     };
   },
 
-  setStyle(style) {
+  setStyle: function(style) {
     setOptions(this, style);
     this.createIcon();
   }
@@ -467,30 +467,53 @@ const LocateControl = Control.extend({
     this._map.on("zoomend", this._onZoomEnd, this);
     if (this.options.showCompass) {
       const oriAbs = "ondeviceorientationabsolute" in window;
-      if (oriAbs || "ondeviceorientation" in window) {
-        const _this = this;
-        const deviceorientation = function () {
-          DomEvent.on(window, oriAbs ? "deviceorientationabsolute" : "deviceorientation", _this._onDeviceOrientation, _this);
-        };
-        if (DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === "function") {
-          DeviceOrientationEvent.requestPermission().then(function (permissionState) {
-            if (permissionState === "granted") {
-              deviceorientation();
-            }
-          });
-        } else {
-          deviceorientation();
-        }
-      }
-    }
-  },
+      const eventName = oriAbs ? "deviceorientationabsolute" : "deviceorientation";
+      const _this = this;
 
-  /**
-   * Called to stop the location engine.
-   *
-   * Override it to shutdown any functionalities you added on start.
-   */
-  _deactivate() {
+      const tryRegisterDeviceOrientation = () => {
+        let received = false;
+
+        const handler = function (event) {
+          if (event && event.alpha !== null) {
+          received = true;
+          window.removeEventListener(eventName, handler);
+          this._onDeviceOrientation(event);
+        } 
+        };
+
+        window.addEventListener(eventName, handler, { once: true });
+
+        // Fallback après 2 secondes si rien n’est reçu
+        setTimeout(() => {
+          if (!received) {
+            console.warn("[LocateControl] No orientation data received. Hiding compass.");
+            _this._hideCompass();
+          }
+    }, 2000);
+  };
+
+  if (typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission === "function") {
+    DeviceOrientationEvent.requestPermission()
+      .then(function (permissionState) {
+        if (permissionState === "granted") {
+          tryRegisterDeviceOrientation();
+        } else {
+          console.warn("[LocateControl] Orientation permission denied.");
+        }
+      })
+      .catch(console.error);
+  } else {
+    tryRegisterDeviceOrientation();
+  }
+}
+}
+
+/**
+ * Called to stop the location engine.
+ *
+ * Override it to shutdown any functionalities you added on start.
+ */
+_deactivate: function () {
     if (!this._active || !this._map) {
       return;
     }
@@ -581,6 +604,18 @@ const LocateControl = Control.extend({
   },
 
   /**
+ * Masque la boussole si les données d’orientation ne sont pas disponibles
+ */
+_hideCompass() {
+  if (this._compass) {
+    this._compass.removeFrom(this._layer);
+    this._compass = null;
+  }
+},
+
+
+
+  /**
    * Draw the marker and accuracy circle on the map.
    *
    * Uses the event retrieved from onLocationFound from the map.
@@ -626,7 +661,7 @@ const LocateControl = Control.extend({
           this._marker.setStyle(mStyle);
         }
       }
-    }
+    },
 
     this._drawCompass();
 
