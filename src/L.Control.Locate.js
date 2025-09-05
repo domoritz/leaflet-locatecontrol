@@ -88,11 +88,17 @@ const CompassMarker = LocationMarker.extend({
     setOptions(this, options);
     this._latlng = latlng;
     this._heading = heading;
+    this._arrowClass = "leaflet-control-locate-heading-arrow";
+    this._cssRule = this._getSvgCSSRule();
     this.createIcon();
   },
 
   setHeading(heading) {
     this._heading = heading;
+
+    if (this._cssRule) {
+      this._cssRule.style.setProperty("transform", `rotate(${this._heading}deg)`);
+    }
   },
 
   /**
@@ -104,7 +110,7 @@ const CompassMarker = LocationMarker.extend({
     const h = (r + options.depth + options.weight) * 2;
     const path = `M0,0 l${options.width / 2},${options.depth} l-${w},0 z`;
     const svg =
-      `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" version="1.1" viewBox="-${w / 2} 0 ${w} ${h}" transform="rotate(${this._heading})">` +
+      `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" version="1.1" viewBox="-${w / 2} 0 ${w} ${h}" class="${this._arrowClass}">` +
       `<path d="${path}" ${style} /></svg>`;
     return {
       className: "leaflet-control-locate-heading",
@@ -112,6 +118,24 @@ const CompassMarker = LocationMarker.extend({
       w,
       h
     };
+  },
+
+  // Finds the CSS rule for the compass arrow so we can update its rotation without setting inline styles
+  _getSvgCSSRule() {
+    const selector = "." + this._arrowClass;
+
+    for (const sheet of document.styleSheets) {
+      // Ignore stylesheets from different origins
+      if (sheet.href && new URL(sheet.href).origin !== location.origin) {
+        continue;
+      }
+
+      for (const rule of sheet.cssRules) {
+        if (rule.selectorText === selector) {
+          return rule;
+        }
+      }
+    }
   }
 });
 
