@@ -100,18 +100,45 @@ const CompassMarker = LocationMarker.extend({
    */
   _getIconSVG(options, style) {
     const r = options.radius;
-    const w = options.width + options.weight;
-    const h = (r + options.depth + options.weight) * 2;
-    const path = `M0,0 l${options.width / 2},${options.depth} l-${w},0 z`;
+    const s = r + options.weight + options.depth;
+    const s2 = s * 2;
+
+    const path = this._arrowPoints(r, options.width, options.depth, this._heading);
+
     const svg =
-      `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" version="1.1" viewBox="-${w / 2} 0 ${w} ${h}" transform="rotate(${this._heading})">` +
+      `<svg xmlns="http://www.w3.org/2000/svg" width="${s2}" height="${s2}" version="1.1" viewBox="-${s} -${s} ${s2} ${s2}">` +
       `<path d="${path}" ${style} /></svg>`;
     return {
       className: "leaflet-control-locate-heading",
       svg,
-      w,
-      h
+      w: s2,
+      h: s2
     };
+  },
+
+  _arrowPoints(radius, width, depth, heading) {
+    const φ = ((heading - 90) * Math.PI) / 180;
+    const ux = Math.cos(φ);
+    const uy = Math.sin(φ);
+    const vx = -Math.sin(φ);
+    const vy = Math.cos(φ);
+    const h = width / 2;
+
+    // Base center on circle
+    const Cx = radius * ux;
+    const Cy = radius * uy;
+
+    // Base corners
+    const B1x = Cx + h * vx;
+    const B1y = Cy + h * vy;
+    const B2x = Cx - h * vx;
+    const B2y = Cy - h * vy;
+
+    // Tip outward
+    const Tx = Cx + depth * ux;
+    const Ty = Cy + depth * uy;
+
+    return `M ${B1x},${B1y} L ${B2x},${B2y} L ${Tx},${Ty} Z`;
   }
 });
 
