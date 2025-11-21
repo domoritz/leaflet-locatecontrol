@@ -21,30 +21,6 @@ module.exports = function (grunt) {
         dest: "dist/L.Control.Locate.min.js"
       }
     },
-    sass: {
-      options: {
-        implementation: require("sass"),
-        sourceMap: true
-      },
-      dist: {
-        options: {
-          style: "compressed"
-        },
-        files: {
-          "dist/L.Control.Locate.min.css": "src/L.Control.Locate.scss",
-          "dist/L.Control.Locate.mapbox.min.css": "src/L.Control.Locate.mapbox.scss"
-        }
-      },
-      uncompressed: {
-        options: {
-          style: "expanded"
-        },
-        files: {
-          "dist/L.Control.Locate.css": "src/L.Control.Locate.scss",
-          "dist/L.Control.Locate.mapbox.css": "src/L.Control.Locate.mapbox.scss"
-        }
-      }
-    },
     bump: {
       options: {
         files: ["package.json", "bower.json"],
@@ -113,12 +89,11 @@ module.exports = function (grunt) {
   });
 
   grunt.loadNpmTasks("grunt-contrib-uglify");
-  grunt.loadNpmTasks("grunt-sass");
   grunt.loadNpmTasks("grunt-rollup");
   grunt.loadNpmTasks("grunt-bump");
   grunt.loadNpmTasks("grunt-contrib-connect");
   grunt.loadNpmTasks("grunt-contrib-copy");
 
   // Default task(s).
-  grunt.registerTask("default", ["rollup:build_es", "rollup:build_umd", "copy", "uglify", "sass"]);
+  grunt.registerTask("default", ["rollup:build_es", "rollup:build_umd", "copy", "uglify"]);
 };
