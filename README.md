@@ -11,12 +11,11 @@ Please check for [breaking changes in the changelog](https://github.com/domoritz
 
 ## Demo
 
-- [Demo with Leaflet](https://domoritz.github.io/leaflet-locatecontrol/demo/)
-- [Demo with Mapbox.js](https://domoritz.github.io/leaflet-locatecontrol/demo_mapbox/)
+Check out the [demo page](https://domoritz.github.io/leaflet-locatecontrol/) with three different examples (Leaflet UMD, Leaflet ESM, Mapbox UMD).
 
 ## Basic Usage
 
-### Set up:
+### Set up
 
 1. Get CSS and JavaScript files
 2. Include CSS and JavaScript files
@@ -230,9 +229,11 @@ let map = new L.Map('map', {
 
 ## Developers
 
-Run the demo locally with `yarn start` or `npm run start` and then open [localhost:9000/demo/index.html](http://localhost:9000/demo/index.html).
+Run the demo locally with `npm start` and then open [http://localhost:9000](http://localhost:9000).
 
-To generate the minified JS and CSS files, use [grunt](http://gruntjs.com/getting-started) and run `grunt`. However, don't include new minified files or a new version as part of a pull request. If you need SASS, install it with `brew install sass/sass/sass`.
+The development server is a native Node.js script (`scripts/server.js`) that serves the project on port 9000. It does not require any external dependencies. Note that modern browsers treat `localhost` as a secure context, so HTTPS is not required for the Geolocation API to work.
+
+To generate the minified JS and CSS files, run `npm run build`.
 
 ## Prettify and linting
 

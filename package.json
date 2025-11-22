@@ -30,7 +30,7 @@
     "bump:patch": "grunt --gruntfile Gruntfile.cjs bump-only:patch && npm run build && grunt --gruntfile Gruntfile.cjs bump-commit",
     "lint": "eslint && stylelint {**/style.css,**/*.scss} && prettier --check .",
     "lint:fix": "eslint --fix && stylelint --fix {**/style.css,**/*.scss} && prettier --write .",
-    "start": "grunt --gruntfile Gruntfile.cjs connect"
+    "start": "node scripts/server.js"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^29.0.0",
@@ -41,7 +41,6 @@
     "eslint-plugin-prettier": "^5.2.5",
     "grunt": "^1.6.1",
     "grunt-bump": "0.8.0",
-    "grunt-contrib-connect": "^5.0.1",
     "leaflet": "^1.9.4",
     "prettier": "^3.5.3",
     "rollup": "^4.53.3",
