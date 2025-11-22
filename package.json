@@ -1,6 +1,7 @@
 {
   "name": "leaflet.locatecontrol",
   "version": "0.85.1",
+  "type": "module",
   "homepage": "https://github.com/domoritz/leaflet-locatecontrol",
   "description": "A useful control to geolocate the user with many options. Used by osm.org and mapbox among many others.",
   "main": "dist/L.Control.Locate.min.js",
@@ -21,35 +22,35 @@
   "license": "MIT",
   "readmeFilename": "README.md",
   "scripts": {
-    "build": "npm run build:css && grunt rollup && grunt copy && grunt uglify",
+    "build": "npm run build:js && npm run build:css && npm run build:types",
+    "build:js": "rollup -c",
     "build:css": "sass src:dist && sass --style=compressed src/L.Control.Locate.scss:dist/L.Control.Locate.min.css src/L.Control.Locate.mapbox.scss:dist/L.Control.Locate.mapbox.min.css",
-    "bump:minor": "grunt bump-only:minor && grunt && grunt bump-commit",
-    "bump:patch": "grunt bump-only:patch && grunt && grunt bump-commit",
+    "build:types": "cp src/L.Control.Locate.d.ts dist/L.Control.Locate.d.ts",
+    "bump:minor": "grunt --gruntfile Gruntfile.cjs bump-only:minor && npm run build && grunt --gruntfile Gruntfile.cjs bump-commit",
+    "bump:patch": "grunt --gruntfile Gruntfile.cjs bump-only:patch && npm run build && grunt --gruntfile Gruntfile.cjs bump-commit",
     "lint": "eslint && stylelint {**/style.css,**/*.scss} && prettier --check .",
     "lint:fix": "eslint --fix && stylelint --fix {**/style.css,**/*.scss} && prettier --write .",
-    "start": "grunt connect"
+    "start": "grunt --gruntfile Gruntfile.cjs connect"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^28.0.3",
-    "@rollup/plugin-node-resolve": "^16.0.1",
+    "@rollup/plugin-commonjs": "^29.0.0",
+    "@rollup/plugin-node-resolve": "^16.0.3",
+    "@rollup/plugin-terser": "^0.4.4",
     "eslint": "^9.23.0",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-prettier": "^5.2.5",
     "grunt": "^1.6.1",
     "grunt-bump": "0.8.0",
     "grunt-contrib-connect": "^5.0.1",
-    "grunt-contrib-copy": "^1.0.0",
-    "grunt-contrib-uglify": "^5.2.2",
-    "grunt-rollup": "^12.0.0",
     "leaflet": "^1.9.4",
     "prettier": "^3.5.3",
-    "rollup": "^4.38.0",
+    "rollup": "^4.53.3",
     "sass": "^1.94.2",
     "stylelint": "^16.17.0",
     "stylelint-config-prettier-scss": "^1.0.0",
     "stylelint-config-recommended-scss": "^14.1.0",
     "stylelint-prettier": "^5.0.3",
     "stylelint-scss": "^6.11.1",
-    "typescript": "^5.8.2"
+    "typescript": "^5.9.3"
   }
 }

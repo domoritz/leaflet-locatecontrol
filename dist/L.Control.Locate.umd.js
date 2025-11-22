@@ -10,6 +10,7 @@
   This file is part of the leaflet locate control. It is licensed under the MIT license.
   You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
   */
+
   const addClasses = (el, names) => {
     names.split(" ").forEach((className) => {
       el.classList.add(className);
@@ -952,10 +953,9 @@
 
 }));
 
-            (function() {
-              if (typeof window !== 'undefined' && window.L) {
-                window.L.control = window.L.control || {};
-                window.L.control.locate = window.L.Control.Locate.locate;
-              }
-            })();
-          
+(function() {
+  if (typeof window !== 'undefined' && window.L) {
+    window.L.control = window.L.control || {};
+    window.L.control.locate = window.L.Control.Locate.locate;
+  }
+})();
