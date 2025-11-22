@@ -1,4 +1,4 @@
-import { Marker, setOptions, divIcon, Control, DomUtil, extend, LayerGroup, DomEvent, Util, circle } from 'leaflet';
+import { Marker, setOptions, divIcon, Control, DomUtil, Util, circle, DomEvent, LayerGroup, extend } from 'leaflet';
 
 /*!
 Copyright (c) 2016 Dominik Moritz
@@ -6,6 +6,7 @@ Copyright (c) 2016 Dominik Moritz
 This file is part of the leaflet locate control. It is licensed under the MIT license.
 You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
 */
+
 const addClasses = (el, names) => {
   names.split(" ").forEach((className) => {
     el.classList.add(className);
