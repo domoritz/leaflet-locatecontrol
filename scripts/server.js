@@ -17,9 +17,7 @@ const MIME_TYPES = {
 const server = http.createServer((req, res) => {
   console.log(`${req.method} ${req.url}`);
 
-  // Einfacher Schutz gegen Directory Traversal
-  const safePath = path.normalize(req.url).replace(/^(\.\.[\/\\])+/, '');
-  let filePath = path.join(ROOT, safePath);
+  let filePath = path.join(ROOT, req.url.split('?')[0]);
 
   fs.stat(filePath, (err, stats) => {
     if (err) {
@@ -28,7 +26,7 @@ const server = http.createServer((req, res) => {
       return;
     }
 
-    // Wenn es ein Ordner ist, suche nach index.html
+    // If it is a directory, look for index.html
     if (stats.isDirectory()) {
       filePath = path.join(filePath, 'index.html');
     }
@@ -49,7 +47,6 @@ const server = http.createServer((req, res) => {
   });
 });
 
-server.listen(PORT, () => {
+server.listen(PORT, 'localhost', () => {
   console.log(`Server running at http://localhost:${PORT}/`);
-  console.log('Hit CTRL-C to stop the server');
 });
