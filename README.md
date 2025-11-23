@@ -17,23 +17,33 @@ Check out the [demo page](https://domoritz.github.io/leaflet-locatecontrol/) wit
 
 ### Set up
 
-1. Get CSS and JavaScript files
-2. Include CSS and JavaScript files
-3. Initialize plugin
+1. Get the JavaScript and CSS files
+2. Include the files in your project
+3. Initialize the plugin
 
-#### Download JavaScript and CSS files
+#### Get the JavaScript and CSS files
 
-For testing purposes and development, you can use the latest version directly from my repository.
+**For production:**
 
-For production environments, use [Bower](http://bower.io/) and run `bower install leaflet.locatecontrol` or [download the files from this repository](https://github.com/domoritz/leaflet-locatecontrol/archive/gh-pages.zip). Bower will always download the latest version and keep the code up to date. The original JS and CSS files are in [`\src`](https://github.com/domoritz/leaflet-locatecontrol/tree/gh-pages/src) and the minified versions suitable for production are in [`\dist`](https://github.com/domoritz/leaflet-locatecontrol/tree/gh-pages/dist).
+The best way to get the plugin is via [npm](https://www.npmjs.org/):
 
-You can also get the latest version of the plugin with [npm](https://www.npmjs.org/). This plugin is available in the [npm repository](https://www.npmjs.org/package/leaflet.locatecontrol). Just run `npm install leaflet.locatecontrol`.
+```bash
+npm install leaflet.locatecontrol
+```
 
-The control is [available from JsDelivr CDN](https://www.jsdelivr.com/projects/leaflet.locatecontrol). If you don't need the latest version, you can use the [mapbox CDN](https://www.mapbox.com/mapbox.js/plugins/#leaflet-locatecontrol).
+Alternatively, you can use the [JsDelivr CDN](https://www.jsdelivr.com/projects/leaflet.locatecontrol) (see instructions below) or [download the files from this repository](https://github.com/domoritz/leaflet-locatecontrol/archive/gh-pages.zip).
 
-#### Add the JavaScript and CSS files
+**For development:**
 
-Then include the CSS and JavaScript files.
+Clone the repository to work with the source code:
+
+```bash
+git clone https://github.com/domoritz/leaflet-locatecontrol
+```
+
+The source files are in `src/` and the built distribution files are in `dist/`.
+
+#### Include the JavaScript and CSS files in your project
 
 ##### With CDN
 
@@ -61,7 +71,7 @@ import "leaflet.locatecontrol/dist/L.Control.Locate.min.css";
 
 Then use `new LocateControl()` instead of `L.control.locate()`.
 
-#### Add the following snippet to your map initialization:
+#### Add the following snippet to your map initialization
 
 This snippet adds the control to the map. You can pass also pass a configuration.
 
@@ -241,11 +251,11 @@ Before a Pull Request please check the code style.
 
 Run `npm run lint` to check if there are code style or linting issues.
 
-Run `npm run:fix` to automatically fix style and linting issues.
+Run `npm run lint:fix` to automatically fix style and linting issues.
 
 ## Making a release (only core developer)
 
-A new version is released with `npm run bump:minor`. Then push the new code with `git push && git push --tags` and publish to npm with `npm publish`.
+A new version is released with `npm run bump:minor` or `npm run bump:patch`. Then push the changes with `git push && git push --tags` and publish to npm with `npm publish`.
 
 ### Terms
 
