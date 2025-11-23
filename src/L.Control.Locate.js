@@ -41,8 +41,8 @@ const LocationMarker = Marker.extend({
       ["fill-opacity", opt.fillOpacity],
       ["opacity", opt.opacity]
     ]
-      .filter(([k,v]) => v !== undefined)
-      .map(([k,v]) => `${k}="${v}"`)
+      .filter(([k, v]) => v !== undefined)
+      .map(([k, v]) => `${k}="${v}"`)
       .join(" ");
 
     const icon = this._getIconSVG(opt, style);
