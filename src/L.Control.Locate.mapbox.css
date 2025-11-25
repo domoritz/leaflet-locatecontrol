@@ -1,4 +1,4 @@
-@use "L.Control.Locate";
+@import "L.Control.Locate.css";
 
 /* Mapbox specific adjustments */
 
