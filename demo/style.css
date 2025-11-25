@@ -1,13 +1,69 @@
+/* Dark mode - controlled via data-theme attribute set by JS */
+:root[data-theme="dark"] .leaflet-control-locate {
+  --locate-control-icon-color: #fff;
+}
+
+:root[data-theme="dark"] #dark-mode-toggle,
+:root[data-theme="dark"] .leaflet-bar a,
+:root[data-theme="dark"] .leaflet-popup-content-wrapper,
+:root[data-theme="dark"] .leaflet-popup-tip,
+:root[data-theme="dark"] .leaflet-control-attribution {
+  background-color: #3a3a3a;
+  color: #fff;
+}
+
+:root[data-theme="dark"] .leaflet-control-attribution a {
+  color: #6db3f2;
+}
+
+:root[data-theme="dark"] .leaflet-bar a {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+:root[data-theme="dark"] #dark-mode-toggle:hover,
+:root[data-theme="dark"] .leaflet-bar a:hover {
+  background-color: #555;
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+  background-color: #1a1a1a;
+  color: #fff;
+}
+
 html,
 body {
   padding: 0;
   margin: 0;
+  background-color: #fff;
+  color: #000;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 #map {
   position: absolute;
   width: 100%;
   height: 100%;
+}
+
+#dark-mode-toggle {
+  position: fixed;
+  top: 130px;
+  left: 10px;
+  z-index: 2000;
+  background: #fff;
+  border-radius: 4px;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 26px;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4);
+  transition: background-color 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /*

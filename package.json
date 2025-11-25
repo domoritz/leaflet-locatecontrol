@@ -24,13 +24,15 @@
   "scripts": {
     "build": "npm run build:js && npm run build:css && npm run build:types",
     "build:js": "rollup -c",
-    "build:css": "sass src:dist && sass --style=compressed src/L.Control.Locate.scss:dist/L.Control.Locate.min.css src/L.Control.Locate.mapbox.scss:dist/L.Control.Locate.mapbox.min.css",
+    "build:css": "npm run build:css:leaflet && npm run build:css:mapbox",
+    "build:css:leaflet": "lightningcss --bundle --sourcemap --targets '>= 0.25%' src/L.Control.Locate.css -o dist/L.Control.Locate.css && lightningcss --minify --bundle --sourcemap --targets '>= 0.25%' src/L.Control.Locate.css -o dist/L.Control.Locate.min.css",
+    "build:css:mapbox": "lightningcss --bundle --sourcemap --targets '>= 0.25%' src/L.Control.Locate.mapbox.css -o dist/L.Control.Locate.mapbox.css && lightningcss --minify --bundle --sourcemap --targets '>= 0.25%' src/L.Control.Locate.mapbox.css -o dist/L.Control.Locate.mapbox.min.css",
     "build:types": "cp src/L.Control.Locate.d.ts dist/L.Control.Locate.d.ts",
     "bump:minor": "npm version minor",
     "bump:patch": "npm version patch",
     "version": "npm run build && git add -A dist",
-    "lint": "eslint && stylelint {**/style.css,**/*.scss} && prettier --check .",
-    "lint:fix": "eslint --fix && stylelint --fix {**/style.css,**/*.scss} && prettier --write .",
+    "lint": "eslint && stylelint **/*.css && prettier --check .",
+    "lint:fix": "eslint --fix && stylelint --fix **/*.css && prettier --write .",
     "start": "node scripts/server.js"
   },
   "devDependencies": {
@@ -41,14 +43,11 @@
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-prettier": "^5.2.5",
     "leaflet": "^1.9.4",
+    "lightningcss-cli": "^1.30.2",
     "prettier": "^3.5.3",
     "rollup": "^4.53.3",
-    "sass": "^1.94.2",
     "stylelint": "^16.17.0",
-    "stylelint-config-prettier-scss": "^1.0.0",
-    "stylelint-config-recommended-scss": "^14.1.0",
     "stylelint-prettier": "^5.0.3",
-    "stylelint-scss": "^6.11.1",
     "typescript": "^5.9.3"
   }
 }
