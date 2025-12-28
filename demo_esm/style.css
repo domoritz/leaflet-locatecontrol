@@ -8,8 +8,8 @@
 :root[data-theme="dark"] .leaflet-popup-content-wrapper,
 :root[data-theme="dark"] .leaflet-popup-tip,
 :root[data-theme="dark"] .leaflet-control-attribution {
-  background-color: #3a3a3a;
-  color: #fff;
+  background-color: #3a3a3a !important;
+  color: #fff !important;
 }
 
 :root[data-theme="dark"] .leaflet-control-attribution a {
@@ -23,6 +23,11 @@
 :root[data-theme="dark"] #dark-mode-toggle:hover,
 :root[data-theme="dark"] .leaflet-bar a:hover {
   background-color: #555;
+}
+
+/* Tile filter for dark mode */
+:root[data-theme="dark"] .map-tiles {
+  filter: invert(1) hue-rotate(180deg) brightness(0.95) saturate(0.85);
 }
 
 html[data-theme="dark"],
