@@ -1,5 +1,5 @@
 import { Map, TileLayer } from "leaflet";
-import { LocateControl } from "../dist/L.Control.Locate.esm.js";
+import { LocateControl } from "../../dist/L.Control.Locate.esm.js";
 
 // Dark Mode Toggle
 const darkModeToggle = document.getElementById("dark-mode-toggle");
