@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>leaflet-locatecontrol</title>
+    <link rel="icon" href="favicon.svg" />
     <style>
       :root {
         --bg: #0a0e13;
@@ -71,6 +72,11 @@
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
+      }
+
+      h1 img {
+        width: 48px;
+        flex-shrink: 0;
       }
 
       .header-description {
@@ -203,7 +209,10 @@
       <div class="container">
         <div class="header-content">
           <div class="header-left">
-            <h1>leaflet-locatecontrol</h1>
+            <h1>
+              <img src="favicon.svg" alt="Leaflet.Locate logo" />
+              leaflet-locatecontrol
+            </h1>
             <div class="header-description">
               <p>A useful control to geolocate the user with many options. Used by osm.org and mapbox among many others.</p>
               <p>
