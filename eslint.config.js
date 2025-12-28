@@ -1,20 +1,17 @@
+import { defineConfig, globalIgnores } from "eslint/config";
 import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
 import globals from "globals";
 
-export default [
+export default defineConfig([
+  globalIgnores(["dist/*"]),
   {
     files: ["**/*.js"],
     languageOptions: {
-      ecmaVersion: 2022,
-      sourceType: "module",
+      ecmaVersion: "latest",
       globals: {
-        ...globals.browser,
-        myCustomGlobal: "readonly"
+        ...globals.browser
       }
     }
   },
-  {
-    ignores: ["*.min.js"]
-  },
   eslintPluginPrettierRecommended
-];
+]);
