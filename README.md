@@ -1,4 +1,4 @@
-# Leaflet.Locate
+# <img src="favicon.svg" alt="Leaflet.Locate logo" width="40" height="40" align="top"> Leaflet.Locate
 
 [![npm version](https://badge.fury.io/js/leaflet.locatecontrol.svg)](http://badge.fury.io/js/leaflet.locatecontrol)
 [![jsDelivr Hits](https://data.jsdelivr.com/v1/package/npm/leaflet.locatecontrol/badge?style=rounded)](https://www.jsdelivr.com/package/npm/leaflet.locatecontrol)

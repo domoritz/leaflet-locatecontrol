@@ -1,6 +1,3 @@
-import { Map, TileLayer } from "leaflet";
-import { LocateControl } from "../dist/L.Control.Locate.esm.js";
-
 // Dark Mode Toggle
 const darkModeToggle = document.getElementById("dark-mode-toggle");
 const root = document.documentElement;
@@ -21,46 +18,42 @@ function getCurrentTheme() {
 
 const osmUrl = "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
 const osmAttrib = 'Map data © <a href="http://osm.org/copyright">OpenStreetMap</a> contributors';
-let osm = new TileLayer(osmUrl, {
+let osm = new L.TileLayer(osmUrl, {
   attribution: osmAttrib,
-  detectRetina: true
+  detectRetina: true,
+  className: "map-tiles"
 });
-
-const osmDarkUrl = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
-const osmDarkAttrib =
-  '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>';
-let osmDark = new TileLayer(osmDarkUrl, {
-  attribution: osmDarkAttrib,
-  detectRetina: true
-});
-
-function updateMapLayer() {
-  if (getCurrentTheme() === "dark") {
-    map.removeLayer(osm);
-    osmDark.addTo(map);
-  } else {
-    map.removeLayer(osmDark);
-    osm.addTo(map);
-  }
-}
 
 darkModeToggle.addEventListener("click", () => {
   const currentTheme = getCurrentTheme();
   const newTheme = currentTheme === "dark" ? "light" : "dark";
   root.setAttribute("data-theme", newTheme);
   localStorage.setItem("theme", newTheme);
-  updateMapLayer();
 });
 
-let map = new Map("map", {
-  layers: [getCurrentTheme() === "dark" ? osmDark : osm],
+// please replace this with your own mapbox token!
+const token = "pk.eyJ1IjoiZG9tb3JpdHoiLCJhIjoiY2s4a2d0OHp3MDFxMTNmcWoxdDVmdHF4MiJ9.y9-0BZCXJBpNBzEHxhFq1Q";
+const mapboxUrl = "https://api.mapbox.com/styles/v1/mapbox/streets-v10/tiles/{z}/{x}/{y}@2x?access_token=" + token;
+const mapboxAttrib = 'Map data © <a href="http://osm.org/copyright">OpenStreetMap</a> contributors. Tiles from <a href="https://www.mapbox.com">Mapbox</a>.';
+let mapbox = new L.TileLayer(mapboxUrl, {
+  attribution: mapboxAttrib,
+  tileSize: 512,
+  zoomOffset: -1
+});
+
+let map = new L.Map("map", {
+  layers: [osm],
   center: [51.505, -0.09],
   zoom: 10,
   zoomControl: true
 });
 
-let lc = new LocateControl({
-  strings: {
-    title: "Show me where I am, yo!"
-  }
-}).addTo(map);
+// add location control to global name space for testing only
+// on a production site, omit the "lc = "!
+lc = L.control
+  .locate({
+    strings: {
+      title: "Show me where I am, yo!"
+    }
+  })
+  .addTo(map);
