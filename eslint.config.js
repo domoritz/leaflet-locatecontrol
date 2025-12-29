@@ -1,6 +1,7 @@
 import { defineConfig, globalIgnores } from "eslint/config";
 import css from "@eslint/css";
 import globals from "globals";
+import js from "@eslint/js";
 
 export default defineConfig([
   globalIgnores(["dist/*"]),
@@ -10,8 +11,10 @@ export default defineConfig([
     languageOptions: {
       ecmaVersion: "latest",
       globals: {
-        ...globals.browser
+        ...globals.browser,
+        L: "readonly"
       }
-    }
+    },
+    extends: [js.configs.recommended]
   }
 ]);
