@@ -31,21 +31,20 @@
     "bump:minor": "npm version minor",
     "bump:patch": "npm version patch",
     "version": "npm run build && git add -A dist",
-    "lint": "eslint && stylelint **/*.css && prettier --check .",
-    "lint:fix": "eslint --fix && stylelint --fix **/*.css && prettier --write .",
+    "lint": "eslint && prettier --check .",
+    "lint:fix": "eslint --fix && prettier --write .",
     "start": "node scripts/server.js"
   },
   "devDependencies": {
+    "@eslint/css": "^0.14.1",
     "@rollup/plugin-commonjs": "^29.0.0",
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@rollup/plugin-terser": "^0.4.4",
-    "eslint": "^9.23.0",
+    "eslint": "^9.39.2",
     "leaflet": "^1.9.4",
     "lightningcss-cli": "^1.30.2",
-    "prettier": "^3.5.3",
+    "prettier": "^3.7.4",
     "rollup": "^4.53.3",
-    "stylelint": "^16.17.0",
-    "stylelint-prettier": "^5.0.3",
     "typescript": "^5.9.3"
   }
 }
