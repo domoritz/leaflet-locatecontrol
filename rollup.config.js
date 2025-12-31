@@ -1,5 +1,3 @@
-import { nodeResolve } from "@rollup/plugin-node-resolve";
-import commonjs from "@rollup/plugin-commonjs";
 import terser from "@rollup/plugin-terser";
 import { readFileSync } from "fs";
 
@@ -24,7 +22,6 @@ export default [
       file: "dist/L.Control.Locate.esm.js",
       format: "es"
     },
-    plugins: [nodeResolve(), commonjs()]
   },
   // UMD build
   {
@@ -40,7 +37,6 @@ export default [
       esModule: true,
       footer: footer
     },
-    plugins: [nodeResolve(), commonjs()]
   },
   // Minified UMD build
   {
@@ -59,8 +55,6 @@ export default [
       sourcemap: true
     },
     plugins: [
-      nodeResolve(),
-      commonjs(),
       terser({
         format: {
           comments: false,
