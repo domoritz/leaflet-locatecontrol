@@ -1,7 +1,6 @@
 import terser from "@rollup/plugin-terser";
-import { readFileSync } from "fs";
+import pkg from "./package.json" with { type: "json" };
 
-const pkg = JSON.parse(readFileSync("./package.json", "utf-8"));
 const banner = `/*! Version: ${pkg.version}\nCopyright (c) 2016 Dominik Moritz */\n`;
 
 const footer = `
@@ -20,8 +19,9 @@ export default [
     external: ["leaflet"],
     output: {
       file: "dist/L.Control.Locate.esm.js",
-      format: "es"
-    },
+      format: "es",
+      banner: banner
+    }
   },
   // UMD build
   {
@@ -35,8 +35,9 @@ export default [
         leaflet: "L"
       },
       esModule: true,
+      banner: banner,
       footer: footer
-    },
+    }
   },
   // Minified UMD build
   {
