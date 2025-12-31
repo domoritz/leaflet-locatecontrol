@@ -1,6 +1,7 @@
 import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
+import process from "node:process";
 
 const PORT = 9000;
 const ROOT = process.cwd();

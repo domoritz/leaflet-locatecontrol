@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+
 // please replace this with your own mapbox token!
 L.mapbox.accessToken = "pk.eyJ1IjoiZG9tb3JpdHoiLCJhIjoiY2s4a2d0OHp3MDFxMTNmcWoxdDVmdHF4MiJ9.y9-0BZCXJBpNBzEHxhFq1Q";
 

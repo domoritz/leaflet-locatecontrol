@@ -41,7 +41,7 @@ let map = new Map("map", {
   zoomControl: true
 });
 
-let lc = new LocateControl({
+new LocateControl({
   strings: {
     title: "Show me where I am, yo!"
   }
