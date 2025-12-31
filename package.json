@@ -5,10 +5,27 @@
   "homepage": "https://github.com/domoritz/leaflet-locatecontrol",
   "description": "A useful control to geolocate the user with many options. Used by osm.org and mapbox among many others.",
   "main": "dist/L.Control.Locate.min.js",
-  "unpkg": "dist/L.Control.Locate.min.js",
-  "jsdelivr": "dist/L.Control.Locate.min.js",
   "module": "dist/L.Control.Locate.esm.js",
   "types": "dist/L.Control.Locate.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/L.Control.Locate.d.ts",
+      "import": "./dist/L.Control.Locate.esm.js",
+      "require": "./dist/L.Control.Locate.min.js",
+      "default": "./dist/L.Control.Locate.min.js"
+    },
+    "./dist/*": "./dist/*"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": [
+    "*.css",
+    "./dist/L.Control.Locate.min.js",
+    "./dist/L.Control.Locate.umd.js"
+  ],
   "author": "Dominik Moritz <domoritz@gmail.com>",
   "repository": {
     "type": "git",
