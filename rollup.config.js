@@ -1,9 +1,6 @@
-import { nodeResolve } from "@rollup/plugin-node-resolve";
-import commonjs from "@rollup/plugin-commonjs";
 import terser from "@rollup/plugin-terser";
-import { readFileSync } from "fs";
+import pkg from "./package.json" with { type: "json" };
 
-const pkg = JSON.parse(readFileSync("./package.json", "utf-8"));
 const banner = `/*! Version: ${pkg.version}\nCopyright (c) 2016 Dominik Moritz */\n`;
 
 const footer = `
@@ -22,9 +19,9 @@ export default [
     external: ["leaflet"],
     output: {
       file: "dist/L.Control.Locate.esm.js",
-      format: "es"
-    },
-    plugins: [nodeResolve(), commonjs()]
+      format: "es",
+      banner: banner
+    }
   },
   // UMD build
   {
@@ -38,9 +35,9 @@ export default [
         leaflet: "L"
       },
       esModule: true,
+      banner: banner,
       footer: footer
-    },
-    plugins: [nodeResolve(), commonjs()]
+    }
   },
   // Minified UMD build
   {
@@ -59,8 +56,6 @@ export default [
       sourcemap: true
     },
     plugins: [
-      nodeResolve(),
-      commonjs(),
       terser({
         format: {
           comments: false,

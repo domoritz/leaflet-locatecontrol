@@ -41,7 +41,7 @@ const LocationMarker = Marker.extend({
       ["fill-opacity", opt.fillOpacity],
       ["opacity", opt.opacity]
     ]
-      .filter(([k, v]) => v !== undefined)
+      .filter(([, v]) => v !== undefined)
       .map(([k, v]) => `${k}="${v}"`)
       .join(" ");
 
@@ -299,7 +299,7 @@ const LocateControl = Control.extend({
       return { link, icon };
     },
     /** This event is called in case of any location error that is not a time out error. */
-    onLocationError(err, control) {
+    onLocationError(err) {
       alert(err.message);
     },
     /**

@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+
 // Dark Mode Toggle
 const darkModeToggle = document.getElementById("dark-mode-toggle");
 const root = document.documentElement;
@@ -29,16 +31,6 @@ darkModeToggle.addEventListener("click", () => {
   const newTheme = currentTheme === "dark" ? "light" : "dark";
   root.setAttribute("data-theme", newTheme);
   localStorage.setItem("theme", newTheme);
-});
-
-// please replace this with your own mapbox token!
-const token = "pk.eyJ1IjoiZG9tb3JpdHoiLCJhIjoiY2s4a2d0OHp3MDFxMTNmcWoxdDVmdHF4MiJ9.y9-0BZCXJBpNBzEHxhFq1Q";
-const mapboxUrl = "https://api.mapbox.com/styles/v1/mapbox/streets-v10/tiles/{z}/{x}/{y}@2x?access_token=" + token;
-const mapboxAttrib = 'Map data © <a href="http://osm.org/copyright">OpenStreetMap</a> contributors. Tiles from <a href="https://www.mapbox.com">Mapbox</a>.';
-let mapbox = new L.TileLayer(mapboxUrl, {
-  attribution: mapboxAttrib,
-  tileSize: 512,
-  zoomOffset: -1
 });
 
 let map = new L.Map("map", {
