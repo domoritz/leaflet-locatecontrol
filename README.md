@@ -98,7 +98,7 @@ Possible options are listed in the following table. More details are [in the cod
 | `layer` | [`ILayer`](http://leafletjs.com/reference.html#ilayer)  | The layer that the user's location should be drawn on. | a new layer |
 | `setView` | `boolean`  or `string`  | Set the map view (zoom and pan) to the user's location as it updates. Options are `false`, `'once'`, `'always'`, `'untilPan'`, or `'untilPanOrZoom'` | `'untilPanOrZoom'` |
 | `flyTo` | `boolean` | Smooth pan and zoom to the location of the marker. Only works in Leaflet 1.0+. | `false` |
-| `keepCurrentZoomLevel` | `boolean`  | Only pan when setting the view. | `false` |
+| `keepCurrentZoomLevel` | `boolean` or `Array`  | Only pan when setting the view. Set to `true` to always keep the current zoom, or provide a zoom range like `[13, 18]` to only keep the zoom when it's within that range. Outside the range, the map will zoom normally. | `false` |
 | `initialZoomLevel` | `false` or `integer` | After activating the plugin by clicking on the icon, zoom to the selected zoom level, even when keepCurrentZoomLevel is true. Set to `false` to disable this feature. | `false` |
 | `clickBehavior` | `object`  | What to do when the user clicks on the control. Has three options `inView`, `inViewNotFollowing` and `outOfView`. Possible values are `stop` and `setView`, or the name of a behaviour to inherit from. | `{inView: 'stop', outOfView: 'setView', inViewNotFollowing: 'inView'}` |
 | `returnToPrevBounds` | `boolean`  | If set, save the map bounds just before centering to the user's location. When control is disabled, set the view back to the bounds that were saved. | `false` |
@@ -200,13 +200,26 @@ var lc = new L.Control.MyLocate();
 
 #### How do I set the maximum zoom level?
 
-Set the `maxZoom` in `locateOptions` (`keepCurrentZoomLevel` must not be set to true).
+Set the `maxZoom` in `locateOptions` (only applies when `keepCurrentZoomLevel` is `false` or when the current zoom is outside a specified range).
 
 ```js
 map.addControl(
   L.control.locate({
     locateOptions: {
       maxZoom: 10
+    }
+  })
+);
+```
+
+You can also use `keepCurrentZoomLevel: [13, 18]` to only keep zoom when it's between levels 13-18, but zoom normally outside that range:
+
+```js
+map.addControl(
+  L.control.locate({
+    keepCurrentZoomLevel: [13, 18],
+    locateOptions: {
+      maxZoom: 16
     }
   })
 );
