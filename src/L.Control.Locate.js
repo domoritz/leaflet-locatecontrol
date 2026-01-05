@@ -166,7 +166,13 @@ const LocateControl = Control.extend({
      *                The map view follows the user's location until she pans.
      */
     setView: "untilPanOrZoom",
-    /** Keep the current map zoom level when setting the view and only pan. */
+    /**
+     * Keep the current map zoom level when setting the view and only pan.
+     * Can be set to:
+     * - `true`: Always keep current zoom level
+     * - `false`: Allow zooming (default)
+     * - `[minZoom, maxZoom]`: Keep zoom only when current zoom is within the specified range
+     */
     keepCurrentZoomLevel: false,
     /** After activating the plugin by clicking on the icon, zoom to the selected zoom level, even when keepCurrentZoomLevel is true. Set to 'false' to disable this feature. */
     initialZoomLevel: false,
@@ -547,6 +553,24 @@ const LocateControl = Control.extend({
   },
 
   /**
+   * Check if the current zoom level should be kept based on keepCurrentZoomLevel option.
+   * @returns {boolean} true if zoom should be kept, false otherwise
+   */
+  _shouldKeepCurrentZoom() {
+    const option = this.options.keepCurrentZoomLevel;
+
+    // If option is an array [minZoom, maxZoom], check if current zoom is within range
+    if (Array.isArray(option) && option.length === 2) {
+      const currentZoom = this._map.getZoom();
+      const [minZoom, maxZoom] = option;
+      return currentZoom >= minZoom && currentZoom <= maxZoom;
+    }
+
+    // Only return true if explicitly set to true
+    return option === true;
+  },
+
+  /**
    * Zoom (unless we should keep the zoom level) and an to the current view.
    */
   setView() {
@@ -558,7 +582,7 @@ const LocateControl = Control.extend({
       if (this._justClicked && this.options.initialZoomLevel !== false) {
         let f = this.options.flyTo ? this._map.flyTo : this._map.setView;
         f.bind(this._map)([this._event.latitude, this._event.longitude], this.options.initialZoomLevel);
-      } else if (this.options.keepCurrentZoomLevel) {
+      } else if (this._shouldKeepCurrentZoom()) {
         let f = this.options.flyTo ? this._map.flyTo : this._map.panTo;
         f.bind(this._map)([this._event.latitude, this._event.longitude]);
       } else {
