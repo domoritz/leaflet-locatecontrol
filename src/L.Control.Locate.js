@@ -380,6 +380,13 @@ const LocateControl = Control.extend({
   },
 
   /**
+   * Called when control is removed from the map.
+   */
+  onRemove() {
+    this.stop()
+  },
+
+  /**
    * This method is called when the user clicks on the control.
    */
   _onClick() {
