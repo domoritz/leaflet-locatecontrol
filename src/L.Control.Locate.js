@@ -290,6 +290,7 @@ const LocateControl = Control.extend({
       link.title = options.strings.title;
       link.href = "#";
       link.setAttribute("role", "button");
+      link.setAttribute("aria-label", options.strings.title);
       const icon = DomUtil.create(options.iconElementTag, options.icon, link);
 
       if (options.strings.text !== undefined) {
