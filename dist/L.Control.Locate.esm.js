@@ -1,3 +1,6 @@
+/*! Version: 0.86.0
+Copyright (c) 2016 Dominik Moritz */
+
 import { Marker, setOptions, divIcon, Control, DomUtil, Util, circle, DomEvent, LayerGroup, extend } from 'leaflet';
 
 /*!
@@ -42,8 +45,8 @@ const LocationMarker = Marker.extend({
       ["fill-opacity", opt.fillOpacity],
       ["opacity", opt.opacity]
     ]
-      .filter(([k,v]) => v !== undefined)
-      .map(([k,v]) => `${k}="${v}"`)
+      .filter(([, v]) => v !== undefined)
+      .map(([k, v]) => `${k}="${v}"`)
       .join(" ");
 
     const icon = this._getIconSVG(opt, style);
@@ -167,7 +170,13 @@ const LocateControl = Control.extend({
      *                The map view follows the user's location until she pans.
      */
     setView: "untilPanOrZoom",
-    /** Keep the current map zoom level when setting the view and only pan. */
+    /**
+     * Keep the current map zoom level when setting the view and only pan.
+     * Can be set to:
+     * - `true`: Always keep current zoom level
+     * - `false`: Allow zooming (default)
+     * - `[minZoom, maxZoom]`: Keep zoom only when current zoom is within the specified range
+     */
     keepCurrentZoomLevel: false,
     /** After activating the plugin by clicking on the icon, zoom to the selected zoom level, even when keepCurrentZoomLevel is true. Set to 'false' to disable this feature. */
     initialZoomLevel: false,
@@ -285,6 +294,7 @@ const LocateControl = Control.extend({
       link.title = options.strings.title;
       link.href = "#";
       link.setAttribute("role", "button");
+      link.setAttribute("aria-label", options.strings.title);
       const icon = DomUtil.create(options.iconElementTag, options.icon, link);
 
       if (options.strings.text !== undefined) {
@@ -300,7 +310,7 @@ const LocateControl = Control.extend({
       return { link, icon };
     },
     /** This event is called in case of any location error that is not a time out error. */
-    onLocationError(err, control) {
+    onLocationError(err) {
       alert(err.message);
     },
     /**
@@ -548,6 +558,24 @@ const LocateControl = Control.extend({
   },
 
   /**
+   * Check if the current zoom level should be kept based on keepCurrentZoomLevel option.
+   * @returns {boolean} true if zoom should be kept, false otherwise
+   */
+  _shouldKeepCurrentZoom() {
+    const option = this.options.keepCurrentZoomLevel;
+
+    // If option is an array [minZoom, maxZoom], check if current zoom is within range
+    if (Array.isArray(option) && option.length === 2) {
+      const currentZoom = this._map.getZoom();
+      const [minZoom, maxZoom] = option;
+      return currentZoom >= minZoom && currentZoom <= maxZoom;
+    }
+
+    // Only return true if explicitly set to true
+    return option === true;
+  },
+
+  /**
    * Zoom (unless we should keep the zoom level) and an to the current view.
    */
   setView() {
@@ -559,7 +587,7 @@ const LocateControl = Control.extend({
       if (this._justClicked && this.options.initialZoomLevel !== false) {
         let f = this.options.flyTo ? this._map.flyTo : this._map.setView;
         f.bind(this._map)([this._event.latitude, this._event.longitude], this.options.initialZoomLevel);
-      } else if (this.options.keepCurrentZoomLevel) {
+      } else if (this._shouldKeepCurrentZoom()) {
         let f = this.options.flyTo ? this._map.flyTo : this._map.panTo;
         f.bind(this._map)([this._event.latitude, this._event.longitude]);
       } else {
