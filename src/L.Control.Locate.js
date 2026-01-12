@@ -763,11 +763,27 @@ const LocateControl = Control.extend({
    * Calls deactivate and dispatches an error.
    */
   _onLocationError(err) {
-    // ignore time out error if the location is watched
-    if (err.code == 3 && this.options.locateOptions.watch) {
+    // Handle timeout errors in watch mode differently
+    if (err.code === 3 && this.options.locateOptions.watch) {
+      this._timeoutCount = (this._timeoutCount || 0) + 1;
+
+      // Fire event for developers to handle timeouts
+      this._map.fire("locationtimeout", {
+        error: err,
+        control: this,
+        count: this._timeoutCount
+      });
+
+      // Visual feedback after repeated timeouts
+      if (this._timeoutCount >= 3 && this._container) {
+        addClasses(this._container, "locate-timeout");
+      }
+
       return;
     }
 
+    // Reset timeout counter for other errors
+    this._timeoutCount = 0;
     this.stop();
     this.options.onLocationError(err, this);
   },
@@ -784,6 +800,12 @@ const LocateControl = Control.extend({
     if (!this._active) {
       // we may have a stray event
       return;
+    }
+
+    // Reset timeout counter on successful location
+    this._timeoutCount = 0;
+    if (this._container) {
+      removeClasses(this._container, "locate-timeout");
     }
 
     this._event = e;
@@ -954,6 +976,14 @@ const LocateControl = Control.extend({
     // true if the control was clicked for the first time
     // we need this so we can pan and zoom once we have the location
     this._justClicked = false;
+
+    // timeout counter for visual feedback
+    this._timeoutCount = 0;
+
+    // remove timeout styling
+    if (this._container) {
+      removeClasses(this._container, "locate-timeout");
+    }
 
     // true if the user has panned the map after clicking the control
     this._userPanned = false;

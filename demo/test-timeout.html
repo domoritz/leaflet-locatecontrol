@@ -1,0 +1,290 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Locate Control - Poor GPS Signal Demo</title>
+    <link rel="icon" href="../favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="../dist/L.Control.Locate.css" />
+    <style>
+      :root {
+        --bg-color: #fff;
+        --text-color: #212529;
+        --border-color: #dee2e6;
+        --console-bg: #1e1e1e;
+        --console-color: #d4d4d4;
+        --button-border: #ccc;
+        --leaflet-bar-bg: #fff;
+        --leaflet-bar-color: #000;
+        --leaflet-bar-border: rgba(0, 0, 0, 0.2);
+        --leaflet-bar-hover-bg: #f4f4f4;
+        --leaflet-attribution-bg: rgba(255, 255, 255, 0.7);
+        --leaflet-attribution-color: #333;
+      }
+
+      :root[data-theme="dark"] {
+        color-scheme: dark;
+        --bg-color: #1a1a1a;
+        --text-color: #f0f0f0;
+        --border-color: #404040;
+        --console-bg: #0d0d0d;
+        --console-color: #e0e0e0;
+        --button-border: #555;
+        --leaflet-bar-bg: #3a3a3a;
+        --leaflet-bar-color: #fff;
+        --leaflet-bar-border: rgba(255, 255, 255, 0.2);
+        --leaflet-bar-hover-bg: #555;
+        --leaflet-attribution-bg: rgba(58, 58, 58, 0.8);
+        --leaflet-attribution-color: #fff;
+      }
+
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: var(--bg-color);
+        color: var(--text-color);
+        transition:
+          background-color 0.3s ease,
+          color 0.3s ease;
+      }
+      #map {
+        height: 100vh;
+      }
+      #description {
+        background: #f8f9fa;
+        padding: 20px;
+        border-bottom: 2px solid #dee2e6;
+      }
+      :root[data-theme="dark"] #description {
+        background: #2d2d30;
+        border-bottom-color: #404040;
+      }
+      #description h2 {
+        margin: 0 0 15px 0;
+        color: var(--text-color);
+        font-size: 24px;
+      }
+      #description p {
+        margin: 0 0 12px 0;
+        color: var(--text-color);
+        line-height: 1.6;
+      }
+      #description code {
+        background: rgba(0, 0, 0, 0.1);
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-family: "Courier New", monospace;
+      }
+      :root[data-theme="dark"] #description code {
+        background: rgba(255, 255, 255, 0.15);
+      }
+      #dark-mode-toggle {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 1000;
+        padding: 8px 15px;
+        background: white;
+        border: 2px solid var(--button-border);
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        transition:
+          background-color 0.3s ease,
+          color 0.3s ease;
+      }
+      :root[data-theme="dark"] #dark-mode-toggle {
+        background: #2d2d30;
+        color: #cccccc;
+        border-color: #555;
+      }
+
+      /* Leaflet controls dark mode */
+      :root[data-theme="dark"] .leaflet-bar a {
+        background: var(--leaflet-bar-bg);
+        color: var(--leaflet-bar-color);
+        border-color: var(--leaflet-bar-border);
+      }
+      :root[data-theme="dark"] .leaflet-bar a:hover,
+      :root[data-theme="dark"] .leaflet-bar a:focus {
+        background: var(--leaflet-bar-hover-bg);
+      }
+      :root[data-theme="dark"] .leaflet-control-attribution {
+        background: var(--leaflet-attribution-bg) !important;
+        color: var(--leaflet-attribution-color) !important;
+      }
+
+      /* Tile filter for dark mode */
+      :root[data-theme="dark"] .leaflet-tile-pane {
+        filter: invert(1) hue-rotate(180deg) brightness(0.95) saturate(0.85);
+      }
+
+      /* Locate control icon color in dark mode */
+      :root[data-theme="dark"] .leaflet-control-locate {
+        --locate-control-icon-color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <button id="dark-mode-toggle" onclick="toggleDarkMode()">🌙 Dark Mode</button>
+    <div id="description">
+      <h2>Poor GPS Signal Demo</h2>
+      <p>
+        This demo simulates <strong>poor GPS reception</strong> (e.g., indoors, tunnels, urban canyons) to showcase how the locate control handles repeated
+        timeouts gracefully in watch mode.
+      </p>
+      <p style="font-size: 14px; color: #6c757d">
+        <strong>Configuration:</strong> This demo uses a <strong>5 second timeout</strong> (realistic for GPS). After
+        <strong>3 consecutive timeouts</strong> (~15 seconds), the spinner turns <strong style="color: #f39c12">orange</strong>
+        to indicate signal issues. The control keeps trying without interrupting the user experience.
+      </p>
+      <p style="font-size: 14px; color: #6c757d">
+        <strong>For developers:</strong> Listen to the <code>locationtimeout</code> event if you want to inform users about signal issues additional to the
+        visual feedback provided by the control:
+        <code style="display: block; margin-top: 8px; padding: 8px; background: rgba(0, 0, 0, 0.05)"
+          >map.on('locationtimeout', (e) => alert(`GPS timeout ${e.count}`));</code
+        >
+      </p>
+    </div>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="../dist/L.Control.Locate.umd.js"></script>
+    <script>
+      function log(message, type = "info") {
+        const prefix =
+          {
+            info: "[INFO]   ",
+            success: "[SUCCESS]",
+            warning: "[WARNING]",
+            error: "[ERROR]  ",
+            event: "[EVENT]  "
+          }[type] || "[INFO]   ";
+        console.log(`${prefix} ${message}`);
+      }
+
+      const map = L.map("map").setView([51.505, -0.09], 13);
+      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "&copy; OpenStreetMap"
+      }).addTo(map);
+
+      log("Map initialized", "success");
+
+      // Locate Control with moderate timeout for testing
+      // Standard Geolocation API: timeout = Infinity (no timeout)
+      // Here: 5000ms = realistic for slow GPS
+      const lc = L.control
+        .locate({
+          locateOptions: {
+            timeout: 5000,
+            maximumAge: 0,
+            enableHighAccuracy: false,
+            watch: true
+          },
+          strings: {
+            title: "Show my location"
+          }
+        })
+        .addTo(map);
+
+      log("Locate Control created (timeout: 5000ms, watch: true)", "info");
+
+      // Event listeners
+      map.on("locationfound", (e) => {
+        log(`locationfound - ${e.latlng.lat.toFixed(5)}, ${e.latlng.lng.toFixed(5)}`, "success");
+      });
+
+      map.on("locationerror", (e) => {
+        const errorTypes = { 1: "PERMISSION_DENIED", 2: "POSITION_UNAVAILABLE", 3: "TIMEOUT" };
+        log(`locationerror - Code ${e.code} (${errorTypes[e.code]}): ${e.message}`, "error");
+      });
+
+      // New locationtimeout event
+      let visualFeedbackActive = false;
+      map.on("locationtimeout", (e) => {
+        log(`locationtimeout EVENT - Count: ${e.count}`, "event");
+        if (e.count >= 3 && !visualFeedbackActive) {
+          visualFeedbackActive = true;
+          log("Visual feedback active (orange spinner)", "warning");
+        }
+      });
+
+      map.on("locateactivate", () => {
+        log("locateactivate - Geolocation started", "info");
+        visualFeedbackActive = false;
+      });
+
+      map.on("locatedeactivate", () => {
+        log("locatedeactivate - Geolocation stopped", "warning");
+      });
+
+      log("Event listeners registered", "info");
+      log("Demo ready - Simulating poor GPS signal", "info");
+
+      // Simulate poor GPS signal (timeout errors)
+      const activeWatchers = new Map();
+      let callCount = 0;
+
+      navigator.geolocation.watchPosition = function (success, error, options) {
+        callCount++;
+        const watchId = callCount;
+        log(`watchPosition (#${watchId}) timeout: ${options.timeout}ms`, "info");
+
+        // Simulate timeout at the configured interval
+        const intervalId = setInterval(() => {
+          if (!activeWatchers.has(watchId)) {
+            clearInterval(intervalId);
+            return;
+          }
+          log(`Timeout triggered (Watch #${watchId})`, "warning");
+          error({ code: 3, message: "Timeout (simulated)", TIMEOUT: 3 });
+        }, options.timeout || 5000);
+
+        activeWatchers.set(watchId, intervalId);
+        return watchId;
+      };
+
+      navigator.geolocation.clearWatch = function (watchId) {
+        if (activeWatchers.has(watchId)) {
+          clearInterval(activeWatchers.get(watchId));
+          activeWatchers.delete(watchId);
+          log(`clearWatch (#${watchId})`, "info");
+        }
+      };
+
+      log("Poor GPS signal simulation active", "warning");
+
+      // Dark mode toggle
+      const root = document.documentElement;
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const savedTheme = localStorage.getItem("theme");
+
+      if (savedTheme) {
+        root.setAttribute("data-theme", savedTheme);
+      } else if (prefersDark) {
+        root.setAttribute("data-theme", "dark");
+      }
+
+      function getCurrentTheme() {
+        const dataTheme = root.getAttribute("data-theme");
+        if (dataTheme) return dataTheme;
+        return prefersDark ? "dark" : "light";
+      }
+
+      function toggleDarkMode() {
+        const currentTheme = getCurrentTheme();
+        const newTheme = currentTheme === "dark" ? "light" : "dark";
+        root.setAttribute("data-theme", newTheme);
+        localStorage.setItem("theme", newTheme);
+        document.getElementById("dark-mode-toggle").textContent = newTheme === "dark" ? "☀️ Light Mode" : "🌙 Dark Mode";
+      }
+
+      // Update button text on load
+      if (getCurrentTheme() === "dark") {
+        document.getElementById("dark-mode-toggle").textContent = "☀️ Light Mode";
+      }
+    </script>
+  </body>
+</html>
