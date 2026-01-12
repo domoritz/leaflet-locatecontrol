@@ -5,7 +5,7 @@
 
 A useful control to geolocate the user with many options. Official [Leaflet](http://leafletjs.com/plugins.html#geolocation) and [MapBox plugin](https://www.mapbox.com/mapbox.js/example/v1.0.0/leaflet-locatecontrol/).
 
-Tested with [Leaflet](http://leafletjs.com/) 1.9.2 and [Mapbox.js](https://docs.mapbox.com/mapbox.js/) 3.3.1 in Firefox, Chrome and Safari.
+Tested with [Leaflet](https://leafletjs.com/) 1.9.2 and [Mapbox.js](https://docs.mapbox.com/mapbox.js/) 3.3.1 in Firefox, Chrome and Safari.
 
 Please check for [breaking changes in the changelog](https://github.com/domoritz/leaflet-locatecontrol/blob/gh-pages/CHANGELOG.md).
 
@@ -81,7 +81,7 @@ L.control.locate().addTo(map);
 
 ### Possible options
 
-The locate controls inherits options from [Leaflet Controls](http://leafletjs.com/reference.html#control-options).
+The locate controls inherits options from [Leaflet Controls](https://leafletjs.com/reference.html#control).
 
 To customize the control, pass an object with your custom options to the locate control.
 
@@ -126,7 +126,7 @@ Possible options are listed in the following table. More details are [in the cod
 | `showPopup` | `boolean`  | Display a pop-up when the user click on the inner marker. | `true` |
 | `strings` | `object`  | Strings used in the control. Options are `title`, `text`, `metersUnit`, `feetUnit`, `popup` and `outsideMapBoundsMsg` | see code |
 | `strings.popup` | `string` or `function`  | The string shown as popup. May contain the placeholders `{distance}` and `{unit}`. If this option is specified as function, it will be executed with a single parameter `{distance, unit}` and expected to return a string. | see code |
-| `locateOptions` | [`Locate options`](http://leafletjs.com/reference.html#map-locate-options)  | The default options passed to leaflets locate method. | see code |
+| `locateOptions` | [`Locate options`](https://leafletjs.com/reference.html#locate-options)  | The default options passed to leaflets locate method. | see code |
 <!-- prettier-ignore-end -->
 
 For example, to customize the position and the title, you could write
@@ -150,10 +150,10 @@ var lc = L.control
 
 Sites that use this locate control:
 
-- [OpenStreetMap](http://www.openstreetmap.org/) on the start page
+- [OpenStreetMap](https://www.openstreetmap.org/) on the start page
 - [MapBox](https://www.mapbox.com/mapbox.js/example/v1.0.0/leaflet-locatecontrol/)
-- [wheelmap.org](http://wheelmap.org/map)
-- [OpenMensa](http://openmensa.org/)
+- [wheelmap.org](https://wheelmap.org/)
+- [OpenMensa](https://openmensa.org/)
 - [Maps Marker Pro](https://www.mapsmarker.com) (WordPress plugin)
 - [Bikemap](https://jackdougherty.github.io/bikemapcode/)
 - [MyRoutes](https://myroutes.io/)
@@ -178,9 +178,20 @@ You can keep the plugin active but stop following using `lc.stopFollowing()`.
 
 ### Events
 
-You can leverage the native Leaflet events `locationfound` and `locationerror` to handle when geolocation is successful or produces an error. You can find out more about these events in the [Leaflet documentation](http://leafletjs.com/examples/mobile.html#geolocation).
+You can leverage the native Leaflet events `locationfound` and `locationerror` to handle when geolocation is successful or produces an error. You can find out more about these events in the [Leaflet documentation](https://leafletjs.com/examples/mobile/#geolocation).
 
 Additionally, the locate control fires `locateactivate` and `locatedeactivate` events on the map object when it is activated and deactivated, respectively.
+
+The control also fires a `locationtimeout` event when geolocation timeouts occur in watch mode. This is useful for providing custom feedback to users when location acquisition takes longer than expected:
+
+```js
+map.on("locationtimeout", function (e) {
+  console.log("Location timeout count:", e.count);
+  // Provide custom feedback or retry logic
+});
+```
+
+Note: When `watch: true` (the default), timeout errors don't stop the location tracking - the browser will automatically retry. After 3 consecutive timeouts, the control displays a visual indicator (orange spinner) to inform users that location acquisition is taking longer than usual.
 
 ### Extending
 
@@ -227,7 +238,7 @@ map.addControl(
 
 #### How do I enable high accuracy?
 
-To enable [high accuracy (GPS) mode](http://leafletjs.com/reference.html#map-enablehighaccuracy), set the `enableHighAccuracy` in `locateOptions`.
+To enable [high accuracy (GPS) mode](https://leafletjs.com/reference.html#locate-options-enablehighaccuracy), set the `enableHighAccuracy` in `locateOptions`.
 
 ```js
 map.addControl(
