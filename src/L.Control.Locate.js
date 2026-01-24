@@ -645,6 +645,10 @@ const LocateControl = Control.extend({
    * Uses the event retrieved from onLocationFound from the map.
    */
   _drawMarker() {
+    if (!this._event) {
+      return;
+    }
+
     if (this._event.accuracy === undefined) {
       this._event.accuracy = 0;
     }
@@ -800,7 +804,7 @@ const LocateControl = Control.extend({
    */
   _onLocationFound(e) {
     // no need to do anything if the location has not changed
-    if (this._event && this._event.latlng.lat === e.latlng.lat && this._event.latlng.lng === e.latlng.lng && this._event.accuracy === e.accuracy) {
+    if (this._event?.latlng?.lat === e.latlng.lat && this._event?.latlng?.lng === e.latlng.lng && this._event?.accuracy === e.accuracy) {
       return;
     }
 
