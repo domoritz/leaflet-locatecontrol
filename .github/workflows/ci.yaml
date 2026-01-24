@@ -1,0 +1,18 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: latest
+      - name: Install dependencies
+        run: npm ci
+      - name: Lint (check code style)
+        run: node --run lint
+      - name: Test (run unit tests against src/)
+        run: node --run test
+      - name: Build (verify dist/ can be generated)
+        run: node --run build
