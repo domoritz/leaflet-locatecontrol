@@ -56,6 +56,8 @@ export class LocateControl extends Control {
 
   onAdd(map: Map): HTMLElement;
 
+  onRemove(): void;
+
   start(): void;
 
   stop(): void;
