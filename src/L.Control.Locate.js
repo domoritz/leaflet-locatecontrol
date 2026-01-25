@@ -5,7 +5,7 @@ This file is part of the leaflet locate control. It is licensed under the MIT li
 You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
 */
 
-import { Control, Marker, DomUtil, setOptions, divIcon, extend, LayerGroup, circle, DomEvent, Util as LeafletUtil } from "leaflet";
+import { Control, Marker, DomUtil, setOptions, divIcon, LayerGroup, circle, DomEvent, Util as LeafletUtil } from "leaflet";
 const addClasses = (el, names) => {
   names.split(" ").forEach((className) => {
     el.classList.add(className);
@@ -17,6 +17,27 @@ const removeClasses = (el, names) => {
     el.classList.remove(className);
   });
 };
+
+/**
+ * Shallow clone options to prevent prototype pollution.
+ * Clones arrays and plain objects, keeps functions/classes as references.
+ * @param {Object} options - The options object to clone.
+ * @returns {Object} A shallow clone of the options object.
+ */
+function cloneOptions(options) {
+  const cloned = {};
+  for (const key in options) {
+    const val = options[key];
+    if (Array.isArray(val)) {
+      cloned[key] = [...val];
+    } else if (val?.constructor === Object) {
+      cloned[key] = { ...val };
+    } else {
+      cloned[key] = val;
+    }
+  }
+  return cloned;
+}
 
 /**
  * Compatible with Circle but a true marker instead of a path
@@ -335,20 +356,25 @@ const LocateControl = Control.extend({
     }
   },
 
-  initialize(options) {
-    // set default options if nothing is set (merge one step deep)
-    for (const i in options) {
-      if (typeof this.options[i] === "object") {
-        extend(this.options[i], options[i]);
+  initialize(options = {}) {
+    // Clone default options to prevent prototype pollution
+    this.options = cloneOptions(this.options);
+
+    // Merge user-provided options
+    for (const key in options) {
+      const userVal = options[key];
+      const defaultVal = this.options[key];
+      if (userVal?.constructor === Object && defaultVal?.constructor === Object) {
+        Object.assign(defaultVal, userVal);
       } else {
-        this.options[i] = options[i];
+        this.options[key] = userVal;
       }
     }
 
-    // extend the follow marker style and circle from the normal style
-    this.options.followMarkerStyle = extend({}, this.options.markerStyle, this.options.followMarkerStyle);
-    this.options.followCircleStyle = extend({}, this.options.circleStyle, this.options.followCircleStyle);
-    this.options.followCompassStyle = extend({}, this.options.compassStyle, this.options.followCompassStyle);
+    // Follow styles inherit from base styles
+    Object.assign(this.options.followMarkerStyle, this.options.markerStyle, this.options.followMarkerStyle);
+    Object.assign(this.options.followCircleStyle, this.options.circleStyle, this.options.followCircleStyle);
+    Object.assign(this.options.followCompassStyle, this.options.compassStyle, this.options.followCompassStyle);
   },
 
   /**
