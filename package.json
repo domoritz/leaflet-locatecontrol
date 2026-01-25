@@ -47,16 +47,19 @@
     "build:types": "cp src/L.Control.Locate.d.ts dist/L.Control.Locate.d.ts",
     "bump:minor": "npm version minor",
     "bump:patch": "npm version patch",
+    "preversion": "npm run lint && npm run test",
     "version": "npm run build && git add -A dist",
     "lint": "eslint && prettier --check .",
     "lint:fix": "eslint --fix && prettier --write .",
-    "start": "node scripts/server.js"
+    "start": "node scripts/server.js",
+    "test": "node --test spec/*.spec.js"
   },
   "devDependencies": {
     "@eslint/css": "^0.14.1",
     "@eslint/js": "^9.39.2",
     "@rollup/plugin-terser": "^0.4.4",
     "eslint": "^9.39.2",
+    "happy-dom": "^20.3.7",
     "leaflet": "^1.9.4",
     "lightningcss-cli": "^1.30.2",
     "prettier": "^3.7.4",

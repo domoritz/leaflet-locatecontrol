@@ -1,0 +1,434 @@
+import { describe, it, beforeEach, afterEach } from "node:test";
+import assert from "node:assert";
+import "./setup.js";
+import { Map, LayerGroup } from "leaflet";
+
+// Import after setup
+const { LocateControl, LocationMarker, CompassMarker, locate } = await import("../src/L.Control.Locate.js");
+
+describe("LocateControl", () => {
+  let map;
+  let container;
+
+  beforeEach(() => {
+    container = document.createElement("div");
+    container.style.width = "800px";
+    container.style.height = "600px";
+    document.body.appendChild(container);
+    map = new Map(container).setView([51.505, -0.09], 13);
+  });
+
+  afterEach(() => {
+    if (map) {
+      map.remove();
+    }
+    document.body.innerHTML = "";
+  });
+
+  describe("Initialization & Options", () => {
+    it("should create a LocateControl instance", () => {
+      const control = new LocateControl();
+      assert.ok(control, "Control should be created");
+      assert.strictEqual(typeof control.start, "function", "Should have start method");
+      assert.strictEqual(typeof control.stop, "function", "Should have stop method");
+      assert.strictEqual(typeof control.setView, "function", "Should have setView method");
+    });
+
+    it("should have default options", () => {
+      const control = new LocateControl();
+      assert.strictEqual(control.options.position, "topleft");
+      assert.strictEqual(control.options.setView, "untilPanOrZoom");
+      assert.strictEqual(control.options.keepCurrentZoomLevel, false);
+      assert.strictEqual(control.options.flyTo, false);
+      assert.strictEqual(control.options.drawCircle, true);
+      assert.strictEqual(control.options.drawMarker, true);
+      assert.strictEqual(control.options.showCompass, true);
+      assert.strictEqual(control.options.cacheLocation, true);
+      assert.strictEqual(control.options.showPopup, true);
+      assert.strictEqual(control.options.metric, true);
+    });
+
+    it("should accept custom options", () => {
+      const control = new LocateControl({
+        position: "topright",
+        flyTo: true,
+        drawCircle: false,
+        metric: false
+      });
+      assert.strictEqual(control.options.position, "topright");
+      assert.strictEqual(control.options.flyTo, true);
+      assert.strictEqual(control.options.drawCircle, false);
+      assert.strictEqual(control.options.metric, false);
+    });
+
+    it("should merge nested options", () => {
+      const control = new LocateControl({
+        strings: {
+          title: "Locate me!"
+        },
+        clickBehavior: {
+          inView: "setView"
+        }
+      });
+      assert.strictEqual(control.options.strings.title, "Locate me!");
+      assert.strictEqual(control.options.clickBehavior.inView, "setView");
+      // Should still have other default strings
+      assert.ok(control.options.strings.popup);
+      assert.ok(control.options.strings.metersUnit);
+    });
+
+    it("should accept a custom layer", () => {
+      const layer = new LayerGroup();
+      const control = new LocateControl({ layer });
+      assert.strictEqual(control.options.layer, layer);
+    });
+  });
+
+  describe("DOM Creation", () => {
+    it("should create DOM elements when added to map", () => {
+      const control = new LocateControl();
+      map.addControl(control);
+      const controlContainer = document.querySelector(".leaflet-control-locate");
+
+      assert.ok(controlContainer instanceof HTMLElement, "Should create control container");
+      assert.ok(controlContainer.classList.contains("leaflet-bar"), "Should have leaflet-bar class");
+    });
+
+    it("should create a link element", () => {
+      const control = new LocateControl();
+      map.addControl(control);
+      const link = document.querySelector(".leaflet-control-locate a");
+
+      assert.ok(link instanceof HTMLElement, "Should create link element");
+      assert.ok(link.hasAttribute("href"), "Link should have href");
+    });
+
+    it("should create an icon element", () => {
+      const control = new LocateControl();
+      map.addControl(control);
+      const icon = document.querySelector(".leaflet-control-locate-location-arrow");
+
+      assert.ok(icon instanceof HTMLElement, "Should create icon element");
+    });
+
+    it("should support text display", () => {
+      const control = new LocateControl({
+        strings: {
+          text: "Locate"
+        }
+      });
+      map.addControl(control);
+      const text = document.querySelector(".leaflet-locate-text");
+
+      assert.ok(text instanceof HTMLElement, "Should create text element");
+      assert.strictEqual(text.textContent, "Locate");
+    });
+  });
+
+  describe("Accessibility (ARIA)", () => {
+    it('should set role="button" on link', () => {
+      const control = new LocateControl();
+      map.addControl(control);
+      const link = document.querySelector(".leaflet-control-locate a");
+
+      assert.strictEqual(link.getAttribute("role"), "button");
+    });
+
+    it("should set aria-label on link", () => {
+      const control = new LocateControl();
+      map.addControl(control);
+      const link = document.querySelector(".leaflet-control-locate a");
+
+      assert.ok(link.hasAttribute("aria-label"));
+      assert.strictEqual(link.getAttribute("aria-label"), control.options.strings.title);
+    });
+
+    it("should set title on link", () => {
+      const customTitle = "Find my location";
+      const control = new LocateControl({
+        strings: { title: customTitle }
+      });
+      map.addControl(control);
+      const link = document.querySelector(".leaflet-control-locate a");
+
+      assert.strictEqual(link.title, customTitle);
+    });
+  });
+
+  describe("setView Options", () => {
+    it('should accept "once" as setView option', () => {
+      const control = new LocateControl({ setView: "once" });
+      assert.strictEqual(control.options.setView, "once");
+    });
+
+    it('should accept "always" as setView option', () => {
+      const control = new LocateControl({ setView: "always" });
+      assert.strictEqual(control.options.setView, "always");
+    });
+
+    it('should accept "untilPan" as setView option', () => {
+      const control = new LocateControl({ setView: "untilPan" });
+      assert.strictEqual(control.options.setView, "untilPan");
+    });
+
+    it("should accept false as setView option", () => {
+      const control = new LocateControl({ setView: false });
+      assert.strictEqual(control.options.setView, false);
+    });
+  });
+
+  describe("clickBehavior Options", () => {
+    it("should have default click behaviors", () => {
+      const control = new LocateControl();
+      assert.strictEqual(control.options.clickBehavior.inView, "stop");
+      assert.strictEqual(control.options.clickBehavior.outOfView, "setView");
+      assert.strictEqual(control.options.clickBehavior.inViewNotFollowing, "inView");
+    });
+
+    it("should not share options between instances", () => {
+      // This test verifies the fix for prototype pollution bug
+      const control1 = new LocateControl({
+        clickBehavior: { inView: "setView" }
+      });
+      const control2 = new LocateControl();
+
+      assert.strictEqual(control1.options.clickBehavior.inView, "setView");
+      assert.strictEqual(control2.options.clickBehavior.inView, "stop", "Options should not be shared between instances");
+    });
+
+    it("should accept custom click behaviors", () => {
+      const control = new LocateControl({
+        clickBehavior: {
+          inView: "setView",
+          outOfView: "stop"
+        }
+      });
+      assert.strictEqual(control.options.clickBehavior.inView, "setView");
+      assert.strictEqual(control.options.clickBehavior.outOfView, "stop");
+    });
+  });
+
+  describe("keepCurrentZoomLevel Options", () => {
+    it("should accept boolean true", () => {
+      const control = new LocateControl({ keepCurrentZoomLevel: true });
+      assert.strictEqual(control.options.keepCurrentZoomLevel, true);
+    });
+
+    it("should accept boolean false", () => {
+      const control = new LocateControl({ keepCurrentZoomLevel: false });
+      assert.strictEqual(control.options.keepCurrentZoomLevel, false);
+    });
+
+    it("should accept array [minZoom, maxZoom]", () => {
+      const control = new LocateControl({ keepCurrentZoomLevel: [10, 15] });
+      assert.deepStrictEqual(control.options.keepCurrentZoomLevel, [10, 15]);
+    });
+  });
+
+  describe("Style Options", () => {
+    it("should have default circle style", () => {
+      const control = new LocateControl();
+      assert.ok(control.options.circleStyle);
+      assert.strictEqual(control.options.circleStyle.className, "leaflet-control-locate-circle");
+      assert.ok(control.options.circleStyle.color);
+    });
+
+    it("should have default marker style", () => {
+      const control = new LocateControl();
+      assert.ok(control.options.markerStyle);
+      assert.strictEqual(control.options.markerStyle.className, "leaflet-control-locate-marker");
+      assert.ok(control.options.markerStyle.radius);
+    });
+
+    it("should have default compass style", () => {
+      const control = new LocateControl();
+      assert.ok(control.options.compassStyle);
+      assert.ok(control.options.compassStyle.radius);
+      assert.ok(control.options.compassStyle.width);
+      assert.ok(control.options.compassStyle.depth);
+    });
+
+    it("should merge follow styles from default styles", () => {
+      const control = new LocateControl();
+      // Follow styles should inherit from default styles
+      assert.strictEqual(control.options.followCircleStyle.className, control.options.circleStyle.className);
+      assert.strictEqual(control.options.followMarkerStyle.className, control.options.markerStyle.className);
+    });
+  });
+
+  describe("Localization", () => {
+    it("should have default string values", () => {
+      const control = new LocateControl();
+      assert.strictEqual(control.options.strings.title, "Show me where I am");
+      assert.strictEqual(control.options.strings.metersUnit, "meters");
+      assert.strictEqual(control.options.strings.feetUnit, "feet");
+      assert.ok(control.options.strings.popup);
+      assert.ok(control.options.strings.outsideMapBoundsMsg);
+    });
+
+    it("should not share strings between instances", () => {
+      // This test verifies the fix for prototype pollution bug
+      const control1 = new LocateControl({
+        strings: { title: "Custom Title" }
+      });
+      const control2 = new LocateControl();
+
+      assert.strictEqual(control1.options.strings.title, "Custom Title");
+      assert.strictEqual(control2.options.strings.title, "Show me where I am", "Strings should not be shared between instances");
+    });
+
+    it("should accept custom strings", () => {
+      const control = new LocateControl({
+        strings: {
+          title: "Zeige meinen Standort",
+          metersUnit: "Meter",
+          feetUnit: "Fuß"
+        }
+      });
+      assert.strictEqual(control.options.strings.title, "Zeige meinen Standort");
+      assert.strictEqual(control.options.strings.metersUnit, "Meter");
+      assert.strictEqual(control.options.strings.feetUnit, "Fuß");
+    });
+  });
+
+  describe("Control Lifecycle", () => {
+    it("should add layer to map when added", () => {
+      const control = new LocateControl();
+      map.addControl(control);
+      // The internal layer should be added to map
+      assert.ok(control._layer);
+    });
+
+    it("should clean up when removed from map", () => {
+      const control = new LocateControl();
+      map.addControl(control);
+      map.removeControl(control);
+      // Control should be stopped
+      assert.strictEqual(control._active, false);
+    });
+  });
+});
+
+describe("LocationMarker", () => {
+  let map;
+  let container;
+
+  beforeEach(() => {
+    container = document.createElement("div");
+    container.style.width = "800px";
+    container.style.height = "600px";
+    document.body.appendChild(container);
+    map = new Map(container).setView([51.505, -0.09], 13);
+  });
+
+  afterEach(() => {
+    if (map) {
+      map.remove();
+    }
+    document.body.innerHTML = "";
+  });
+
+  it("should create a LocationMarker", () => {
+    const marker = new LocationMarker([51.505, -0.09], {
+      color: "#fff",
+      fillColor: "#2A93EE",
+      radius: 9
+    });
+    assert.ok(marker);
+  });
+
+  it("should generate SVG icon", () => {
+    const marker = new LocationMarker([51.505, -0.09], {
+      color: "#fff",
+      fillColor: "#2A93EE",
+      fillOpacity: 1,
+      weight: 3,
+      opacity: 1,
+      radius: 9
+    });
+    assert.ok(marker._locationIcon);
+    assert.ok(marker._locationIcon.options.html.includes("<svg"));
+    assert.ok(marker._locationIcon.options.html.includes("<circle"));
+  });
+
+  it("should update style with setStyle", () => {
+    const marker = new LocationMarker([51.505, -0.09], {
+      radius: 9
+    });
+    marker.setStyle({ radius: 12 });
+    assert.strictEqual(marker.options.radius, 12);
+  });
+});
+
+describe("CompassMarker", () => {
+  let map;
+  let container;
+
+  beforeEach(() => {
+    container = document.createElement("div");
+    container.style.width = "800px";
+    container.style.height = "600px";
+    document.body.appendChild(container);
+    map = new Map(container).setView([51.505, -0.09], 13);
+  });
+
+  afterEach(() => {
+    if (map) {
+      map.remove();
+    }
+    document.body.innerHTML = "";
+  });
+
+  it("should create a CompassMarker with heading", () => {
+    const marker = new CompassMarker([51.505, -0.09], 45, {
+      radius: 9,
+      width: 9,
+      depth: 6
+    });
+    assert.ok(marker);
+    assert.strictEqual(marker._heading, 45);
+  });
+
+  it("should generate SVG with arrow path", () => {
+    const marker = new CompassMarker([51.505, -0.09], 90, {
+      fillColor: "#2A93EE",
+      fillOpacity: 1,
+      weight: 0,
+      radius: 9,
+      width: 9,
+      depth: 6
+    });
+    assert.ok(marker._locationIcon);
+    assert.ok(marker._locationIcon.options.html.includes("<svg"));
+    assert.ok(marker._locationIcon.options.html.includes("<path"));
+  });
+
+  it("should update heading with setHeading", () => {
+    const marker = new CompassMarker([51.505, -0.09], 0, {
+      radius: 9,
+      width: 9,
+      depth: 6
+    });
+    marker.setHeading(180);
+    assert.strictEqual(marker._heading, 180);
+  });
+});
+
+describe("Exports", () => {
+  it("should export LocateControl", () => {
+    assert.ok(LocateControl);
+  });
+
+  it("should export LocationMarker", () => {
+    assert.ok(LocationMarker);
+  });
+
+  it("should export CompassMarker", () => {
+    assert.ok(CompassMarker);
+  });
+
+  it("should export locate factory function", () => {
+    assert.ok(locate);
+    assert.strictEqual(typeof locate, "function");
+  });
+});
