@@ -625,26 +625,29 @@ const LocateControl = Control.extend({
     if (this._isOutsideMapBounds()) {
       this._event = undefined; // clear the current location so we can get back into the bounds
       this.options.onLocationOutsideMapBounds(this);
+      return;
+    }
+
+    const latlng = this._event.latlng;
+
+    if (this._justClicked && this.options.initialZoomLevel !== false) {
+      const f = this.options.flyTo ? this._map.flyTo : this._map.setView;
+      f.bind(this._map)(latlng, this.options.initialZoomLevel);
+    } else if (this._shouldKeepCurrentZoom()) {
+      const f = this.options.flyTo ? this._map.flyTo : this._map.panTo;
+      f.bind(this._map)(latlng);
     } else {
-      if (this._justClicked && this.options.initialZoomLevel !== false) {
-        let f = this.options.flyTo ? this._map.flyTo : this._map.setView;
-        f.bind(this._map)([this._event.latitude, this._event.longitude], this.options.initialZoomLevel);
-      } else if (this._shouldKeepCurrentZoom()) {
-        let f = this.options.flyTo ? this._map.flyTo : this._map.panTo;
-        f.bind(this._map)([this._event.latitude, this._event.longitude]);
-      } else {
-        let f = this.options.flyTo ? this._map.flyToBounds : this._map.fitBounds;
-        // Ignore zoom events while setting the viewport as these would stop following
-        this._ignoreEvent = true;
-        f.bind(this._map)(this.options.getLocationBounds(this._event), {
-          padding: this.options.circlePadding,
-          maxZoom: this.options.initialZoomLevel || this.options.locateOptions.maxZoom
-        });
-        requestAnimationFrame(() => {
-          // Wait until after the next animFrame because the flyTo can be async
-          this._ignoreEvent = false;
-        });
-      }
+      const f = this.options.flyTo ? this._map.flyToBounds : this._map.fitBounds;
+      // Ignore zoom events while setting the viewport as these would stop following
+      this._ignoreEvent = true;
+      f.bind(this._map)(this.options.getLocationBounds(this._event), {
+        padding: this.options.circlePadding,
+        maxZoom: this.options.initialZoomLevel || this.options.locateOptions.maxZoom
+      });
+      requestAnimationFrame(() => {
+        // Wait until after the next animFrame because the flyTo can be async
+        this._ignoreEvent = false;
+      });
     }
   },
 
