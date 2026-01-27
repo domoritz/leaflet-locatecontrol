@@ -638,10 +638,10 @@ const LocateControl = Control.extend({
           padding: this.options.circlePadding,
           maxZoom: this.options.initialZoomLevel || this.options.locateOptions.maxZoom
         });
-        LeafletUtil.requestAnimFrame(function () {
+        requestAnimationFrame(() => {
           // Wait until after the next animFrame because the flyTo can be async
           this._ignoreEvent = false;
-        }, this);
+        });
       }
     }
   },
@@ -773,13 +773,12 @@ const LocateControl = Control.extend({
    * Sets the compass heading
    */
   _setCompassHeading(angle) {
-    if (!isNaN(parseFloat(angle)) && isFinite(angle)) {
-      angle = Math.round(angle);
-
-      this._compassHeading = angle;
-      LeafletUtil.requestAnimFrame(this._drawCompass, this);
+    if (Number.isFinite(angle)) {
+      this._compassHeading = Math.round(angle);
+      requestAnimationFrame(() => this._drawCompass());
     } else {
       this._compassHeading = null;
+      this._drawCompass();
     }
   },
 
