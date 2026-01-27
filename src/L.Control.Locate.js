@@ -755,6 +755,7 @@ const LocateControl = Control.extend({
     this._layer.clearLayers();
     this._marker = undefined;
     this._circle = undefined;
+    this._compass = undefined;
   },
 
   /**
@@ -944,6 +945,8 @@ const LocateControl = Control.extend({
     } else if (this.options.setView === "untilPanOrZoom") {
       return !this._userPanned && !this._userZoomed;
     }
+
+    return false;
   },
 
   /**
