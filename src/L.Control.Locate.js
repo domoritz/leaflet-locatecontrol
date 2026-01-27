@@ -5,18 +5,31 @@ This file is part of the leaflet locate control. It is licensed under the MIT li
 You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
 */
 
-import { Control, Marker, DomUtil, setOptions, divIcon, LayerGroup, circle, DomEvent, Util as LeafletUtil } from "leaflet";
-const addClasses = (el, names) => {
+import { Control, Marker, DomUtil, setOptions, divIcon, LayerGroup, Circle, DomEvent, Util as LeafletUtil } from "leaflet";
+
+const METERS_TO_FEET = 3.2808399;
+
+/**
+ * Add one or more CSS classes to an element.
+ * @param {HTMLElement} el - The element to add classes to.
+ * @param {string} names - Space-separated class names.
+ */
+function addClasses(el, names) {
   names.split(" ").forEach((className) => {
     el.classList.add(className);
   });
-};
+}
 
-const removeClasses = (el, names) => {
+/**
+ * Remove one or more CSS classes from an element.
+ * @param {HTMLElement} el - The element to remove classes from.
+ * @param {string} names - Space-separated class names.
+ */
+function removeClasses(el, names) {
   names.split(" ").forEach((className) => {
     el.classList.remove(className);
   });
-};
+}
 
 /**
  * Shallow clone options to prevent prototype pollution.
@@ -627,10 +640,10 @@ const LocateControl = Control.extend({
           padding: this.options.circlePadding,
           maxZoom: this.options.initialZoomLevel || this.options.locateOptions.maxZoom
         });
-        LeafletUtil.requestAnimFrame(function () {
+        requestAnimationFrame(() => {
           // Wait until after the next animFrame because the flyTo can be async
           this._ignoreEvent = false;
-        }, this);
+        });
       }
     }
   },
@@ -675,65 +688,81 @@ const LocateControl = Control.extend({
       return;
     }
 
-    if (this._event.accuracy === undefined) {
-      this._event.accuracy = 0;
-    }
-
-    const radius = this._event.accuracy;
     const latlng = this._event.latlng;
+    const accuracy = this._event.accuracy ?? 0;
+    const isFollowing = this._isFollowing();
 
-    // circle with the radius of the location's accuracy
+    // Draw accuracy circle
     if (this.options.drawCircle) {
-      const style = this._isFollowing() ? this.options.followCircleStyle : this.options.circleStyle;
+      const style = isFollowing ? this.options.followCircleStyle : this.options.circleStyle;
 
-      if (!this._circle) {
-        this._circle = circle(latlng, radius, style).addTo(this._layer);
+      if (this._circle) {
+        this._circle.setLatLng(latlng).setRadius(accuracy).setStyle(style);
       } else {
-        this._circle.setLatLng(latlng).setRadius(radius).setStyle(style);
+        const options = Object.assign({}, style, { radius: accuracy });
+        this._circle = new Circle(latlng, options).addTo(this._layer);
       }
     }
 
+    // Draw location marker
+    if (this.options.drawMarker) {
+      const style = isFollowing ? this.options.followMarkerStyle : this.options.markerStyle;
+
+      if (this._marker) {
+        this._marker.setLatLng(latlng);
+        if (this._marker.setStyle) {
+          this._marker.setStyle(style);
+        }
+      } else {
+        this._marker = new this.options.markerClass(latlng, style).addTo(this._layer);
+      }
+    }
+
+    // Draw compass
+    this._drawCompass();
+
+    // Bind popup to marker and compass
+    this._bindPopup(latlng, accuracy);
+  },
+
+  /**
+   * Bind popup with distance information to marker and compass.
+   * @param {L.LatLng} latlng - The location to bind the popup to.
+   * @param {number} accuracy - The accuracy radius in meters.
+   */
+  _bindPopup(latlng, accuracy) {
+    const t = this.options.strings.popup;
+    if (!this.options.showPopup || !t) {
+      return;
+    }
+
+    // Format distance for display
     let distance;
     let unit;
     if (this.options.metric) {
-      distance = radius.toFixed(0);
+      distance = accuracy.toFixed(0);
       unit = this.options.strings.metersUnit;
     } else {
-      distance = (radius * 3.2808399).toFixed(0);
+      distance = (accuracy * METERS_TO_FEET).toFixed(0);
       unit = this.options.strings.feetUnit;
     }
 
-    // small inner marker
-    if (this.options.drawMarker) {
-      const mStyle = this._isFollowing() ? this.options.followMarkerStyle : this.options.markerStyle;
-      if (!this._marker) {
-        this._marker = new this.options.markerClass(latlng, mStyle).addTo(this._layer);
-      } else {
-        this._marker.setLatLng(latlng);
-        // If the markerClass can be updated with setStyle, update it.
-        if (this._marker.setStyle) {
-          this._marker.setStyle(mStyle);
-        }
-      }
+    // Generate popup text
+    let popupText;
+    if (typeof t === "string") {
+      popupText = LeafletUtil.template(t, { distance, unit });
+    } else if (typeof t === "function") {
+      popupText = t({ distance, unit });
+    } else {
+      popupText = t;
     }
 
-    this._drawCompass();
-
-    const t = this.options.strings.popup;
-    function getPopupText() {
-      if (typeof t === "string") {
-        return LeafletUtil.template(t, { distance, unit });
-      } else if (typeof t === "function") {
-        return t({ distance, unit });
-      } else {
-        return t;
-      }
+    // Bind to marker and compass
+    if (this._marker) {
+      this._marker.bindPopup(popupText)._popup.setLatLng(latlng);
     }
-    if (this.options.showPopup && t && this._marker) {
-      this._marker.bindPopup(getPopupText())._popup.setLatLng(latlng);
-    }
-    if (this.options.showPopup && t && this._compass) {
-      this._compass.bindPopup(getPopupText())._popup.setLatLng(latlng);
+    if (this._compass) {
+      this._compass.bindPopup(popupText)._popup.setLatLng(latlng);
     }
   },
 
@@ -744,6 +773,7 @@ const LocateControl = Control.extend({
     this._layer.clearLayers();
     this._marker = undefined;
     this._circle = undefined;
+    this._compass = undefined;
   },
 
   /**
@@ -762,13 +792,12 @@ const LocateControl = Control.extend({
    * Sets the compass heading
    */
   _setCompassHeading(angle) {
-    if (!isNaN(parseFloat(angle)) && isFinite(angle)) {
-      angle = Math.round(angle);
-
-      this._compassHeading = angle;
-      LeafletUtil.requestAnimFrame(this._drawCompass, this);
+    if (Number.isFinite(angle)) {
+      this._compassHeading = Math.round(angle);
+      requestAnimationFrame(() => this._drawCompass());
     } else {
       this._compassHeading = null;
+      this._drawCompass();
     }
   },
 
@@ -934,6 +963,8 @@ const LocateControl = Control.extend({
     } else if (this.options.setView === "untilPanOrZoom") {
       return !this._userPanned && !this._userZoomed;
     }
+
+    return false;
   },
 
   /**
@@ -970,24 +1001,27 @@ const LocateControl = Control.extend({
    * Sets the CSS classes for the state.
    */
   _setClasses(state) {
-    if (state == "requesting") {
-      removeClasses(this._container, "active following");
-      addClasses(this._container, "requesting");
+    switch (state) {
+      case "requesting":
+        removeClasses(this._container, "active following");
+        addClasses(this._container, "requesting");
+        removeClasses(this._icon, this.options.icon);
+        addClasses(this._icon, this.options.iconLoading);
+        break;
 
-      removeClasses(this._icon, this.options.icon);
-      addClasses(this._icon, this.options.iconLoading);
-    } else if (state == "active") {
-      removeClasses(this._container, "requesting following");
-      addClasses(this._container, "active");
+      case "active":
+        removeClasses(this._container, "requesting following");
+        addClasses(this._container, "active");
+        removeClasses(this._icon, this.options.iconLoading);
+        addClasses(this._icon, this.options.icon);
+        break;
 
-      removeClasses(this._icon, this.options.iconLoading);
-      addClasses(this._icon, this.options.icon);
-    } else if (state == "following") {
-      removeClasses(this._container, "requesting");
-      addClasses(this._container, "active following");
-
-      removeClasses(this._icon, this.options.iconLoading);
-      addClasses(this._icon, this.options.icon);
+      case "following":
+        removeClasses(this._container, "requesting");
+        addClasses(this._container, "active following");
+        removeClasses(this._icon, this.options.iconLoading);
+        addClasses(this._icon, this.options.icon);
+        break;
     }
   },
 

@@ -307,6 +307,69 @@ describe("LocateControl", () => {
       assert.strictEqual(control._active, false);
     });
   });
+
+  describe("Popup Binding", () => {
+    it("should bind popup to marker when showPopup is true", () => {
+      const control = new LocateControl({ showPopup: true });
+      map.addControl(control);
+
+      // Simulate location event
+      control._event = {
+        latlng: { lat: 51.5, lng: -0.09 },
+        accuracy: 100
+      };
+      control._drawMarker();
+
+      assert.ok(control._marker);
+      assert.ok(control._marker.getPopup());
+    });
+
+    it("should not bind popup when showPopup is false", () => {
+      const control = new LocateControl({ showPopup: false });
+      map.addControl(control);
+
+      control._event = {
+        latlng: { lat: 51.5, lng: -0.09 },
+        accuracy: 100
+      };
+      control._drawMarker();
+
+      assert.ok(control._marker);
+      assert.strictEqual(control._marker.getPopup(), undefined);
+    });
+
+    it("should bind popup to compass when compass is active", () => {
+      const control = new LocateControl({ showPopup: true, showCompass: true });
+      map.addControl(control);
+
+      control._event = {
+        latlng: { lat: 51.5, lng: -0.09 },
+        accuracy: 100
+      };
+      control._compassHeading = 45;
+      control._active = true;
+      control._drawMarker();
+
+      assert.ok(control._compass);
+      assert.ok(control._compass.getPopup());
+    });
+
+    it("should not crash when compass is null", () => {
+      const control = new LocateControl({ showPopup: true, showCompass: false });
+      map.addControl(control);
+
+      control._event = {
+        latlng: { lat: 51.5, lng: -0.09 },
+        accuracy: 100
+      };
+      control._compass = null;
+      control._drawMarker();
+
+      // Should not throw, marker should still have popup
+      assert.ok(control._marker);
+      assert.ok(control._marker.getPopup());
+    });
+  });
 });
 
 describe("LocationMarker", () => {
