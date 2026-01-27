@@ -981,24 +981,27 @@ const LocateControl = Control.extend({
    * Sets the CSS classes for the state.
    */
   _setClasses(state) {
-    if (state == "requesting") {
-      removeClasses(this._container, "active following");
-      addClasses(this._container, "requesting");
+    switch (state) {
+      case "requesting":
+        removeClasses(this._container, "active following");
+        addClasses(this._container, "requesting");
+        removeClasses(this._icon, this.options.icon);
+        addClasses(this._icon, this.options.iconLoading);
+        break;
 
-      removeClasses(this._icon, this.options.icon);
-      addClasses(this._icon, this.options.iconLoading);
-    } else if (state == "active") {
-      removeClasses(this._container, "requesting following");
-      addClasses(this._container, "active");
+      case "active":
+        removeClasses(this._container, "requesting following");
+        addClasses(this._container, "active");
+        removeClasses(this._icon, this.options.iconLoading);
+        addClasses(this._icon, this.options.icon);
+        break;
 
-      removeClasses(this._icon, this.options.iconLoading);
-      addClasses(this._icon, this.options.icon);
-    } else if (state == "following") {
-      removeClasses(this._container, "requesting");
-      addClasses(this._container, "active following");
-
-      removeClasses(this._icon, this.options.iconLoading);
-      addClasses(this._icon, this.options.icon);
+      case "following":
+        removeClasses(this._container, "requesting");
+        addClasses(this._container, "active following");
+        removeClasses(this._icon, this.options.iconLoading);
+        addClasses(this._icon, this.options.icon);
+        break;
     }
   },
 
