@@ -6,17 +6,28 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
 */
 
 import { Control, Marker, DomUtil, setOptions, divIcon, LayerGroup, circle, DomEvent, Util as LeafletUtil } from "leaflet";
-const addClasses = (el, names) => {
+
+/**
+ * Add one or more CSS classes to an element.
+ * @param {HTMLElement} el - The element to add classes to.
+ * @param {string} names - Space-separated class names.
+ */
+function addClasses(el, names) {
   names.split(" ").forEach((className) => {
     el.classList.add(className);
   });
-};
+}
 
-const removeClasses = (el, names) => {
+/**
+ * Remove one or more CSS classes from an element.
+ * @param {HTMLElement} el - The element to remove classes from.
+ * @param {string} names - Space-separated class names.
+ */
+function removeClasses(el, names) {
   names.split(" ").forEach((className) => {
     el.classList.remove(className);
   });
-};
+}
 
 /**
  * Shallow clone options to prevent prototype pollution.
