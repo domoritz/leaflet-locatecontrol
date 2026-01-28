@@ -308,6 +308,17 @@ describe("LocateControl", () => {
     });
   });
 
+  describe("setView", () => {
+    it("should zoom to initialZoomLevel when justClicked", () => {
+      const control = new LocateControl({ initialZoomLevel: 15 });
+      map.addControl(control);
+      control._event = { latlng: { lat: 51.5, lng: -0.09 }, accuracy: 100 };
+      control._justClicked = true;
+      control.setView();
+      assert.strictEqual(map.getZoom(), 15);
+    });
+  });
+
   describe("Popup Binding", () => {
     it("should bind popup to marker when showPopup is true", () => {
       const control = new LocateControl({ showPopup: true });
