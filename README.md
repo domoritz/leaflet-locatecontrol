@@ -117,6 +117,7 @@ Possible options are listed in the following table. More details are [in the cod
 | `icon` | `string`  | The CSS class for the icon. | `leaflet-control-locate-location-arrow` |
 | `iconLoading` | `string`  | The CSS class for the icon while loading. | `leaflet-control-locate-spinner` |
 | `iconElementTag` | `string`  | The element to be created for icons. | `span` |
+| `textElementTag` | `string`  | The element to be created for the text. | `small` |
 | `circlePadding` | `array`  | Padding around the accuracy circle. | `[0, 0]` |
 | `createButtonCallback` | `function`  | This callback can be used in case you would like to override button creation behavior. | see code |
 | `getLocationBounds` | `function`  | This callback can be used to override the viewport tracking behavior. | see code |
@@ -132,11 +133,24 @@ Possible options are listed in the following table. More details are [in the cod
 For example, to customize the position and the title, you could write
 
 ```js
-var lc = L.control
+let lc = L.control
   .locate({
     position: "topright",
     strings: {
       title: "Show me where I am, yo!"
+    }
+  })
+  .addTo(map);
+```
+
+To add text next to the location icon:
+
+```js
+let lc = L.control
+  .locate({
+    strings: {
+      title: "Show me where I am, yo!",
+      text: "Locate me"
     }
   })
   .addTo(map);
@@ -168,7 +182,7 @@ You can call `start()` or `stop()` on the locate control object to set the locat
 
 ```js
 // create control and add to map
-var lc = L.control.locate().addTo(map);
+let lc = L.control.locate().addTo(map);
 
 // request location update and set location
 lc.start();
@@ -204,7 +218,7 @@ L.Control.MyLocate = L.Control.Locate.extend({
   }
 });
 
-var lc = new L.Control.MyLocate();
+let lc = new L.Control.MyLocate();
 ```
 
 ### FAQ

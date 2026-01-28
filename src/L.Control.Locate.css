@@ -39,17 +39,23 @@
   }
 }
 
-.leaflet-touch .leaflet-bar .leaflet-locate-text-active {
-  width: 100%;
+.leaflet-bar .leaflet-locate-text-active {
+  width: auto;
   max-width: 200px;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
   padding: 0 10px;
+  display: flex;
+  align-items: center;
 
   .leaflet-locate-icon {
     padding: 0 5px 0 0;
   }
+}
+
+.leaflet-touch .leaflet-bar .leaflet-locate-text-active {
+  width: 100%;
 }
 
 .leaflet-control-locate-location circle {

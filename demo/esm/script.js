@@ -41,8 +41,18 @@ let map = new Map("map", {
   zoomControl: true
 });
 
+// Default control (top left)
 new LocateControl({
   strings: {
     title: "Show me where I am, yo!"
+  }
+}).addTo(map);
+
+// Control with text (bottom left)
+new LocateControl({
+  position: "bottomleft",
+  strings: {
+    title: "Show me where I am, yo!",
+    text: "Locate me"
   }
 }).addTo(map);
