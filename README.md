@@ -194,9 +194,26 @@ You can keep the plugin active but stop following using `lc.stopFollowing()`.
 
 You can leverage the native Leaflet events `locationfound` and `locationerror` to handle when geolocation is successful or produces an error. You can find out more about these events in the [Leaflet documentation](https://leafletjs.com/examples/mobile/#geolocation).
 
-Additionally, the locate control fires `locateactivate` and `locatedeactivate` events on the map object when it is activated and deactivated, respectively.
+Additionally, the locate control fires the following events on the map object:
 
-The control also fires a `locationtimeout` event when geolocation timeouts occur in watch mode. This is useful for providing custom feedback to users when location acquisition takes longer than expected:
+| Event                 | Description                                                                                                     |
+| --------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `locateactivate`      | Fired when the control is activated                                                                             |
+| `locatedeactivate`    | Fired when the control is deactivated                                                                           |
+| `locatelocationfound` | Fired when a location is found (includes `latlng`, `accuracy`, `bounds`, `control`, and other geolocation data) |
+| `locationtimeout`     | Fired when geolocation timeouts occur in watch mode                                                             |
+
+The `locatelocationfound` event is particularly useful when you need to react to location updates with access to the control instance. For example, to get the location once and then stop:
+
+```js
+map.on("locatelocationfound", function (e) {
+  console.log("Location found:", e.latlng);
+  console.log("Accuracy:", e.accuracy, "meters");
+  e.control.stop(); // Stop after first location ("one-shot" behavior)
+});
+```
+
+The `locationtimeout` event is useful when geolocation timeouts occur in watch mode. This is useful for providing custom feedback to users when location acquisition takes longer than expected:
 
 ```js
 map.on("locationtimeout", function (e) {

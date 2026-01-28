@@ -1,6 +1,16 @@
 import { Control, Layer, Map, ControlOptions, PathOptions, MarkerOptions, LocationEvent, LatLngBounds, LocateOptions as LeafletLocateOptions } from "leaflet";
 
 export type SetView = false | "once" | "always" | "untilPan" | "untilPanOrZoom";
+
+/**
+ * Event fired when a location is found by the locate control.
+ * Extends Leaflet's LocationEvent with a reference to the control instance.
+ */
+export interface LocateLocationFoundEvent extends LocationEvent {
+  /** Reference to the locate control instance */
+  control: LocateControl;
+}
+
 export type ClickBehavior = "stop" | "setView";
 
 export interface StringsOptions {
