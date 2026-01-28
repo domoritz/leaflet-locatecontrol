@@ -5,6 +5,7 @@ export type ClickBehavior = "stop" | "setView";
 
 export interface StringsOptions {
   title?: string | undefined;
+  text?: string | undefined;
   metersUnit?: string | undefined;
   feetUnit?: string | undefined;
   popup?: string | undefined;
@@ -55,6 +56,8 @@ export class LocateControl extends Control {
   constructor(locateOptions?: LocateOptions);
 
   onAdd(map: Map): HTMLElement;
+
+  onRemove(): void;
 
   start(): void;
 

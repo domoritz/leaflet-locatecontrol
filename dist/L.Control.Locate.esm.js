@@ -1,7 +1,7 @@
-/*! Version: 0.86.0
+/*! Version: 0.87.0
 Copyright (c) 2016 Dominik Moritz */
 
-import { Marker, setOptions, divIcon, Control, DomUtil, Util, circle, DomEvent, LayerGroup, extend } from 'leaflet';
+import { Marker, setOptions, divIcon, Control, DomUtil, Util, Circle, DomEvent, LayerGroup } from 'leaflet';
 
 /*!
 Copyright (c) 2016 Dominik Moritz
@@ -10,17 +10,51 @@ This file is part of the leaflet locate control. It is licensed under the MIT li
 You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
 */
 
-const addClasses = (el, names) => {
+
+const METERS_TO_FEET = 3.2808399;
+
+/**
+ * Add one or more CSS classes to an element.
+ * @param {HTMLElement} el - The element to add classes to.
+ * @param {string} names - Space-separated class names.
+ */
+function addClasses(el, names) {
   names.split(" ").forEach((className) => {
     el.classList.add(className);
   });
-};
+}
 
-const removeClasses = (el, names) => {
+/**
+ * Remove one or more CSS classes from an element.
+ * @param {HTMLElement} el - The element to remove classes from.
+ * @param {string} names - Space-separated class names.
+ */
+function removeClasses(el, names) {
   names.split(" ").forEach((className) => {
     el.classList.remove(className);
   });
-};
+}
+
+/**
+ * Shallow clone options to prevent prototype pollution.
+ * Clones arrays and plain objects, keeps functions/classes as references.
+ * @param {Object} options - The options object to clone.
+ * @returns {Object} A shallow clone of the options object.
+ */
+function cloneOptions(options) {
+  const cloned = {};
+  for (const key in options) {
+    const val = options[key];
+    if (Array.isArray(val)) {
+      cloned[key] = [...val];
+    } else if (val?.constructor === Object) {
+      cloned[key] = { ...val };
+    } else {
+      cloned[key] = val;
+    }
+  }
+  return cloned;
+}
 
 /**
  * Compatible with Circle but a true marker instead of a path
@@ -339,20 +373,25 @@ const LocateControl = Control.extend({
     }
   },
 
-  initialize(options) {
-    // set default options if nothing is set (merge one step deep)
-    for (const i in options) {
-      if (typeof this.options[i] === "object") {
-        extend(this.options[i], options[i]);
+  initialize(options = {}) {
+    // Clone default options to prevent prototype pollution
+    this.options = cloneOptions(this.options);
+
+    // Merge user-provided options
+    for (const key in options) {
+      const userVal = options[key];
+      const defaultVal = this.options[key];
+      if (userVal?.constructor === Object && defaultVal?.constructor === Object) {
+        Object.assign(defaultVal, userVal);
       } else {
-        this.options[i] = options[i];
+        this.options[key] = userVal;
       }
     }
 
-    // extend the follow marker style and circle from the normal style
-    this.options.followMarkerStyle = extend({}, this.options.markerStyle, this.options.followMarkerStyle);
-    this.options.followCircleStyle = extend({}, this.options.circleStyle, this.options.followCircleStyle);
-    this.options.followCompassStyle = extend({}, this.options.compassStyle, this.options.followCompassStyle);
+    // Follow styles inherit from base styles
+    Object.assign(this.options.followMarkerStyle, this.options.markerStyle, this.options.followMarkerStyle);
+    Object.assign(this.options.followCircleStyle, this.options.circleStyle, this.options.followCircleStyle);
+    Object.assign(this.options.followCompassStyle, this.options.compassStyle, this.options.followCompassStyle);
   },
 
   /**
@@ -388,6 +427,13 @@ const LocateControl = Control.extend({
     this._map.on("unload", this._unload, this);
 
     return container;
+  },
+
+  /**
+   * Called when control is removed from the map.
+   */
+  onRemove() {
+    this.stop();
   },
 
   /**
@@ -583,26 +629,29 @@ const LocateControl = Control.extend({
     if (this._isOutsideMapBounds()) {
       this._event = undefined; // clear the current location so we can get back into the bounds
       this.options.onLocationOutsideMapBounds(this);
+      return;
+    }
+
+    const latlng = this._event.latlng;
+
+    if (this._justClicked && this.options.initialZoomLevel !== false) {
+      const f = this.options.flyTo ? this._map.flyTo : this._map.setView;
+      f.bind(this._map)(latlng, this.options.initialZoomLevel);
+    } else if (this._shouldKeepCurrentZoom()) {
+      const f = this.options.flyTo ? this._map.flyTo : this._map.panTo;
+      f.bind(this._map)(latlng);
     } else {
-      if (this._justClicked && this.options.initialZoomLevel !== false) {
-        let f = this.options.flyTo ? this._map.flyTo : this._map.setView;
-        f.bind(this._map)([this._event.latitude, this._event.longitude], this.options.initialZoomLevel);
-      } else if (this._shouldKeepCurrentZoom()) {
-        let f = this.options.flyTo ? this._map.flyTo : this._map.panTo;
-        f.bind(this._map)([this._event.latitude, this._event.longitude]);
-      } else {
-        let f = this.options.flyTo ? this._map.flyToBounds : this._map.fitBounds;
-        // Ignore zoom events while setting the viewport as these would stop following
-        this._ignoreEvent = true;
-        f.bind(this._map)(this.options.getLocationBounds(this._event), {
-          padding: this.options.circlePadding,
-          maxZoom: this.options.initialZoomLevel || this.options.locateOptions.maxZoom
-        });
-        Util.requestAnimFrame(function () {
-          // Wait until after the next animFrame because the flyTo can be async
-          this._ignoreEvent = false;
-        }, this);
-      }
+      const f = this.options.flyTo ? this._map.flyToBounds : this._map.fitBounds;
+      // Ignore zoom events while setting the viewport as these would stop following
+      this._ignoreEvent = true;
+      f.bind(this._map)(this.options.getLocationBounds(this._event), {
+        padding: this.options.circlePadding,
+        maxZoom: this.options.initialZoomLevel || this.options.locateOptions.maxZoom
+      });
+      requestAnimationFrame(() => {
+        // Wait until after the next animFrame because the flyTo can be async
+        this._ignoreEvent = false;
+      });
     }
   },
 
@@ -642,65 +691,85 @@ const LocateControl = Control.extend({
    * Uses the event retrieved from onLocationFound from the map.
    */
   _drawMarker() {
-    if (this._event.accuracy === undefined) {
-      this._event.accuracy = 0;
+    if (!this._event) {
+      return;
     }
 
-    const radius = this._event.accuracy;
     const latlng = this._event.latlng;
+    const accuracy = this._event.accuracy ?? 0;
+    const isFollowing = this._isFollowing();
 
-    // circle with the radius of the location's accuracy
+    // Draw accuracy circle
     if (this.options.drawCircle) {
-      const style = this._isFollowing() ? this.options.followCircleStyle : this.options.circleStyle;
+      const style = isFollowing ? this.options.followCircleStyle : this.options.circleStyle;
 
-      if (!this._circle) {
-        this._circle = circle(latlng, radius, style).addTo(this._layer);
+      if (this._circle) {
+        this._circle.setLatLng(latlng).setRadius(accuracy).setStyle(style);
       } else {
-        this._circle.setLatLng(latlng).setRadius(radius).setStyle(style);
+        const options = Object.assign({}, style, { radius: accuracy });
+        this._circle = new Circle(latlng, options).addTo(this._layer);
       }
     }
 
+    // Draw location marker
+    if (this.options.drawMarker) {
+      const style = isFollowing ? this.options.followMarkerStyle : this.options.markerStyle;
+
+      if (this._marker) {
+        this._marker.setLatLng(latlng);
+        if (this._marker.setStyle) {
+          this._marker.setStyle(style);
+        }
+      } else {
+        this._marker = new this.options.markerClass(latlng, style).addTo(this._layer);
+      }
+    }
+
+    // Draw compass
+    this._drawCompass();
+
+    // Bind popup to marker and compass
+    this._bindPopup(latlng, accuracy);
+  },
+
+  /**
+   * Bind popup with distance information to marker and compass.
+   * @param {L.LatLng} latlng - The location to bind the popup to.
+   * @param {number} accuracy - The accuracy radius in meters.
+   */
+  _bindPopup(latlng, accuracy) {
+    const t = this.options.strings.popup;
+    if (!this.options.showPopup || !t) {
+      return;
+    }
+
+    // Format distance for display
     let distance;
     let unit;
     if (this.options.metric) {
-      distance = radius.toFixed(0);
+      distance = accuracy.toFixed(0);
       unit = this.options.strings.metersUnit;
     } else {
-      distance = (radius * 3.2808399).toFixed(0);
+      distance = (accuracy * METERS_TO_FEET).toFixed(0);
       unit = this.options.strings.feetUnit;
     }
 
-    // small inner marker
-    if (this.options.drawMarker) {
-      const mStyle = this._isFollowing() ? this.options.followMarkerStyle : this.options.markerStyle;
-      if (!this._marker) {
-        this._marker = new this.options.markerClass(latlng, mStyle).addTo(this._layer);
-      } else {
-        this._marker.setLatLng(latlng);
-        // If the markerClass can be updated with setStyle, update it.
-        if (this._marker.setStyle) {
-          this._marker.setStyle(mStyle);
-        }
-      }
+    // Generate popup text
+    let popupText;
+    if (typeof t === "string") {
+      popupText = Util.template(t, { distance, unit });
+    } else if (typeof t === "function") {
+      popupText = t({ distance, unit });
+    } else {
+      popupText = t;
     }
 
-    this._drawCompass();
-
-    const t = this.options.strings.popup;
-    function getPopupText() {
-      if (typeof t === "string") {
-        return Util.template(t, { distance, unit });
-      } else if (typeof t === "function") {
-        return t({ distance, unit });
-      } else {
-        return t;
-      }
+    // Bind to marker and compass
+    if (this._marker) {
+      this._marker.bindPopup(popupText)._popup.setLatLng(latlng);
     }
-    if (this.options.showPopup && t && this._marker) {
-      this._marker.bindPopup(getPopupText())._popup.setLatLng(latlng);
-    }
-    if (this.options.showPopup && t && this._compass) {
-      this._compass.bindPopup(getPopupText())._popup.setLatLng(latlng);
+    if (this._compass) {
+      this._compass.bindPopup(popupText)._popup.setLatLng(latlng);
     }
   },
 
@@ -711,6 +780,7 @@ const LocateControl = Control.extend({
     this._layer.clearLayers();
     this._marker = undefined;
     this._circle = undefined;
+    this._compass = undefined;
   },
 
   /**
@@ -729,13 +799,12 @@ const LocateControl = Control.extend({
    * Sets the compass heading
    */
   _setCompassHeading(angle) {
-    if (!isNaN(parseFloat(angle)) && isFinite(angle)) {
-      angle = Math.round(angle);
-
-      this._compassHeading = angle;
-      Util.requestAnimFrame(this._drawCompass, this);
+    if (Number.isFinite(angle)) {
+      this._compassHeading = Math.round(angle);
+      requestAnimationFrame(() => this._drawCompass());
     } else {
       this._compassHeading = null;
+      this._drawCompass();
     }
   },
 
@@ -767,11 +836,27 @@ const LocateControl = Control.extend({
    * Calls deactivate and dispatches an error.
    */
   _onLocationError(err) {
-    // ignore time out error if the location is watched
-    if (err.code == 3 && this.options.locateOptions.watch) {
+    // Handle timeout errors in watch mode differently
+    if (err.code === 3 && this.options.locateOptions.watch) {
+      this._timeoutCount = (this._timeoutCount || 0) + 1;
+
+      // Fire event for developers to handle timeouts
+      this._map.fire("locationtimeout", {
+        error: err,
+        control: this,
+        count: this._timeoutCount
+      });
+
+      // Visual feedback after repeated timeouts
+      if (this._timeoutCount >= 3 && this._container) {
+        addClasses(this._container, "locate-timeout");
+      }
+
       return;
     }
 
+    // Reset timeout counter for other errors
+    this._timeoutCount = 0;
     this.stop();
     this.options.onLocationError(err, this);
   },
@@ -781,13 +866,19 @@ const LocateControl = Control.extend({
    */
   _onLocationFound(e) {
     // no need to do anything if the location has not changed
-    if (this._event && this._event.latlng.lat === e.latlng.lat && this._event.latlng.lng === e.latlng.lng && this._event.accuracy === e.accuracy) {
+    if (this._event?.latlng?.lat === e.latlng.lat && this._event?.latlng?.lng === e.latlng.lng && this._event?.accuracy === e.accuracy) {
       return;
     }
 
     if (!this._active) {
       // we may have a stray event
       return;
+    }
+
+    // Reset timeout counter on successful location
+    this._timeoutCount = 0;
+    if (this._container) {
+      removeClasses(this._container, "locate-timeout");
     }
 
     this._event = e;
@@ -876,6 +967,8 @@ const LocateControl = Control.extend({
     } else if (this.options.setView === "untilPanOrZoom") {
       return !this._userPanned && !this._userZoomed;
     }
+
+    return false;
   },
 
   /**
@@ -912,24 +1005,27 @@ const LocateControl = Control.extend({
    * Sets the CSS classes for the state.
    */
   _setClasses(state) {
-    if (state == "requesting") {
-      removeClasses(this._container, "active following");
-      addClasses(this._container, "requesting");
+    switch (state) {
+      case "requesting":
+        removeClasses(this._container, "active following");
+        addClasses(this._container, "requesting");
+        removeClasses(this._icon, this.options.icon);
+        addClasses(this._icon, this.options.iconLoading);
+        break;
 
-      removeClasses(this._icon, this.options.icon);
-      addClasses(this._icon, this.options.iconLoading);
-    } else if (state == "active") {
-      removeClasses(this._container, "requesting following");
-      addClasses(this._container, "active");
+      case "active":
+        removeClasses(this._container, "requesting following");
+        addClasses(this._container, "active");
+        removeClasses(this._icon, this.options.iconLoading);
+        addClasses(this._icon, this.options.icon);
+        break;
 
-      removeClasses(this._icon, this.options.iconLoading);
-      addClasses(this._icon, this.options.icon);
-    } else if (state == "following") {
-      removeClasses(this._container, "requesting");
-      addClasses(this._container, "active following");
-
-      removeClasses(this._icon, this.options.iconLoading);
-      addClasses(this._icon, this.options.icon);
+      case "following":
+        removeClasses(this._container, "requesting");
+        addClasses(this._container, "active following");
+        removeClasses(this._icon, this.options.iconLoading);
+        addClasses(this._icon, this.options.icon);
+        break;
     }
   },
 
@@ -955,6 +1051,14 @@ const LocateControl = Control.extend({
     // true if the control was clicked for the first time
     // we need this so we can pan and zoom once we have the location
     this._justClicked = false;
+
+    // timeout counter for visual feedback
+    this._timeoutCount = 0;
+
+    // remove timeout styling
+    if (this._container) {
+      removeClasses(this._container, "locate-timeout");
+    }
 
     // true if the user has panned the map after clicking the control
     this._userPanned = false;
