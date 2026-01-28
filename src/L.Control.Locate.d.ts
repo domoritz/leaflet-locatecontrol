@@ -5,6 +5,7 @@ export type ClickBehavior = "stop" | "setView";
 
 export interface StringsOptions {
   title?: string | undefined;
+  text?: string | undefined;
   metersUnit?: string | undefined;
   feetUnit?: string | undefined;
   popup?: string | undefined;
