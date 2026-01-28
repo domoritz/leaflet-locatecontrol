@@ -133,7 +133,7 @@ Possible options are listed in the following table. More details are [in the cod
 For example, to customize the position and the title, you could write
 
 ```js
-var lc = L.control
+let lc = L.control
   .locate({
     position: "topright",
     strings: {
@@ -146,7 +146,7 @@ var lc = L.control
 To add text next to the location icon:
 
 ```js
-var lc = L.control
+let lc = L.control
   .locate({
     strings: {
       title: "Show me where I am, yo!",
@@ -182,7 +182,7 @@ You can call `start()` or `stop()` on the locate control object to set the locat
 
 ```js
 // create control and add to map
-var lc = L.control.locate().addTo(map);
+let lc = L.control.locate().addTo(map);
 
 // request location update and set location
 lc.start();
@@ -218,7 +218,7 @@ L.Control.MyLocate = L.Control.Locate.extend({
   }
 });
 
-var lc = new L.Control.MyLocate();
+let lc = new L.Control.MyLocate();
 ```
 
 ### FAQ
