@@ -882,6 +882,12 @@ const LocateControl = Control.extend({
     this._drawMarker();
     this._updateContainerStyle();
 
+    // Fire event with location data and control reference
+    this._map.fire("locatelocationfound", {
+      ...e,
+      control: this
+    });
+
     switch (this.options.setView) {
       case "once":
         if (this._justClicked) {

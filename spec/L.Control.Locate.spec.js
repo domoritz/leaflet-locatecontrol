@@ -291,6 +291,61 @@ describe("LocateControl", () => {
     });
   });
 
+  describe("Events", () => {
+    it("should fire locatelocationfound event when location is found", () => {
+      const control = new LocateControl({ setView: false });
+      map.addControl(control);
+
+      let eventFired = false;
+      let eventData = null;
+
+      map.on("locatelocationfound", (e) => {
+        eventFired = true;
+        eventData = e;
+      });
+
+      // Simulate the control being active
+      control._active = true;
+
+      // Simulate a location found event
+      const locationEvent = {
+        latlng: { lat: 51.5, lng: -0.09 },
+        accuracy: 100,
+        altitude: 50,
+        altitudeAccuracy: 10,
+        heading: 90,
+        speed: 5,
+        timestamp: Date.now(),
+        bounds: null
+      };
+
+      control._onLocationFound(locationEvent);
+
+      assert.ok(eventFired, "Event should be fired");
+      assert.deepStrictEqual(eventData.latlng, locationEvent.latlng);
+      assert.strictEqual(eventData.accuracy, 100);
+      assert.strictEqual(eventData.control, control);
+    });
+
+    it("should allow stopping the control from the event handler (oneshot)", () => {
+      const control = new LocateControl({ setView: false });
+      map.addControl(control);
+
+      map.on("locatelocationfound", (e) => {
+        e.control.stop();
+      });
+
+      control._active = true;
+      control._onLocationFound({
+        latlng: { lat: 51.5, lng: -0.09 },
+        accuracy: 100,
+        bounds: null
+      });
+
+      assert.strictEqual(control._active, false, "Control should be stopped");
+    });
+  });
+
   describe("Control Lifecycle", () => {
     it("should add layer to map when added", () => {
       const control = new LocateControl();
