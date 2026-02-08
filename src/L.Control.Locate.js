@@ -618,7 +618,8 @@ const LocateControl = Control.extend({
   },
 
   /**
-   * Zoom (unless we should keep the zoom level) and an to the current view.
+   * Pan and/or zoom the map to the current location.
+   * Respects keepCurrentZoomLevel and initialZoomLevel options.
    */
   setView() {
     this._drawMarker();
@@ -628,27 +629,42 @@ const LocateControl = Control.extend({
       return;
     }
 
-    const latlng = this._event.latlng;
+    const { latlng } = this._event;
+    const fly = this.options.flyTo;
+    let method, args;
 
     if (this._justClicked && this.options.initialZoomLevel !== false) {
-      const f = this.options.flyTo ? this._map.flyTo : this._map.setView;
-      f.bind(this._map)(latlng, this.options.initialZoomLevel);
+      method = fly ? "flyTo" : "setView";
+      args = [latlng, this.options.initialZoomLevel];
     } else if (this._shouldKeepCurrentZoom()) {
-      const f = this.options.flyTo ? this._map.flyTo : this._map.panTo;
-      f.bind(this._map)(latlng);
+      method = fly ? "flyTo" : "panTo";
+      args = [latlng];
     } else {
-      const f = this.options.flyTo ? this._map.flyToBounds : this._map.fitBounds;
-      // Ignore zoom events while setting the viewport as these would stop following
-      this._ignoreEvent = true;
-      f.bind(this._map)(this.options.getLocationBounds(this._event), {
-        padding: this.options.circlePadding,
-        maxZoom: this.options.initialZoomLevel || this.options.locateOptions.maxZoom
-      });
-      requestAnimationFrame(() => {
-        // Wait until after the next animFrame because the flyTo can be async
-        this._ignoreEvent = false;
-      });
+      method = fly ? "flyToBounds" : "fitBounds";
+      args = [
+        this.options.getLocationBounds(this._event),
+        {
+          padding: this.options.circlePadding,
+          maxZoom: this.options.locateOptions.maxZoom
+        }
+      ];
     }
+
+    this._setViewIgnoringEvents(method, args);
+  },
+
+  /**
+   * Execute a map view method while ignoring zoom/pan events to prevent breaking following mode.
+   * @param {string} method - The map method name to call ('flyTo', 'setView', 'panTo', 'fitBounds', 'flyToBounds')
+   * @param {Array} args - Arguments to pass to the method
+   */
+  _setViewIgnoringEvents(method, args) {
+    this._ignoreEvent = true;
+    this._map[method](...args);
+    requestAnimationFrame(() => {
+      // Wait until after the next animFrame because flyTo/flyToBounds can be async
+      this._ignoreEvent = false;
+    });
   },
 
   /**

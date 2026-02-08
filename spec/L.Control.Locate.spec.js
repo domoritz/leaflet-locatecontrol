@@ -372,6 +372,70 @@ describe("LocateControl", () => {
       control.setView();
       assert.strictEqual(map.getZoom(), 15);
     });
+
+    it("should not break following when flyTo is used with untilPanOrZoom", () => {
+      const control = new LocateControl({
+        flyTo: true,
+        setView: "untilPanOrZoom",
+        initialZoomLevel: 15
+      });
+      map.addControl(control);
+
+      // Activate to bind event listeners (zoomstart -> _onZoom)
+      control._activate();
+
+      // Simulate first location found (user just clicked)
+      control._justClicked = true;
+      control._event = {
+        latlng: { lat: 51.5, lng: -0.09 },
+        accuracy: 100,
+        bounds: { getSouthWest: () => ({ lat: 51.49, lng: -0.1 }), getNorthEast: () => ({ lat: 51.51, lng: -0.08 }) }
+      };
+
+      control.setView();
+
+      // flyTo triggers zoomstart internally, but _ignoreEvent should prevent
+      // _userZoomed from being set to true
+      assert.strictEqual(control._userZoomed, false, "_userZoomed should remain false after flyTo");
+    });
+
+    it("should set _ignoreEvent when using keepCurrentZoomLevel path", async () => {
+      const control = new LocateControl({
+        flyTo: true,
+        setView: "untilPanOrZoom",
+        keepCurrentZoomLevel: true
+      });
+      map.addControl(control);
+      control._activate();
+
+      control._event = {
+        latlng: { lat: 51.5, lng: -0.09 },
+        accuracy: 100,
+        bounds: { getSouthWest: () => ({ lat: 51.49, lng: -0.1 }), getNorthEast: () => ({ lat: 51.51, lng: -0.08 }) }
+      };
+
+      // Capture _ignoreEvent state during setView
+      let ignoreEventDuringCall = null;
+      const originalFlyTo = map.flyTo;
+      map.flyTo = function (...args) {
+        ignoreEventDuringCall = control._ignoreEvent;
+        return originalFlyTo.apply(this, args);
+      };
+
+      try {
+        control.setView();
+
+        // _ignoreEvent should have been true during the flyTo call
+        assert.strictEqual(ignoreEventDuringCall, true, "_ignoreEvent should be set during flyTo call");
+
+        // Wait for requestAnimationFrame to complete
+        await new Promise((resolve) => requestAnimationFrame(resolve));
+        assert.strictEqual(control._ignoreEvent, false, "_ignoreEvent should be reset after requestAnimationFrame");
+      } finally {
+        // Restore original method
+        map.flyTo = originalFlyTo;
+      }
+    });
   });
 
   describe("Popup Binding", () => {
