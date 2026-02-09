@@ -758,21 +758,24 @@ const LocateControl = Control.extend({
     // Format distance for display
     let distance;
     let unit;
+    let altitude;
     if (this.options.metric) {
       distance = accuracy.toFixed(0);
       unit = this.options.strings.metersUnit;
+      altitude = this._event?.altitude != null ? this._event.altitude.toFixed(1) : "N/A";
     } else {
       distance = (accuracy * METERS_TO_FEET).toFixed(0);
       unit = this.options.strings.feetUnit;
+      altitude = this._event?.altitude != null ? (this._event.altitude * METERS_TO_FEET).toFixed(1) : "N/A";
     }
 
     // Collect template data
     const data = {
       distance,
       unit,
-      lat: latlng.lat,
-      lng: latlng.lng,
-      altitude: this._event?.altitude ?? "N/A"
+      lat: latlng.lat.toFixed(6),
+      lng: latlng.lng.toFixed(6),
+      altitude
     };
 
     // Generate popup text

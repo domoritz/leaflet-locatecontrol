@@ -512,14 +512,14 @@ describe("LocateControl", () => {
       control._event = {
         latlng: { lat: 51.505, lng: -0.09 },
         accuracy: 100,
-        altitude: 42
+        altitude: 42.7
       };
       control._drawMarker();
 
       const popupContent = control._marker.getPopup().getContent();
-      assert.ok(popupContent.includes("51.505"), "popup should contain lat");
-      assert.ok(popupContent.includes("-0.09"), "popup should contain lng");
-      assert.ok(popupContent.includes("42"), "popup should contain altitude");
+      assert.ok(popupContent.includes("51.505000"), "popup should contain formatted lat");
+      assert.ok(popupContent.includes("-0.090000"), "popup should contain formatted lng");
+      assert.ok(popupContent.includes("42.7"), "popup should contain altitude");
     });
 
     it("should show N/A for altitude when not available", () => {
@@ -561,9 +561,9 @@ describe("LocateControl", () => {
       };
       control._drawMarker();
 
-      assert.strictEqual(receivedData.lat, 51.505);
-      assert.strictEqual(receivedData.lng, -0.09);
-      assert.strictEqual(receivedData.altitude, 15);
+      assert.strictEqual(receivedData.lat, "51.505000");
+      assert.strictEqual(receivedData.lng, "-0.090000");
+      assert.strictEqual(receivedData.altitude, "15.0");
       assert.ok(receivedData.distance);
       assert.ok(receivedData.unit);
     });
