@@ -59,6 +59,7 @@
     "@eslint/js": "^10.0.1",
     "@rollup/plugin-terser": "^0.4.4",
     "eslint": "^10.0.0",
+    "globals": "^17.3.0",
     "happy-dom": "^20.5.1",
     "leaflet": "^1.9.4",
     "lightningcss-cli": "^1.31.1",
