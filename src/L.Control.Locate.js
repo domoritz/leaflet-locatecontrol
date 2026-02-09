@@ -260,6 +260,14 @@ const LocateControl = Control.extend({
     drawMarker: true,
     /** If set and supported then show the compass heading */
     showCompass: true,
+    /**
+     * Threshold for compass accuracy in degrees. The compass is only displayed
+     * when the reported accuracy is below this value. On iOS Safari,
+     * `webkitCompassAccuracy` is checked against this threshold. A value of -1
+     * means uncalibrated and is always rejected. Set to `false` to disable
+     * the accuracy check and always show the compass when heading data is available.
+     */
+    compassThreshold: 25,
     /** The class to be used to create the marker. For example L.CircleMarker or L.Marker */
     markerClass: LocationMarker,
     /** The class us be used to create the compass bearing arrow */
@@ -821,14 +829,8 @@ const LocateControl = Control.extend({
   },
 
   /**
-   * If the compass fails calibration just fail safely and remove the compass
-   */
-  _onCompassNeedsCalibration() {
-    this._setCompassHeading();
-  },
-
-  /**
-   * Process and normalise compass events
+   * Process and normalise compass events.
+   * Filters out inaccurate readings based on compassThreshold.
    */
   _onDeviceOrientation(e) {
     if (!this._active) {
@@ -836,7 +838,14 @@ const LocateControl = Control.extend({
     }
 
     if (e.webkitCompassHeading) {
-      // iOS
+      // iOS: check accuracy if threshold is set
+      if (this.options.compassThreshold !== false && e.webkitCompassAccuracy != null) {
+        // -1 means uncalibrated, always reject
+        if (e.webkitCompassAccuracy < 0 || e.webkitCompassAccuracy > this.options.compassThreshold) {
+          this._setCompassHeading();
+          return;
+        }
+      }
       this._setCompassHeading(e.webkitCompassHeading);
     } else if (e.absolute && e.alpha) {
       // Android
