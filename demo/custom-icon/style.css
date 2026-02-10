@@ -1,0 +1,58 @@
+/* Custom color scheme for locate control */
+.leaflet-control-locate {
+  --locate-control-icon-color: #6c757d;
+  --locate-control-active-color: #28a745;
+  --locate-control-following-color: #8b5cf6;
+}
+
+.info {
+  position: absolute;
+  bottom: 30px;
+  left: 30px;
+  background: white;
+  padding: 15px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  max-width: 320px;
+}
+.info h3 {
+  margin-top: 0;
+}
+.info code {
+  background: #f4f4f4;
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+.status-demo {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  margin: 4px 0;
+}
+.status-demo .color-box {
+  width: 16px;
+  height: 16px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.color-inactive {
+  background-color: #6c757d;
+}
+.color-active {
+  background-color: #28a745;
+}
+.color-following {
+  background-color: #8b5cf6;
+}
+:root[data-theme="dark"] .info {
+  background: #3a3a3a;
+  color: #fff;
+}
+:root[data-theme="dark"] .info code {
+  background: rgba(255, 255, 255, 0.15);
+}
+:root[data-theme="dark"] .info a {
+  color: #6db3f2;
+}

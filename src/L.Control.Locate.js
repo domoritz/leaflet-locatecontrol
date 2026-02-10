@@ -326,15 +326,14 @@ const LocateControl = Control.extend({
       link.setAttribute("role", "button");
       link.setAttribute("aria-label", options.strings.title);
       const icon = DomUtil.create(options.iconElementTag, options.icon, link);
+      // Add common class for all icons to enable color status changes
+      icon.classList.add("leaflet-locate-icon");
 
       if (options.strings.text !== undefined) {
         const text = DomUtil.create(options.textElementTag, "leaflet-locate-text", link);
         text.textContent = options.strings.text;
         link.classList.add("leaflet-locate-text-active");
         link.parentNode.style.display = "flex";
-        if (options.icon.length > 0) {
-          icon.classList.add("leaflet-locate-icon");
-        }
       }
 
       return { link, icon };
