@@ -745,7 +745,7 @@ const LocateControl = Control.extend({
   },
 
   /**
-   * Bind popup with distance information to marker and compass.
+   * Bind popup with location information to marker and compass.
    * @param {L.LatLng} latlng - The location to bind the popup to.
    * @param {number} accuracy - The accuracy radius in meters.
    */
@@ -758,20 +758,32 @@ const LocateControl = Control.extend({
     // Format distance for display
     let distance;
     let unit;
+    let altitude;
     if (this.options.metric) {
       distance = accuracy.toFixed(0);
       unit = this.options.strings.metersUnit;
+      altitude = this._event?.altitude != null ? this._event.altitude.toFixed(1) : "N/A";
     } else {
       distance = (accuracy * METERS_TO_FEET).toFixed(0);
       unit = this.options.strings.feetUnit;
+      altitude = this._event?.altitude != null ? (this._event.altitude * METERS_TO_FEET).toFixed(1) : "N/A";
     }
+
+    // Collect template data
+    const data = {
+      distance,
+      unit,
+      lat: latlng.lat.toFixed(6),
+      lng: latlng.lng.toFixed(6),
+      altitude
+    };
 
     // Generate popup text
     let popupText;
     if (typeof t === "string") {
-      popupText = LeafletUtil.template(t, { distance, unit });
+      popupText = LeafletUtil.template(t, data);
     } else if (typeof t === "function") {
-      popupText = t({ distance, unit });
+      popupText = t(data);
     } else {
       popupText = t;
     }

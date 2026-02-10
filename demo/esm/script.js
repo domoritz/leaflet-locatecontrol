@@ -48,11 +48,12 @@ new LocateControl({
   }
 }).addTo(map);
 
-// Control with text (bottom left)
+// Control with text (bottom left) - demonstrates lat/lng/altitude in popup
 new LocateControl({
   position: "bottomleft",
   strings: {
     title: "Show me where I am, yo!",
-    text: "Locate me"
+    text: "Locate me",
+    popup: "Lat: {lat}<br>Lng: {lng}<br>Alt: {altitude} {unit}<br>Accuracy: ±{distance} {unit}"
   }
 }).addTo(map);

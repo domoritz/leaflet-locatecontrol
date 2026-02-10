@@ -126,7 +126,7 @@ Possible options are listed in the following table. More details are [in the cod
 | `onLocationOutsideMapBounds` | `function`  | Called when the user's location is outside the bounds set on the map. Called repeatedly when the user's location changes. | see code |
 | `showPopup` | `boolean`  | Display a pop-up when the user click on the inner marker. | `true` |
 | `strings` | `object`  | Strings used in the control. Options are `title`, `text`, `metersUnit`, `feetUnit`, `popup` and `outsideMapBoundsMsg` | see code |
-| `strings.popup` | `string` or `function`  | The string shown as popup. May contain the placeholders `{distance}` and `{unit}`. If this option is specified as function, it will be executed with a single parameter `{distance, unit}` and expected to return a string. | see code |
+| `strings.popup` | `string` or `function`  | The string shown as popup. May contain the placeholders `{distance}`, `{unit}`, `{lat}`, `{lng}`, and `{altitude}`. If this option is specified as function, it will be executed with a single parameter `{distance, unit, lat, lng, altitude}` and expected to return a string. | see code |
 | `locateOptions` | [`Locate options`](https://leafletjs.com/reference.html#locate-options)  | The default options passed to leaflets locate method. | see code |
 <!-- prettier-ignore-end -->
 
