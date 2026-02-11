@@ -1,4 +1,4 @@
-/*! Version: 0.87.0
+/*! Version: 0.88.0
 Copyright (c) 2016 Dominik Moritz */
 
 import { Marker, setOptions, divIcon, Control, DomUtil, Util, Circle, DomEvent, LayerGroup } from 'leaflet';
@@ -330,15 +330,14 @@ const LocateControl = Control.extend({
       link.setAttribute("role", "button");
       link.setAttribute("aria-label", options.strings.title);
       const icon = DomUtil.create(options.iconElementTag, options.icon, link);
+      // Add common class for all icons to enable color status changes
+      icon.classList.add("leaflet-locate-icon");
 
       if (options.strings.text !== undefined) {
         const text = DomUtil.create(options.textElementTag, "leaflet-locate-text", link);
         text.textContent = options.strings.text;
         link.classList.add("leaflet-locate-text-active");
         link.parentNode.style.display = "flex";
-        if (options.icon.length > 0) {
-          icon.classList.add("leaflet-locate-icon");
-        }
       }
 
       return { link, icon };
@@ -622,7 +621,8 @@ const LocateControl = Control.extend({
   },
 
   /**
-   * Zoom (unless we should keep the zoom level) and an to the current view.
+   * Pan and/or zoom the map to the current location.
+   * Respects keepCurrentZoomLevel and initialZoomLevel options.
    */
   setView() {
     this._drawMarker();
@@ -632,27 +632,42 @@ const LocateControl = Control.extend({
       return;
     }
 
-    const latlng = this._event.latlng;
+    const { latlng } = this._event;
+    const fly = this.options.flyTo;
+    let method, args;
 
     if (this._justClicked && this.options.initialZoomLevel !== false) {
-      const f = this.options.flyTo ? this._map.flyTo : this._map.setView;
-      f.bind(this._map)(latlng, this.options.initialZoomLevel);
+      method = fly ? "flyTo" : "setView";
+      args = [latlng, this.options.initialZoomLevel];
     } else if (this._shouldKeepCurrentZoom()) {
-      const f = this.options.flyTo ? this._map.flyTo : this._map.panTo;
-      f.bind(this._map)(latlng);
+      method = fly ? "flyTo" : "panTo";
+      args = [latlng];
     } else {
-      const f = this.options.flyTo ? this._map.flyToBounds : this._map.fitBounds;
-      // Ignore zoom events while setting the viewport as these would stop following
-      this._ignoreEvent = true;
-      f.bind(this._map)(this.options.getLocationBounds(this._event), {
-        padding: this.options.circlePadding,
-        maxZoom: this.options.initialZoomLevel || this.options.locateOptions.maxZoom
-      });
-      requestAnimationFrame(() => {
-        // Wait until after the next animFrame because the flyTo can be async
-        this._ignoreEvent = false;
-      });
+      method = fly ? "flyToBounds" : "fitBounds";
+      args = [
+        this.options.getLocationBounds(this._event),
+        {
+          padding: this.options.circlePadding,
+          maxZoom: this.options.locateOptions.maxZoom
+        }
+      ];
     }
+
+    this._setViewIgnoringEvents(method, args);
+  },
+
+  /**
+   * Execute a map view method while ignoring zoom/pan events to prevent breaking following mode.
+   * @param {string} method - The map method name to call ('flyTo', 'setView', 'panTo', 'fitBounds', 'flyToBounds')
+   * @param {Array} args - Arguments to pass to the method
+   */
+  _setViewIgnoringEvents(method, args) {
+    this._ignoreEvent = true;
+    this._map[method](...args);
+    requestAnimationFrame(() => {
+      // Wait until after the next animFrame because flyTo/flyToBounds can be async
+      this._ignoreEvent = false;
+    });
   },
 
   /**
@@ -733,7 +748,7 @@ const LocateControl = Control.extend({
   },
 
   /**
-   * Bind popup with distance information to marker and compass.
+   * Bind popup with location information to marker and compass.
    * @param {L.LatLng} latlng - The location to bind the popup to.
    * @param {number} accuracy - The accuracy radius in meters.
    */
@@ -746,20 +761,32 @@ const LocateControl = Control.extend({
     // Format distance for display
     let distance;
     let unit;
+    let altitude;
     if (this.options.metric) {
       distance = accuracy.toFixed(0);
       unit = this.options.strings.metersUnit;
+      altitude = this._event?.altitude != null ? this._event.altitude.toFixed(1) : "N/A";
     } else {
       distance = (accuracy * METERS_TO_FEET).toFixed(0);
       unit = this.options.strings.feetUnit;
+      altitude = this._event?.altitude != null ? (this._event.altitude * METERS_TO_FEET).toFixed(1) : "N/A";
     }
+
+    // Collect template data
+    const data = {
+      distance,
+      unit,
+      lat: latlng.lat.toFixed(6),
+      lng: latlng.lng.toFixed(6),
+      altitude
+    };
 
     // Generate popup text
     let popupText;
     if (typeof t === "string") {
-      popupText = Util.template(t, { distance, unit });
+      popupText = Util.template(t, data);
     } else if (typeof t === "function") {
-      popupText = t({ distance, unit });
+      popupText = t(data);
     } else {
       popupText = t;
     }
@@ -885,6 +912,12 @@ const LocateControl = Control.extend({
 
     this._drawMarker();
     this._updateContainerStyle();
+
+    // Fire event with location data and control reference
+    this._map.fire("locatelocationfound", {
+      ...e,
+      control: this
+    });
 
     switch (this.options.setView) {
       case "once":
