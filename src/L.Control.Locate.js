@@ -5,7 +5,7 @@ This file is part of the leaflet locate control. It is licensed under the MIT li
 You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
 */
 
-import { Control, Marker, DomUtil, setOptions, divIcon, LayerGroup, Circle, DomEvent, Util as LeafletUtil } from "leaflet";
+import { Control, Marker, DomUtil, setOptions, DivIcon, LayerGroup, Circle, DomEvent, Util as LeafletUtil } from "leaflet";
 
 const METERS_TO_FEET = 3.2808399;
 
@@ -81,7 +81,7 @@ const LocationMarker = Marker.extend({
 
     const icon = this._getIconSVG(opt, style);
 
-    this._locationIcon = divIcon({
+    this._locationIcon = new DivIcon({
       className: icon.className,
       html: icon.svg,
       iconSize: [icon.w, icon.h]
