@@ -620,11 +620,22 @@ const LocateControl = Control.extend({
     this._map.off("dragstart", this._onDrag, this);
     this._map.off("zoomstart", this._onZoom, this);
     this._map.off("zoomend", this._onZoomEnd, this);
-    if (this._compassEventName) {
-      this._compassHeading = null;
-      DomEvent.off(window, this._compassEventName, this._onDeviceOrientation, this);
-      this._compassEventName = null;
+
+    this._deactivateCompass();
+  },
+
+  /**
+   * Remove compass event listener and reset compass heading state.
+   * Symmetric counterpart to _activateCompass().
+   */
+  _deactivateCompass() {
+    if (!this._compassEventName) {
+      return;
     }
+
+    this._compassHeading = null;
+    DomEvent.off(window, this._compassEventName, this._onDeviceOrientation, this);
+    this._compassEventName = null;
   },
 
   /**
