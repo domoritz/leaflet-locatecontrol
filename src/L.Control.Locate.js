@@ -543,7 +543,7 @@ const LocateControl = Control.extend({
    * It should set the this._active to true and do nothing if
    * this._active is true.
    */
-  _activate() {
+  async _activate() {
     if (this._active || !this._map) {
       return;
     }
@@ -566,11 +566,16 @@ const LocateControl = Control.extend({
           DomEvent.on(window, oriAbs ? "deviceorientationabsolute" : "deviceorientation", _this._onDeviceOrientation, _this);
         };
         if (DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === "function") {
-          DeviceOrientationEvent.requestPermission().then(function (permissionState) {
+          try {
+            const permissionState = await DeviceOrientationEvent.requestPermission();
             if (permissionState === "granted") {
               deviceorientation();
             }
-          });
+          } catch (err) {
+            // Permission denied or not supported (e.g. iOS Chrome / WKWebView)
+            // Compass will not be shown but geolocation continues normally
+            console.warn("DeviceOrientation permission denied or unavailable:", err);
+          }
         } else {
           deviceorientation();
         }
