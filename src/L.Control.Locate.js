@@ -543,7 +543,7 @@ const LocateControl = Control.extend({
    * It should set the this._active to true and do nothing if
    * this._active is true.
    */
-  async _activate() {
+  _activate() {
     if (this._active || !this._map) {
       return;
     }
@@ -558,29 +558,41 @@ const LocateControl = Control.extend({
     this._map.on("dragstart", this._onDrag, this);
     this._map.on("zoomstart", this._onZoom, this);
     this._map.on("zoomend", this._onZoomEnd, this);
-    if (this.options.showCompass) {
-      const oriAbs = "ondeviceorientationabsolute" in window;
-      if (oriAbs || "ondeviceorientation" in window) {
-        const _this = this;
-        const deviceorientation = function () {
-          DomEvent.on(window, oriAbs ? "deviceorientationabsolute" : "deviceorientation", _this._onDeviceOrientation, _this);
-        };
-        if (DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === "function") {
-          try {
-            const permissionState = await DeviceOrientationEvent.requestPermission();
-            if (permissionState === "granted") {
-              deviceorientation();
-            }
-          } catch (err) {
-            // Permission denied or not supported (e.g. iOS Chrome / WKWebView)
-            // Compass will not be shown but geolocation continues normally
-            console.warn("DeviceOrientation permission denied or unavailable:", err);
-          }
-        } else {
-          deviceorientation();
+
+    this._activateCompass();
+  },
+
+  /**
+   * Request DeviceOrientation permission (if needed) and bind compass events.
+   * Fails gracefully — geolocation continues without compass.
+   */
+  async _activateCompass() {
+    if (!this.options.showCompass) {
+      return;
+    }
+
+    const oriAbs = "ondeviceorientationabsolute" in window;
+    if (!oriAbs && !("ondeviceorientation" in window)) {
+      return;
+    }
+
+    const eventName = oriAbs ? "deviceorientationabsolute" : "deviceorientation";
+
+    if (DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === "function") {
+      try {
+        const permissionState = await DeviceOrientationEvent.requestPermission();
+        if (permissionState !== "granted") {
+          return;
         }
+      } catch (err) {
+        // Permission denied or not supported (e.g. iOS Chrome / WKWebView)
+        // Compass will not be shown but geolocation continues normally
+        console.warn("DeviceOrientation permission denied or unavailable:", err);
+        return;
       }
     }
+
+    DomEvent.on(window, eventName, this._onDeviceOrientation, this);
   },
 
   /**
