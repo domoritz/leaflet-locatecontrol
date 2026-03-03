@@ -5,7 +5,7 @@ This file is part of the leaflet locate control. It is licensed under the MIT li
 You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
 */
 
-import { Control, Marker, DomUtil, setOptions, DivIcon, LayerGroup, Circle, DomEvent, Util as LeafletUtil } from "leaflet";
+import { Control, Marker, setOptions, DivIcon, LayerGroup, Circle, DomEvent, Util as LeafletUtil } from "leaflet";
 
 const METERS_TO_FEET = 3.2808399;
 
@@ -29,6 +29,20 @@ function removeClasses(el, names) {
   names.split(" ").forEach((className) => {
     el.classList.remove(className);
   });
+}
+
+/**
+ * Create a DOM element with a class name and optionally append it to a parent.
+ * @param {string} tag - The element tag name.
+ * @param {string} [className] - Space-separated class names.
+ * @param {HTMLElement} [parent] - Optional parent to append the element to.
+ * @returns {HTMLElement}
+ */
+function createElement(tag, className, parent) {
+  const el = document.createElement(tag);
+  if (className) el.className = className;
+  parent?.append(el);
+  return el;
 }
 
 /**
@@ -320,17 +334,17 @@ const LocateControl = Control.extend({
      * This function should return an object with HtmlElement for the button (link property) and the icon (icon property).
      */
     createButtonCallback(container, options) {
-      const link = DomUtil.create("a", "leaflet-bar-part leaflet-bar-part-single", container);
+      const link = createElement("a", "leaflet-bar-part leaflet-bar-part-single", container);
       link.title = options.strings.title;
       link.href = "#";
       link.setAttribute("role", "button");
       link.setAttribute("aria-label", options.strings.title);
-      const icon = DomUtil.create(options.iconElementTag, options.icon, link);
+      const icon = createElement(options.iconElementTag, options.icon, link);
       // Add common class for all icons to enable color status changes
       icon.classList.add("leaflet-locate-icon");
 
       if (options.strings.text !== undefined) {
-        const text = DomUtil.create(options.textElementTag, "leaflet-locate-text", link);
+        const text = createElement(options.textElementTag, "leaflet-locate-text", link);
         text.textContent = options.strings.text;
         link.classList.add("leaflet-locate-text-active");
         link.parentNode.style.display = "flex";
@@ -393,7 +407,7 @@ const LocateControl = Control.extend({
    * Add control to map. Returns the container for the control.
    */
   onAdd(map) {
-    const container = DomUtil.create("div", "leaflet-control-locate leaflet-bar leaflet-control");
+    const container = createElement("div", "leaflet-control-locate leaflet-bar leaflet-control");
     this._container = container;
     this._map = map;
     this._layer = this.options.layer || new LayerGroup();
