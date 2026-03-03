@@ -1065,10 +1065,7 @@ const LocateControl = Control.extend({
    * Removes all classes from button.
    */
   _cleanClasses() {
-    DomUtil.removeClass(this._container, "requesting");
-    DomUtil.removeClass(this._container, "active");
-    DomUtil.removeClass(this._container, "following");
-
+    removeClasses(this._container, "requesting active following");
     removeClasses(this._icon, this.options.iconLoading);
     addClasses(this._icon, this.options.icon);
   },
