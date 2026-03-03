@@ -592,6 +592,7 @@ const LocateControl = Control.extend({
       }
     }
 
+    this._compassEventName = eventName;
     DomEvent.on(window, eventName, this._onDeviceOrientation, this);
   },
 
@@ -619,13 +620,10 @@ const LocateControl = Control.extend({
     this._map.off("dragstart", this._onDrag, this);
     this._map.off("zoomstart", this._onZoom, this);
     this._map.off("zoomend", this._onZoomEnd, this);
-    if (this.options.showCompass) {
+    if (this._compassEventName) {
       this._compassHeading = null;
-      if ("ondeviceorientationabsolute" in window) {
-        DomEvent.off(window, "deviceorientationabsolute", this._onDeviceOrientation, this);
-      } else if ("ondeviceorientation" in window) {
-        DomEvent.off(window, "deviceorientation", this._onDeviceOrientation, this);
-      }
+      DomEvent.off(window, this._compassEventName, this._onDeviceOrientation, this);
+      this._compassEventName = null;
     }
   },
 
