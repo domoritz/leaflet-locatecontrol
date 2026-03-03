@@ -363,6 +363,62 @@ describe("LocateControl", () => {
     });
   });
 
+  describe("CSS state", () => {
+    it("should remove state classes when stopped", () => {
+      const control = new LocateControl();
+      map.addControl(control);
+      control._container.classList.add("requesting", "active", "following");
+      control.stop();
+      assert.ok(!control._container.classList.contains("requesting"));
+      assert.ok(!control._container.classList.contains("active"));
+      assert.ok(!control._container.classList.contains("following"));
+    });
+
+    it("should set requesting class when active without location", () => {
+      const control = new LocateControl();
+      map.addControl(control);
+      control._active = true;
+      control._event = undefined;
+      control._updateContainerStyle();
+      assert.ok(control._container.classList.contains("requesting"));
+      assert.ok(!control._container.classList.contains("active"));
+      assert.ok(!control._container.classList.contains("following"));
+    });
+
+    it("should set active class when active with location but not following", () => {
+      const control = new LocateControl({ setView: false });
+      map.addControl(control);
+      control._active = true;
+      control._event = { latlng: { lat: 51.5, lng: -0.09 }, accuracy: 50 };
+      control._updateContainerStyle();
+      assert.ok(control._container.classList.contains("active"));
+      assert.ok(!control._container.classList.contains("requesting"));
+      assert.ok(!control._container.classList.contains("following"));
+    });
+
+    it("should set following class when following", () => {
+      const control = new LocateControl({ setView: "always" });
+      map.addControl(control);
+      control._active = true;
+      control._event = { latlng: { lat: 51.5, lng: -0.09 }, accuracy: 50 };
+      control._updateContainerStyle();
+      assert.ok(control._container.classList.contains("active"));
+      assert.ok(control._container.classList.contains("following"));
+      assert.ok(!control._container.classList.contains("requesting"));
+    });
+
+    it("should restore default icon class when stopped", () => {
+      const control = new LocateControl();
+      map.addControl(control);
+      // Simulate loading state
+      control._icon.classList.remove(control.options.icon);
+      control._icon.classList.add(control.options.iconLoading);
+      control.stop();
+      assert.ok(control._icon.classList.contains(control.options.icon));
+      assert.ok(!control._icon.classList.contains(control.options.iconLoading));
+    });
+  });
+
   describe("setView", () => {
     it("should zoom to initialZoomLevel when justClicked", () => {
       const control = new LocateControl({ initialZoomLevel: 15 });
