@@ -642,6 +642,101 @@ describe("LocateControl", () => {
     });
   });
 
+  describe("Compass Deactivation", () => {
+    let originalOnDeviceOrientation;
+    let originalOnDeviceOrientationAbsolute;
+
+    beforeEach(() => {
+      originalOnDeviceOrientation = window.ondeviceorientation;
+      originalOnDeviceOrientationAbsolute = window.ondeviceorientationabsolute;
+
+      window.ondeviceorientation = null;
+      delete window.ondeviceorientationabsolute;
+      delete DeviceOrientationEvent.requestPermission;
+    });
+
+    afterEach(() => {
+      if (originalOnDeviceOrientation !== undefined) {
+        window.ondeviceorientation = originalOnDeviceOrientation;
+      } else {
+        delete window.ondeviceorientation;
+      }
+      if (originalOnDeviceOrientationAbsolute !== undefined) {
+        window.ondeviceorientationabsolute = originalOnDeviceOrientationAbsolute;
+      } else {
+        delete window.ondeviceorientationabsolute;
+      }
+      mock.restoreAll();
+    });
+
+    it("should stop receiving orientation events after deactivate", async () => {
+      const control = new LocateControl({ showCompass: true });
+      map.addControl(control);
+      control._active = true;
+
+      await control._activateCompass();
+
+      // Sanity check: events are received while active
+      window.dispatchEvent(new DeviceOrientationEvent("deviceorientation", { alpha: 90, absolute: true }));
+      assert.strictEqual(control._compassHeading, 270, "Should receive events before deactivate");
+
+      control._deactivate();
+
+      // Events after deactivate should not update compassHeading
+      window.dispatchEvent(new DeviceOrientationEvent("deviceorientation", { alpha: 45, absolute: true }));
+      assert.strictEqual(control._compassHeading, null, "Should not receive events after deactivate");
+    });
+
+    it("should reset _compassHeading to null on deactivate", async () => {
+      const control = new LocateControl({ showCompass: true });
+      map.addControl(control);
+      control._active = true;
+
+      await control._activateCompass();
+
+      window.dispatchEvent(new DeviceOrientationEvent("deviceorientation", { alpha: 90, absolute: true }));
+      assert.strictEqual(control._compassHeading, 270, "Should have a heading before deactivate");
+
+      control._deactivate();
+
+      assert.strictEqual(control._compassHeading, null, "_compassHeading should be null after deactivate");
+    });
+
+    it("should remove deviceorientationabsolute listener when that was bound", async () => {
+      window.ondeviceorientationabsolute = null;
+
+      const control = new LocateControl({ showCompass: true });
+      map.addControl(control);
+      control._active = true;
+
+      await control._activateCompass();
+
+      // Sanity check: absolute events are received
+      window.dispatchEvent(new DeviceOrientationEvent("deviceorientationabsolute", { alpha: 90, absolute: true }));
+      assert.strictEqual(control._compassHeading, 270, "Should receive absolute events before deactivate");
+
+      control._deactivate();
+
+      window.dispatchEvent(new DeviceOrientationEvent("deviceorientationabsolute", { alpha: 45, absolute: true }));
+      assert.strictEqual(control._compassHeading, null, "Should not receive absolute events after deactivate");
+    });
+
+    it("should deactivate cleanly when compass listener was never bound", async () => {
+      // Simulate no orientation support — _activateCompass binds nothing
+      delete window.ondeviceorientation;
+      delete window.ondeviceorientationabsolute;
+
+      const control = new LocateControl({ showCompass: true });
+      map.addControl(control);
+      control._active = true;
+
+      await control._activateCompass();
+
+      // Should not throw
+      assert.doesNotThrow(() => control._deactivate());
+    });
+  });
+
   describe("Popup Binding", () => {
     it("should bind popup to marker when showPopup is true", () => {
       const control = new LocateControl({ showPopup: true });
