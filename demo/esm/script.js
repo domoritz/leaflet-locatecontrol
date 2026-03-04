@@ -48,12 +48,12 @@ new LocateControl({
   }
 }).addTo(map);
 
-// Control with text (bottom left) - demonstrates lat/lng/altitude in popup
+// Control with text (bottom left) - demonstrates all popup fields incl. speed & heading
 new LocateControl({
   position: "bottomleft",
   strings: {
     title: "Show me where I am, yo!",
     text: "Locate me",
-    popup: "Lat: {lat}<br>Lng: {lng}<br>Alt: {altitude} {unit}<br>Accuracy: ±{distance} {unit}"
+    popup: "{lat}, {lng}<br>Accuracy: ±{distance} {unit}<br>Altitude: {altitude} {unit}<br>Speed: {speed} {speedUnit}<br>Heading: {heading}°"
   }
 }).addTo(map);

@@ -8,6 +8,8 @@ You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
 import { Control, Marker, setOptions, DivIcon, LayerGroup, Circle, DomEvent, Util as LeafletUtil } from "leaflet";
 
 const METERS_TO_FEET = 3.2808399;
+const MS_TO_KMH = 3.6;
+const MS_TO_MPH = 2.2369363;
 
 /**
  * Add one or more CSS classes to an element.
@@ -370,6 +372,8 @@ const LocateControl = Control.extend({
       title: "Show me where I am",
       metersUnit: "meters",
       feetUnit: "feet",
+      kmhUnit: "km/h",
+      mphUnit: "mph",
       popup: "You are within {distance} {unit} from this point",
       outsideMapBoundsMsg: "You seem located outside the boundaries of the map"
     },
@@ -798,15 +802,24 @@ const LocateControl = Control.extend({
     let distance;
     let unit;
     let altitude;
+    let speed;
+    let speedUnit;
     if (this.options.metric) {
       distance = accuracy.toFixed(0);
       unit = this.options.strings.metersUnit;
       altitude = this._event?.altitude != null ? this._event.altitude.toFixed(1) : "N/A";
+      speed = this._event?.speed != null ? (this._event.speed * MS_TO_KMH).toFixed(1) : "N/A";
+      speedUnit = this.options.strings.kmhUnit;
     } else {
       distance = (accuracy * METERS_TO_FEET).toFixed(0);
       unit = this.options.strings.feetUnit;
       altitude = this._event?.altitude != null ? (this._event.altitude * METERS_TO_FEET).toFixed(1) : "N/A";
+      speed = this._event?.speed != null ? (this._event.speed * MS_TO_MPH).toFixed(1) : "N/A";
+      speedUnit = this.options.strings.mphUnit;
     }
+
+    // Format heading (always in degrees, unit-independent)
+    const heading = this._event?.heading != null ? this._event.heading.toFixed(0) : "N/A";
 
     // Collect template data
     const data = {
@@ -814,7 +827,10 @@ const LocateControl = Control.extend({
       unit,
       lat: latlng.lat.toFixed(6),
       lng: latlng.lng.toFixed(6),
-      altitude
+      altitude,
+      speed,
+      speedUnit,
+      heading
     };
 
     // Generate popup text

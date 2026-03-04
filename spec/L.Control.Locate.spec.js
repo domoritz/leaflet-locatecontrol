@@ -856,7 +856,9 @@ describe("LocateControl", () => {
       control._event = {
         latlng: { lat: 51.505, lng: -0.09 },
         accuracy: 200,
-        altitude: 15
+        altitude: 15,
+        speed: 5.5,
+        heading: 270
       };
       control._drawMarker();
 
@@ -865,6 +867,74 @@ describe("LocateControl", () => {
       assert.strictEqual(receivedData.altitude, "15.0");
       assert.ok(receivedData.distance);
       assert.ok(receivedData.unit);
+      assert.strictEqual(receivedData.speed, "19.8", "speed should be converted to km/h");
+      assert.strictEqual(receivedData.speedUnit, "km/h");
+      assert.strictEqual(receivedData.heading, "270", "heading should be in degrees");
+    });
+
+    it("should include speed and heading in popup template", () => {
+      const control = new LocateControl({
+        showPopup: true,
+        strings: {
+          popup: "{speed} {speedUnit} heading {heading}°"
+        }
+      });
+      map.addControl(control);
+
+      control._event = {
+        latlng: { lat: 51.505, lng: -0.09 },
+        accuracy: 100,
+        speed: 10,
+        heading: 90
+      };
+      control._drawMarker();
+
+      const popupContent = control._marker.getPopup().getContent();
+      assert.ok(popupContent.includes("36.0"), "popup should contain speed in km/h");
+      assert.ok(popupContent.includes("km/h"), "popup should contain speed unit");
+      assert.ok(popupContent.includes("90"), "popup should contain heading");
+    });
+
+    it("should show N/A for speed and heading when not available", () => {
+      const control = new LocateControl({
+        showPopup: true,
+        strings: {
+          popup: "speed:{speed} heading:{heading}"
+        }
+      });
+      map.addControl(control);
+
+      control._event = {
+        latlng: { lat: 51.505, lng: -0.09 },
+        accuracy: 100
+      };
+      control._drawMarker();
+
+      const popupContent = control._marker.getPopup().getContent();
+      assert.ok(popupContent.includes("speed:N/A"), "popup should show N/A for speed when not available");
+      assert.ok(popupContent.includes("heading:N/A"), "popup should show N/A for heading when not available");
+    });
+
+    it("should convert speed to mph when metric is false", () => {
+      const control = new LocateControl({
+        showPopup: true,
+        metric: false,
+        strings: {
+          popup: "{speed} {speedUnit}"
+        }
+      });
+      map.addControl(control);
+
+      control._event = {
+        latlng: { lat: 51.505, lng: -0.09 },
+        accuracy: 100,
+        speed: 10
+      };
+      control._drawMarker();
+
+      const popupContent = control._marker.getPopup().getContent();
+      assert.ok(popupContent.includes("22.4"), "popup should contain speed in mph");
+      assert.ok(popupContent.includes("mph"), "popup should contain mph unit");
     });
   });
 });
