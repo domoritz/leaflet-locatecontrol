@@ -1,4 +1,4 @@
-import { describe, it, beforeEach, afterEach } from "node:test";
+import { describe, it, beforeEach, afterEach, mock } from "node:test";
 import assert from "node:assert";
 import "./setup.js";
 import { Map, LayerGroup } from "leaflet";
@@ -491,6 +491,249 @@ describe("LocateControl", () => {
         // Restore original method
         map.flyTo = originalFlyTo;
       }
+    });
+  });
+
+  describe("Compass Activation", () => {
+    let originalOnDeviceOrientation;
+    let originalOnDeviceOrientationAbsolute;
+    let originalRequestPermission;
+
+    beforeEach(() => {
+      originalOnDeviceOrientation = window.ondeviceorientation;
+      originalOnDeviceOrientationAbsolute = window.ondeviceorientationabsolute;
+      originalRequestPermission = DeviceOrientationEvent.requestPermission;
+
+      // Default: deviceorientation supported, no requestPermission
+      window.ondeviceorientation = null;
+      delete window.ondeviceorientationabsolute;
+      delete DeviceOrientationEvent.requestPermission;
+    });
+
+    afterEach(() => {
+      // Restore originals
+      if (originalOnDeviceOrientation !== undefined) {
+        window.ondeviceorientation = originalOnDeviceOrientation;
+      } else {
+        delete window.ondeviceorientation;
+      }
+      if (originalOnDeviceOrientationAbsolute !== undefined) {
+        window.ondeviceorientationabsolute = originalOnDeviceOrientationAbsolute;
+      } else {
+        delete window.ondeviceorientationabsolute;
+      }
+      if (originalRequestPermission !== undefined) {
+        DeviceOrientationEvent.requestPermission = originalRequestPermission;
+      } else {
+        delete DeviceOrientationEvent.requestPermission;
+      }
+      mock.restoreAll();
+    });
+
+    it("should skip compass when showCompass is false", async () => {
+      const control = new LocateControl({ showCompass: false });
+      map.addControl(control);
+      const spy = mock.method(control, "_onDeviceOrientation");
+
+      await control._activateCompass();
+
+      // Dispatch orientation event — should not be received
+      window.dispatchEvent(new DeviceOrientationEvent("deviceorientation", { alpha: 90 }));
+      assert.strictEqual(spy.mock.callCount(), 0, "_onDeviceOrientation should not be called");
+    });
+
+    it("should skip compass when device has no orientation support", async () => {
+      delete window.ondeviceorientation;
+      delete window.ondeviceorientationabsolute;
+
+      const control = new LocateControl({ showCompass: true });
+      map.addControl(control);
+      const spy = mock.method(control, "_onDeviceOrientation");
+
+      await control._activateCompass();
+
+      window.dispatchEvent(new DeviceOrientationEvent("deviceorientation", { alpha: 90 }));
+      assert.strictEqual(spy.mock.callCount(), 0, "_onDeviceOrientation should not be called");
+    });
+
+    it("should bind deviceorientation event when supported", async () => {
+      const control = new LocateControl({ showCompass: true });
+      map.addControl(control);
+      control._active = true;
+
+      await control._activateCompass();
+
+      // Verify the handler is bound by dispatching an event
+      const event = new DeviceOrientationEvent("deviceorientation", { alpha: 90, absolute: true });
+      window.dispatchEvent(event);
+      assert.strictEqual(control._compassHeading, 270, "Should process orientation event (360 - 90)");
+    });
+
+    it("should prefer deviceorientationabsolute when available", async () => {
+      window.ondeviceorientationabsolute = null;
+
+      const control = new LocateControl({ showCompass: true });
+      map.addControl(control);
+      control._active = true;
+
+      await control._activateCompass();
+
+      // deviceorientation should NOT trigger the handler
+      window.dispatchEvent(new DeviceOrientationEvent("deviceorientation", { alpha: 45, absolute: true }));
+      assert.strictEqual(control._compassHeading, null, "Should not react to deviceorientation");
+
+      // deviceorientationabsolute SHOULD trigger the handler
+      const event = new DeviceOrientationEvent("deviceorientationabsolute", { alpha: 45, absolute: true });
+      window.dispatchEvent(event);
+      assert.strictEqual(control._compassHeading, 315, "Should process absolute orientation event");
+    });
+
+    it("should bind compass when requestPermission grants access", async () => {
+      DeviceOrientationEvent.requestPermission = async () => "granted";
+
+      const control = new LocateControl({ showCompass: true });
+      map.addControl(control);
+      control._active = true;
+
+      await control._activateCompass();
+
+      const event = new DeviceOrientationEvent("deviceorientation", { alpha: 180, absolute: true });
+      window.dispatchEvent(event);
+      assert.strictEqual(control._compassHeading, 180, "Should process orientation after granted permission");
+    });
+
+    it("should not bind compass when requestPermission denies access", async () => {
+      DeviceOrientationEvent.requestPermission = async () => "denied";
+
+      const control = new LocateControl({ showCompass: true });
+      map.addControl(control);
+      const spy = mock.method(control, "_onDeviceOrientation");
+
+      await control._activateCompass();
+
+      window.dispatchEvent(new DeviceOrientationEvent("deviceorientation", { alpha: 90 }));
+      assert.strictEqual(spy.mock.callCount(), 0, "_onDeviceOrientation should not be called when denied");
+    });
+
+    it("should handle requestPermission rejection gracefully", async () => {
+      DeviceOrientationEvent.requestPermission = async () => {
+        throw new Error("NotAllowedError");
+      };
+
+      const control = new LocateControl({ showCompass: true });
+      map.addControl(control);
+      const spy = mock.method(control, "_onDeviceOrientation");
+
+      // Should not throw
+      await control._activateCompass();
+
+      window.dispatchEvent(new DeviceOrientationEvent("deviceorientation", { alpha: 90 }));
+      assert.strictEqual(spy.mock.callCount(), 0, "_onDeviceOrientation should not be called after rejection");
+    });
+
+    it("should call _activateCompass from _activate", () => {
+      const control = new LocateControl({ showCompass: true });
+      map.addControl(control);
+      const spy = mock.method(control, "_activateCompass", () => {});
+
+      control._activate();
+
+      assert.strictEqual(spy.mock.callCount(), 1, "_activateCompass should be called once");
+    });
+  });
+
+  describe("Compass Deactivation", () => {
+    let originalOnDeviceOrientation;
+    let originalOnDeviceOrientationAbsolute;
+
+    beforeEach(() => {
+      originalOnDeviceOrientation = window.ondeviceorientation;
+      originalOnDeviceOrientationAbsolute = window.ondeviceorientationabsolute;
+
+      window.ondeviceorientation = null;
+      delete window.ondeviceorientationabsolute;
+      delete DeviceOrientationEvent.requestPermission;
+    });
+
+    afterEach(() => {
+      if (originalOnDeviceOrientation !== undefined) {
+        window.ondeviceorientation = originalOnDeviceOrientation;
+      } else {
+        delete window.ondeviceorientation;
+      }
+      if (originalOnDeviceOrientationAbsolute !== undefined) {
+        window.ondeviceorientationabsolute = originalOnDeviceOrientationAbsolute;
+      } else {
+        delete window.ondeviceorientationabsolute;
+      }
+      mock.restoreAll();
+    });
+
+    it("should stop receiving orientation events after deactivate", async () => {
+      const control = new LocateControl({ showCompass: true });
+      map.addControl(control);
+      control._active = true;
+
+      await control._activateCompass();
+
+      // Sanity check: events are received while active
+      window.dispatchEvent(new DeviceOrientationEvent("deviceorientation", { alpha: 90, absolute: true }));
+      assert.strictEqual(control._compassHeading, 270, "Should receive events before deactivate");
+
+      control._deactivate();
+
+      // Events after deactivate should not update compassHeading
+      window.dispatchEvent(new DeviceOrientationEvent("deviceorientation", { alpha: 45, absolute: true }));
+      assert.strictEqual(control._compassHeading, null, "Should not receive events after deactivate");
+    });
+
+    it("should reset _compassHeading to null on deactivate", async () => {
+      const control = new LocateControl({ showCompass: true });
+      map.addControl(control);
+      control._active = true;
+
+      await control._activateCompass();
+
+      window.dispatchEvent(new DeviceOrientationEvent("deviceorientation", { alpha: 90, absolute: true }));
+      assert.strictEqual(control._compassHeading, 270, "Should have a heading before deactivate");
+
+      control._deactivate();
+
+      assert.strictEqual(control._compassHeading, null, "_compassHeading should be null after deactivate");
+    });
+
+    it("should remove deviceorientationabsolute listener when that was bound", async () => {
+      window.ondeviceorientationabsolute = null;
+
+      const control = new LocateControl({ showCompass: true });
+      map.addControl(control);
+      control._active = true;
+
+      await control._activateCompass();
+
+      // Sanity check: absolute events are received
+      window.dispatchEvent(new DeviceOrientationEvent("deviceorientationabsolute", { alpha: 90, absolute: true }));
+      assert.strictEqual(control._compassHeading, 270, "Should receive absolute events before deactivate");
+
+      control._deactivate();
+
+      window.dispatchEvent(new DeviceOrientationEvent("deviceorientationabsolute", { alpha: 45, absolute: true }));
+      assert.strictEqual(control._compassHeading, null, "Should not receive absolute events after deactivate");
+    });
+
+    it("should deactivate cleanly when compass listener was never bound", async () => {
+      // Simulate no orientation support — _activateCompass binds nothing
+      delete window.ondeviceorientation;
+      delete window.ondeviceorientationabsolute;
+
+      const control = new LocateControl({ showCompass: true });
+      map.addControl(control);
+      control._active = true;
+
+      await control._activateCompass();
+
+      // Should not throw
+      assert.doesNotThrow(() => control._deactivate());
     });
   });
 

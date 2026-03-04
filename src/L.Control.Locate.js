@@ -558,24 +558,42 @@ const LocateControl = Control.extend({
     this._map.on("dragstart", this._onDrag, this);
     this._map.on("zoomstart", this._onZoom, this);
     this._map.on("zoomend", this._onZoomEnd, this);
-    if (this.options.showCompass) {
-      const oriAbs = "ondeviceorientationabsolute" in window;
-      if (oriAbs || "ondeviceorientation" in window) {
-        const _this = this;
-        const deviceorientation = function () {
-          DomEvent.on(window, oriAbs ? "deviceorientationabsolute" : "deviceorientation", _this._onDeviceOrientation, _this);
-        };
-        if (DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === "function") {
-          DeviceOrientationEvent.requestPermission().then(function (permissionState) {
-            if (permissionState === "granted") {
-              deviceorientation();
-            }
-          });
-        } else {
-          deviceorientation();
+
+    this._activateCompass();
+  },
+
+  /**
+   * Request DeviceOrientation permission (if needed) and bind compass events.
+   * Fails gracefully — geolocation continues without compass.
+   */
+  async _activateCompass() {
+    if (!this.options.showCompass) {
+      return;
+    }
+
+    const oriAbs = "ondeviceorientationabsolute" in window;
+    if (!oriAbs && !("ondeviceorientation" in window)) {
+      return;
+    }
+
+    const eventName = oriAbs ? "deviceorientationabsolute" : "deviceorientation";
+
+    if (DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === "function") {
+      try {
+        const permissionState = await DeviceOrientationEvent.requestPermission();
+        if (permissionState !== "granted") {
+          return;
         }
+      } catch (err) {
+        // Permission denied or not supported (e.g. iOS Chrome / WKWebView)
+        // Compass will not be shown but geolocation continues normally
+        console.warn("DeviceOrientation permission denied or unavailable:", err);
+        return;
       }
     }
+
+    this._compassEventName = eventName;
+    DomEvent.on(window, eventName, this._onDeviceOrientation, this);
   },
 
   /**
@@ -602,14 +620,22 @@ const LocateControl = Control.extend({
     this._map.off("dragstart", this._onDrag, this);
     this._map.off("zoomstart", this._onZoom, this);
     this._map.off("zoomend", this._onZoomEnd, this);
-    if (this.options.showCompass) {
-      this._compassHeading = null;
-      if ("ondeviceorientationabsolute" in window) {
-        DomEvent.off(window, "deviceorientationabsolute", this._onDeviceOrientation, this);
-      } else if ("ondeviceorientation" in window) {
-        DomEvent.off(window, "deviceorientation", this._onDeviceOrientation, this);
-      }
+
+    this._deactivateCompass();
+  },
+
+  /**
+   * Remove compass event listener and reset compass heading state.
+   * Symmetric counterpart to _activateCompass().
+   */
+  _deactivateCompass() {
+    if (!this._compassEventName) {
+      return;
     }
+
+    this._compassHeading = null;
+    DomEvent.off(window, this._compassEventName, this._onDeviceOrientation, this);
+    this._compassEventName = null;
   },
 
   /**
