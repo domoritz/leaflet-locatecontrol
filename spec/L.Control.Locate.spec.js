@@ -856,7 +856,9 @@ describe("LocateControl", () => {
       control._event = {
         latlng: { lat: 51.505, lng: -0.09 },
         accuracy: 200,
-        altitude: 15
+        altitude: 15,
+        speed: 5.5,
+        heading: 270
       };
       control._drawMarker();
 
@@ -865,6 +867,72 @@ describe("LocateControl", () => {
       assert.strictEqual(receivedData.altitude, "15.0");
       assert.ok(receivedData.distance);
       assert.ok(receivedData.unit);
+      assert.strictEqual(receivedData.speed, "5.50", "speed should be raw m/s");
+      assert.strictEqual(receivedData.heading, "270", "heading should be in degrees");
+    });
+
+    it("should include speed and heading in popup template", () => {
+      const control = new LocateControl({
+        showPopup: true,
+        strings: {
+          popup: "{speed} m/s heading {heading}°"
+        }
+      });
+      map.addControl(control);
+
+      control._event = {
+        latlng: { lat: 51.505, lng: -0.09 },
+        accuracy: 100,
+        speed: 10,
+        heading: 90
+      };
+      control._drawMarker();
+
+      const popupContent = control._marker.getPopup().getContent();
+      assert.ok(popupContent.includes("10.00"), "popup should contain raw speed in m/s");
+      assert.ok(popupContent.includes("m/s"), "popup should contain speed unit label");
+      assert.ok(popupContent.includes("90"), "popup should contain heading");
+    });
+
+    it("should show N/A for speed and heading when not available", () => {
+      const control = new LocateControl({
+        showPopup: true,
+        strings: {
+          popup: "speed:{speed} heading:{heading}"
+        }
+      });
+      map.addControl(control);
+
+      control._event = {
+        latlng: { lat: 51.505, lng: -0.09 },
+        accuracy: 100
+      };
+      control._drawMarker();
+
+      const popupContent = control._marker.getPopup().getContent();
+      assert.ok(popupContent.includes("speed:N/A"), "popup should show N/A for speed when not available");
+      assert.ok(popupContent.includes("heading:N/A"), "popup should show N/A for heading when not available");
+    });
+
+    it("should provide raw speed regardless of metric setting", () => {
+      const control = new LocateControl({
+        showPopup: true,
+        metric: false,
+        strings: {
+          popup: "{speed}"
+        }
+      });
+      map.addControl(control);
+
+      control._event = {
+        latlng: { lat: 51.505, lng: -0.09 },
+        accuracy: 100,
+        speed: 10
+      };
+      control._drawMarker();
+
+      const popupContent = control._marker.getPopup().getContent();
+      assert.ok(popupContent.includes("10.00"), "speed should be raw m/s regardless of metric setting");
     });
   });
 });

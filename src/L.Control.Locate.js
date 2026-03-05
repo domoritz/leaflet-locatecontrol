@@ -808,13 +808,19 @@ const LocateControl = Control.extend({
       altitude = this._event?.altitude != null ? (this._event.altitude * METERS_TO_FEET).toFixed(1) : "N/A";
     }
 
+    // Speed in m/s (raw value from Geolocation API), heading in degrees
+    const speed = this._event?.speed != null ? this._event.speed.toFixed(2) : "N/A";
+    const heading = this._event?.heading != null ? this._event.heading.toFixed(0) : "N/A";
+
     // Collect template data
     const data = {
       distance,
       unit,
       lat: latlng.lat.toFixed(6),
       lng: latlng.lng.toFixed(6),
-      altitude
+      altitude,
+      speed,
+      heading
     };
 
     // Generate popup text
