@@ -18,8 +18,6 @@ export interface StringsOptions {
   text?: string | undefined;
   metersUnit?: string | undefined;
   feetUnit?: string | undefined;
-  kmhUnit?: string | undefined;
-  mphUnit?: string | undefined;
   popup?: string | undefined;
   outsideMapBoundsMsg?: string | undefined;
 }

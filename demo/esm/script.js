@@ -54,6 +54,6 @@ new LocateControl({
   strings: {
     title: "Show me where I am, yo!",
     text: "Locate me",
-    popup: "{lat}, {lng}<br>Accuracy: ±{distance} {unit}<br>Altitude: {altitude} {unit}<br>Speed: {speed} {speedUnit}<br>Heading: {heading}°"
+    popup: "{lat}, {lng}<br>Accuracy: ±{distance} {unit}<br>Altitude: {altitude} {unit}<br>Speed: {speed} m/s<br>Heading: {heading}°"
   }
 }).addTo(map);

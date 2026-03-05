@@ -867,8 +867,7 @@ describe("LocateControl", () => {
       assert.strictEqual(receivedData.altitude, "15.0");
       assert.ok(receivedData.distance);
       assert.ok(receivedData.unit);
-      assert.strictEqual(receivedData.speed, "19.8", "speed should be converted to km/h");
-      assert.strictEqual(receivedData.speedUnit, "km/h");
+      assert.strictEqual(receivedData.speed, "5.50", "speed should be raw m/s");
       assert.strictEqual(receivedData.heading, "270", "heading should be in degrees");
     });
 
@@ -876,7 +875,7 @@ describe("LocateControl", () => {
       const control = new LocateControl({
         showPopup: true,
         strings: {
-          popup: "{speed} {speedUnit} heading {heading}°"
+          popup: "{speed} m/s heading {heading}°"
         }
       });
       map.addControl(control);
@@ -890,8 +889,8 @@ describe("LocateControl", () => {
       control._drawMarker();
 
       const popupContent = control._marker.getPopup().getContent();
-      assert.ok(popupContent.includes("36.0"), "popup should contain speed in km/h");
-      assert.ok(popupContent.includes("km/h"), "popup should contain speed unit");
+      assert.ok(popupContent.includes("10.00"), "popup should contain raw speed in m/s");
+      assert.ok(popupContent.includes("m/s"), "popup should contain speed unit label");
       assert.ok(popupContent.includes("90"), "popup should contain heading");
     });
 
@@ -915,12 +914,12 @@ describe("LocateControl", () => {
       assert.ok(popupContent.includes("heading:N/A"), "popup should show N/A for heading when not available");
     });
 
-    it("should convert speed to mph when metric is false", () => {
+    it("should provide raw speed regardless of metric setting", () => {
       const control = new LocateControl({
         showPopup: true,
         metric: false,
         strings: {
-          popup: "{speed} {speedUnit}"
+          popup: "{speed}"
         }
       });
       map.addControl(control);
@@ -933,8 +932,7 @@ describe("LocateControl", () => {
       control._drawMarker();
 
       const popupContent = control._marker.getPopup().getContent();
-      assert.ok(popupContent.includes("22.4"), "popup should contain speed in mph");
-      assert.ok(popupContent.includes("mph"), "popup should contain mph unit");
+      assert.ok(popupContent.includes("10.00"), "speed should be raw m/s regardless of metric setting");
     });
   });
 });
