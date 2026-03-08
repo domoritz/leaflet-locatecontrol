@@ -2,11 +2,12 @@
 
 Here we document notable changes.
 
-## **Unreleased**
+## **0.89.0** - 2026-03-08
 
-- Add `{speed}` (raw m/s) and `{heading}` (degrees) placeholders to popup template data. (#405)
-- Refactor compass activation/deactivation and error handling. (#401)
-- Replace Leaflet DOM helpers with native equivalents. (#404)
+- Add `{speed}` (raw m/s) and `{heading}` (degrees) placeholders to popup template data (#405)
+- Refactor compass activation/deactivation and error handling (#401)
+- Replace Leaflet DOM helpers with native equivalents for Leaflet 2 compatibility (#404, #369)
+- Fix incorrect `onLocationError` option description in README (wrong since 2014) (#409)
 
 ## **0.88** - 2026-02-12
 
