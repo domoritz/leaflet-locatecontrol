@@ -110,4 +110,4 @@ Thanks to @brendanheywood for the updates!
 
 ---
 
-*Changes prior to v0.46.0 are not documented here. See the [full commit history](https://github.com/domoritz/leaflet-locatecontrol/commits/gh-pages/) for details.*
+_Changes prior to v0.46.0 are not documented here. See the [full commit history](https://github.com/domoritz/leaflet-locatecontrol/commits/gh-pages/) for details._
