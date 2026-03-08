@@ -1,4 +1,4 @@
-/*! Version: 0.88.0
+/*! Version: 0.89.0
 Copyright (c) 2016 Dominik Moritz */
 
 (function (global, factory) {
@@ -40,6 +40,20 @@ Copyright (c) 2016 Dominik Moritz */
   }
 
   /**
+   * Create a DOM element with a class name and optionally append it to a parent.
+   * @param {string} tag - The element tag name.
+   * @param {string} [className] - Space-separated class names.
+   * @param {HTMLElement} [parent] - Optional parent to append the element to.
+   * @returns {HTMLElement}
+   */
+  function createElement(tag, className, parent) {
+    const el = document.createElement(tag);
+    if (className) el.className = className;
+    parent?.append(el);
+    return el;
+  }
+
+  /**
    * Shallow clone options to prevent prototype pollution.
    * Clones arrays and plain objects, keeps functions/classes as references.
    * @param {Object} options - The options object to clone.
@@ -65,7 +79,7 @@ Copyright (c) 2016 Dominik Moritz */
    */
   const LocationMarker = leaflet.Marker.extend({
     initialize(latlng, options) {
-      leaflet.setOptions(this, options);
+      leaflet.Util.setOptions(this, options);
       this._latlng = latlng;
       this.createIcon();
     },
@@ -89,7 +103,7 @@ Copyright (c) 2016 Dominik Moritz */
 
       const icon = this._getIconSVG(opt, style);
 
-      this._locationIcon = leaflet.divIcon({
+      this._locationIcon = new leaflet.DivIcon({
         className: icon.className,
         html: icon.svg,
         iconSize: [icon.w, icon.h]
@@ -120,14 +134,14 @@ Copyright (c) 2016 Dominik Moritz */
     },
 
     setStyle(style) {
-      leaflet.setOptions(this, style);
+      leaflet.Util.setOptions(this, style);
       this.createIcon();
     }
   });
 
   const CompassMarker = LocationMarker.extend({
     initialize(latlng, heading, options) {
-      leaflet.setOptions(this, options);
+      leaflet.Util.setOptions(this, options);
       this._latlng = latlng;
       this._heading = heading;
       this.createIcon();
@@ -328,17 +342,17 @@ Copyright (c) 2016 Dominik Moritz */
        * This function should return an object with HtmlElement for the button (link property) and the icon (icon property).
        */
       createButtonCallback(container, options) {
-        const link = leaflet.DomUtil.create("a", "leaflet-bar-part leaflet-bar-part-single", container);
+        const link = createElement("a", "leaflet-bar-part leaflet-bar-part-single", container);
         link.title = options.strings.title;
         link.href = "#";
         link.setAttribute("role", "button");
         link.setAttribute("aria-label", options.strings.title);
-        const icon = leaflet.DomUtil.create(options.iconElementTag, options.icon, link);
+        const icon = createElement(options.iconElementTag, options.icon, link);
         // Add common class for all icons to enable color status changes
         icon.classList.add("leaflet-locate-icon");
 
         if (options.strings.text !== undefined) {
-          const text = leaflet.DomUtil.create(options.textElementTag, "leaflet-locate-text", link);
+          const text = createElement(options.textElementTag, "leaflet-locate-text", link);
           text.textContent = options.strings.text;
           link.classList.add("leaflet-locate-text-active");
           link.parentNode.style.display = "flex";
@@ -392,16 +406,16 @@ Copyright (c) 2016 Dominik Moritz */
       }
 
       // Follow styles inherit from base styles
-      Object.assign(this.options.followMarkerStyle, this.options.markerStyle, this.options.followMarkerStyle);
-      Object.assign(this.options.followCircleStyle, this.options.circleStyle, this.options.followCircleStyle);
-      Object.assign(this.options.followCompassStyle, this.options.compassStyle, this.options.followCompassStyle);
+      this.options.followMarkerStyle = { ...this.options.markerStyle, ...this.options.followMarkerStyle };
+      this.options.followCircleStyle = { ...this.options.circleStyle, ...this.options.followCircleStyle };
+      this.options.followCompassStyle = { ...this.options.compassStyle, ...this.options.followCompassStyle };
     },
 
     /**
      * Add control to map. Returns the container for the control.
      */
     onAdd(map) {
-      const container = leaflet.DomUtil.create("div", "leaflet-control-locate leaflet-bar leaflet-control");
+      const container = createElement("div", "leaflet-control-locate leaflet-bar leaflet-control");
       this._container = container;
       this._map = map;
       this._layer = this.options.layer || new leaflet.LayerGroup();
@@ -414,16 +428,12 @@ Copyright (c) 2016 Dominik Moritz */
       this._link = linkAndIcon.link;
       this._icon = linkAndIcon.icon;
 
-      leaflet.DomEvent.on(
-        this._link,
-        "click",
-        function (ev) {
-          leaflet.DomEvent.stopPropagation(ev);
-          leaflet.DomEvent.preventDefault(ev);
-          this._onClick();
-        },
-        this
-      ).on(this._link, "dblclick", leaflet.DomEvent.stopPropagation);
+      this._link.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        ev.preventDefault();
+        this._onClick();
+      });
+      this._link.addEventListener("dblclick", (ev) => ev.stopPropagation());
 
       this._resetVariables();
 
@@ -552,24 +562,42 @@ Copyright (c) 2016 Dominik Moritz */
       this._map.on("dragstart", this._onDrag, this);
       this._map.on("zoomstart", this._onZoom, this);
       this._map.on("zoomend", this._onZoomEnd, this);
-      if (this.options.showCompass) {
-        const oriAbs = "ondeviceorientationabsolute" in window;
-        if (oriAbs || "ondeviceorientation" in window) {
-          const _this = this;
-          const deviceorientation = function () {
-            leaflet.DomEvent.on(window, oriAbs ? "deviceorientationabsolute" : "deviceorientation", _this._onDeviceOrientation, _this);
-          };
-          if (DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === "function") {
-            DeviceOrientationEvent.requestPermission().then(function (permissionState) {
-              if (permissionState === "granted") {
-                deviceorientation();
-              }
-            });
-          } else {
-            deviceorientation();
+
+      this._activateCompass();
+    },
+
+    /**
+     * Request DeviceOrientation permission (if needed) and bind compass events.
+     * Fails gracefully — geolocation continues without compass.
+     */
+    async _activateCompass() {
+      if (!this.options.showCompass) {
+        return;
+      }
+
+      const oriAbs = "ondeviceorientationabsolute" in window;
+      if (!oriAbs && !("ondeviceorientation" in window)) {
+        return;
+      }
+
+      const eventName = oriAbs ? "deviceorientationabsolute" : "deviceorientation";
+
+      if (DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === "function") {
+        try {
+          const permissionState = await DeviceOrientationEvent.requestPermission();
+          if (permissionState !== "granted") {
+            return;
           }
+        } catch (err) {
+          // Permission denied or not supported (e.g. iOS Chrome / WKWebView)
+          // Compass will not be shown but geolocation continues normally
+          console.warn("DeviceOrientation permission denied or unavailable:", err);
+          return;
         }
       }
+
+      this._compassEventName = eventName;
+      leaflet.DomEvent.on(window, eventName, this._onDeviceOrientation, this);
     },
 
     /**
@@ -596,14 +624,22 @@ Copyright (c) 2016 Dominik Moritz */
       this._map.off("dragstart", this._onDrag, this);
       this._map.off("zoomstart", this._onZoom, this);
       this._map.off("zoomend", this._onZoomEnd, this);
-      if (this.options.showCompass) {
-        this._compassHeading = null;
-        if ("ondeviceorientationabsolute" in window) {
-          leaflet.DomEvent.off(window, "deviceorientationabsolute", this._onDeviceOrientation, this);
-        } else if ("ondeviceorientation" in window) {
-          leaflet.DomEvent.off(window, "deviceorientation", this._onDeviceOrientation, this);
-        }
+
+      this._deactivateCompass();
+    },
+
+    /**
+     * Remove compass event listener and reset compass heading state.
+     * Symmetric counterpart to _activateCompass().
+     */
+    _deactivateCompass() {
+      if (!this._compassEventName) {
+        return;
       }
+
+      this._compassHeading = null;
+      leaflet.DomEvent.off(window, this._compassEventName, this._onDeviceOrientation, this);
+      this._compassEventName = null;
     },
 
     /**
@@ -725,7 +761,7 @@ Copyright (c) 2016 Dominik Moritz */
         if (this._circle) {
           this._circle.setLatLng(latlng).setRadius(accuracy).setStyle(style);
         } else {
-          const options = Object.assign({}, style, { radius: accuracy });
+          const options = { ...style, radius: accuracy };
           this._circle = new leaflet.Circle(latlng, options).addTo(this._layer);
         }
       }
@@ -776,13 +812,19 @@ Copyright (c) 2016 Dominik Moritz */
         altitude = this._event?.altitude != null ? (this._event.altitude * METERS_TO_FEET).toFixed(1) : "N/A";
       }
 
+      // Speed in m/s (raw value from Geolocation API), heading in degrees
+      const speed = this._event?.speed != null ? this._event.speed.toFixed(2) : "N/A";
+      const heading = this._event?.heading != null ? this._event.heading.toFixed(0) : "N/A";
+
       // Collect template data
       const data = {
         distance,
         unit,
         lat: latlng.lat.toFixed(6),
         lng: latlng.lng.toFixed(6),
-        altitude
+        altitude,
+        speed,
+        heading
       };
 
       // Generate popup text
@@ -1070,10 +1112,7 @@ Copyright (c) 2016 Dominik Moritz */
      * Removes all classes from button.
      */
     _cleanClasses() {
-      leaflet.DomUtil.removeClass(this._container, "requesting");
-      leaflet.DomUtil.removeClass(this._container, "active");
-      leaflet.DomUtil.removeClass(this._container, "following");
-
+      removeClasses(this._container, "requesting active following");
       removeClasses(this._icon, this.options.iconLoading);
       addClasses(this._icon, this.options.icon);
     },
