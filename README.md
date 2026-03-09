@@ -327,6 +327,8 @@ To all [contributors](https://github.com/domoritz/leaflet-locatecontrol/contribu
 
 ## License
 
-MIT
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+
+## Attributions
 
 SVG icons from [Font Awesome v5.15.4](https://github.com/FortAwesome/Font-Awesome/releases/tag/5.15.4): [Creative Commons Attribution 4.0](https://fontawesome.com/license/free)
