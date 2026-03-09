@@ -192,7 +192,7 @@ You can keep the plugin active but stop following using `lc.stopFollowing()`.
 
 ### Events
 
-You can leverage the native Leaflet events `locationfound` and `locationerror` to handle when geolocation is successful or produces an error. You can find out more about these events in the [Leaflet documentation](https://leafletjs.com/examples/mobile/#geolocation).
+You can leverage the native Leaflet events `locationfound` and `locationerror` to handle when geolocation is successful or produces an error. You can find out more about these events in the [Leaflet documentation](https://leafletjs.com/examples/mobile/#geolocation). Note that the control's `onLocationError` callback (which shows a browser `alert()` by default) fires independently of this event — override it to suppress the alert.
 
 Additionally, the locate control fires the following events on the map object:
 
