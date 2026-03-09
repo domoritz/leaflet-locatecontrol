@@ -1,9 +1,9 @@
 # <img src="favicon.svg" alt="Leaflet.Locate logo" width="40" height="40" align="top"> Leaflet.Locate
 
-[![npm version](https://badge.fury.io/js/leaflet.locatecontrol.svg)](http://badge.fury.io/js/leaflet.locatecontrol)
+[![npm version](https://badge.fury.io/js/leaflet.locatecontrol.svg)](https://badge.fury.io/js/leaflet.locatecontrol)
 [![jsDelivr Hits](https://data.jsdelivr.com/v1/package/npm/leaflet.locatecontrol/badge?style=rounded)](https://www.jsdelivr.com/package/npm/leaflet.locatecontrol)
 
-A useful control to geolocate the user with many options. Official [Leaflet](http://leafletjs.com/plugins.html#geolocation) and [MapBox plugin](https://www.mapbox.com/mapbox.js/example/v1.0.0/leaflet-locatecontrol/).
+A useful control to geolocate the user with many options. Official [Leaflet](https://leafletjs.com/plugins.html#geolocation) and [MapBox plugin](https://www.mapbox.com/mapbox.js/example/v1.0.0/leaflet-locatecontrol/).
 
 Tested with [Leaflet](https://leafletjs.com/) 1.9.x and 2.x and [Mapbox.js](https://docs.mapbox.com/mapbox.js/) 3.3.1 in Firefox, Chrome and Safari.
 
@@ -81,7 +81,7 @@ L.control.locate().addTo(map);
 
 ### Possible options
 
-The locate controls inherits options from [Leaflet Controls](https://leafletjs.com/reference.html#control).
+The locate control inherits options from [Leaflet Controls](https://leafletjs.com/reference.html#control).
 
 To customize the control, pass an object with your custom options to the locate control.
 
@@ -97,7 +97,7 @@ Possible options are listed in the following table. More details are [in the cod
 | `position` | `string`  | Position of the control | `topleft` |
 | `layer` | [`Layer`](https://leafletjs.com/reference.html#layer)  | The layer that the user's location should be drawn on. | a new layer |
 | `setView` | `boolean`  or `string`  | Set the map view (zoom and pan) to the user's location as it updates. Options are `false`, `'once'`, `'always'`, `'untilPan'`, or `'untilPanOrZoom'` | `'untilPanOrZoom'` |
-| `flyTo` | `boolean` | Smooth pan and zoom to the location of the marker. Only works in Leaflet 1.0+. | `false` |
+| `flyTo` | `boolean` | Smooth pan and zoom to the location of the marker. | `false` |
 | `keepCurrentZoomLevel` | `boolean` or `Array`  | Only pan when setting the view. Set to `true` to always keep the current zoom, or provide a zoom range like `[13, 18]` to only keep the zoom when it's within that range. Outside the range, the map will zoom normally. | `false` |
 | `initialZoomLevel` | `false` or `integer` | After activating the plugin by clicking on the icon, zoom to the selected zoom level, even when keepCurrentZoomLevel is true. Set to `false` to disable this feature. | `false` |
 | `clickBehavior` | `object`  | What to do when the user clicks on the control. Has three options `inView`, `inViewNotFollowing` and `outOfView`. Possible values are `stop` and `setView`, or the name of a behaviour to inherit from. | `{inView: 'stop', outOfView: 'setView', inViewNotFollowing: 'inView'}` |
@@ -124,10 +124,10 @@ Possible options are listed in the following table. More details are [in the cod
 | `onLocationError` | `function`  | Called on location errors. Receives the error and the control instance. | see code |
 | `metric` | `boolean` | Use metric units. | `true` |
 | `onLocationOutsideMapBounds` | `function`  | Called when the user's location is outside the bounds set on the map. Called repeatedly when the user's location changes. | see code |
-| `showPopup` | `boolean`  | Display a pop-up when the user click on the inner marker. | `true` |
+| `showPopup` | `boolean`  | Display a pop-up when the user clicks on the inner marker. | `true` |
 | `strings` | `object`  | Strings used in the control. Options are `title`, `text`, `metersUnit`, `feetUnit`, `popup` and `outsideMapBoundsMsg` | see code |
 | `strings.popup` | `string` or `function`  | The string shown as popup. May contain the placeholders `{distance}`, `{unit}`, `{lat}`, `{lng}`, `{altitude}`, `{speed}` (in m/s), and `{heading}` (in degrees). If this option is specified as function, it will be executed with a single parameter `{distance, unit, lat, lng, altitude, speed, heading}` and expected to return a string. | see code |
-| `locateOptions` | [`Locate options`](https://leafletjs.com/reference.html#locate-options)  | The default options passed to leaflets locate method. | see code |
+| `locateOptions` | [`Locate options`](https://leafletjs.com/reference.html#locate-options)  | The default options passed to Leaflet's locate method. | see code |
 <!-- prettier-ignore-end -->
 
 For example, to customize the position and the title, you could write
