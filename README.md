@@ -1,11 +1,11 @@
 # <img src="favicon.svg" alt="Leaflet.Locate logo" width="40" height="40" align="top"> Leaflet.Locate
 
-[![npm version](https://badge.fury.io/js/leaflet.locatecontrol.svg)](http://badge.fury.io/js/leaflet.locatecontrol)
+[![npm version](https://badge.fury.io/js/leaflet.locatecontrol.svg)](https://badge.fury.io/js/leaflet.locatecontrol)
 [![jsDelivr Hits](https://data.jsdelivr.com/v1/package/npm/leaflet.locatecontrol/badge?style=rounded)](https://www.jsdelivr.com/package/npm/leaflet.locatecontrol)
 
-A useful control to geolocate the user with many options. Official [Leaflet](http://leafletjs.com/plugins.html#geolocation) and [MapBox plugin](https://www.mapbox.com/mapbox.js/example/v1.0.0/leaflet-locatecontrol/).
+A useful control to geolocate the user with many options. Official [Leaflet](https://leafletjs.com/plugins.html#geolocation) and [MapBox plugin](https://www.mapbox.com/mapbox.js/example/v1.0.0/leaflet-locatecontrol/).
 
-Tested with [Leaflet](https://leafletjs.com/) 1.9.2 and [Mapbox.js](https://docs.mapbox.com/mapbox.js/) 3.3.1 in Firefox, Chrome and Safari.
+Tested with [Leaflet](https://leafletjs.com/) 1.9.x and 2.x and [Mapbox.js](https://docs.mapbox.com/mapbox.js/) 3.3.1 in Firefox, Chrome and Safari.
 
 Please check for [breaking changes in the changelog](https://github.com/domoritz/leaflet-locatecontrol/blob/gh-pages/CHANGELOG.md).
 
@@ -73,7 +73,7 @@ Then use `new LocateControl()` instead of `L.control.locate()`.
 
 #### Add the following snippet to your map initialization
 
-This snippet adds the control to the map. You can pass also pass a configuration.
+This snippet adds the control to the map. You can also pass a configuration.
 
 ```js
 L.control.locate().addTo(map);
@@ -81,7 +81,7 @@ L.control.locate().addTo(map);
 
 ### Possible options
 
-The locate controls inherits options from [Leaflet Controls](https://leafletjs.com/reference.html#control).
+The locate control inherits options from [Leaflet Controls](https://leafletjs.com/reference.html#control).
 
 To customize the control, pass an object with your custom options to the locate control.
 
@@ -95,9 +95,9 @@ Possible options are listed in the following table. More details are [in the cod
 | Option     | Type      | Description       |  Default |
 |------------|-----------|-------------------|----------|
 | `position` | `string`  | Position of the control | `topleft` |
-| `layer` | [`ILayer`](http://leafletjs.com/reference.html#ilayer)  | The layer that the user's location should be drawn on. | a new layer |
+| `layer` | [`Layer`](https://leafletjs.com/reference.html#layer)  | The layer that the user's location should be drawn on. | a new layer |
 | `setView` | `boolean`  or `string`  | Set the map view (zoom and pan) to the user's location as it updates. Options are `false`, `'once'`, `'always'`, `'untilPan'`, or `'untilPanOrZoom'` | `'untilPanOrZoom'` |
-| `flyTo` | `boolean` | Smooth pan and zoom to the location of the marker. Only works in Leaflet 1.0+. | `false` |
+| `flyTo` | `boolean` | Smooth pan and zoom to the location of the marker. | `false` |
 | `keepCurrentZoomLevel` | `boolean` or `Array`  | Only pan when setting the view. Set to `true` to always keep the current zoom, or provide a zoom range like `[13, 18]` to only keep the zoom when it's within that range. Outside the range, the map will zoom normally. | `false` |
 | `initialZoomLevel` | `false` or `integer` | After activating the plugin by clicking on the icon, zoom to the selected zoom level, even when keepCurrentZoomLevel is true. Set to `false` to disable this feature. | `false` |
 | `clickBehavior` | `object`  | What to do when the user clicks on the control. Has three options `inView`, `inViewNotFollowing` and `outOfView`. Possible values are `stop` and `setView`, or the name of a behaviour to inherit from. | `{inView: 'stop', outOfView: 'setView', inViewNotFollowing: 'inView'}` |
@@ -107,13 +107,13 @@ Possible options are listed in the following table. More details are [in the cod
 | `drawCircle` | `boolean`  | If set, a circle that shows the location accuracy is drawn. | `true` |
 | `drawMarker` | `boolean`  | If set, the marker at the users' location is drawn. | `true` |
 | `markerClass` | `class`  | The class to be used to create the marker. | `LocationMarker` |
-| `compassClass` | `class`  | The class to be used to create the marker. | `CompassMarker` |
-| `circleStyle` | [`Path options`](http://leafletjs.com/reference.html#path-options) | Accuracy circle style properties. | see code |
-| `markerStyle` | [`Path options`](http://leafletjs.com/reference.html#path-options) | Inner marker style properties. Only works if your marker class supports `setStyle`. | see code |
-| `compassStyle` | [`Path options`](http://leafletjs.com/reference.html#path-options) | Triangle compass heading marker style properties. Only works if your marker class supports `setStyle`. | see code |
-| `followCircleStyle` | [`Path options`](http://leafletjs.com/reference.html#path-options)  | Changes to the accuracy circle while following. Only need to provide changes. | `{}` |
-| `followMarkerStyle` | [`Path options`](http://leafletjs.com/reference.html#path-options)  | Changes to the inner marker while following. Only need to provide changes. | `{}` |
-| `followCompassStyle` | [`Path options`](http://leafletjs.com/reference.html#path-options)  | Changes to the compass marker while following. Only need to provide changes. | `{}` |
+| `compassClass` | `class`  | The class to be used to create the compass marker. | `CompassMarker` |
+| `circleStyle` | [`Path options`](https://leafletjs.com/reference.html#path) | Accuracy circle style properties. | see code |
+| `markerStyle` | [`Path options`](https://leafletjs.com/reference.html#path) | Inner marker style properties. Only works if your marker class supports `setStyle`. | see code |
+| `compassStyle` | [`Path options`](https://leafletjs.com/reference.html#path) | Triangle compass heading marker style properties. Only works if your marker class supports `setStyle`. | see code |
+| `followCircleStyle` | [`Path options`](https://leafletjs.com/reference.html#path)  | Changes to the accuracy circle while following. Only need to provide changes. | `{}` |
+| `followMarkerStyle` | [`Path options`](https://leafletjs.com/reference.html#path)  | Changes to the inner marker while following. Only need to provide changes. | `{}` |
+| `followCompassStyle` | [`Path options`](https://leafletjs.com/reference.html#path)  | Changes to the compass marker while following. Only need to provide changes. | `{}` |
 | `icon` | `string`  | The CSS class for the icon. | `leaflet-control-locate-location-arrow` |
 | `iconLoading` | `string`  | The CSS class for the icon while loading. | `leaflet-control-locate-spinner` |
 | `iconElementTag` | `string`  | The element to be created for icons. | `span` |
@@ -124,10 +124,10 @@ Possible options are listed in the following table. More details are [in the cod
 | `onLocationError` | `function`  | Called on location errors. Receives the error and the control instance. | see code |
 | `metric` | `boolean` | Use metric units. | `true` |
 | `onLocationOutsideMapBounds` | `function`  | Called when the user's location is outside the bounds set on the map. Called repeatedly when the user's location changes. | see code |
-| `showPopup` | `boolean`  | Display a pop-up when the user click on the inner marker. | `true` |
+| `showPopup` | `boolean`  | Display a pop-up when the user clicks on the inner marker. | `true` |
 | `strings` | `object`  | Strings used in the control. Options are `title`, `text`, `metersUnit`, `feetUnit`, `popup` and `outsideMapBoundsMsg` | see code |
 | `strings.popup` | `string` or `function`  | The string shown as popup. May contain the placeholders `{distance}`, `{unit}`, `{lat}`, `{lng}`, `{altitude}`, `{speed}` (in m/s), and `{heading}` (in degrees). If this option is specified as function, it will be executed with a single parameter `{distance, unit, lat, lng, altitude, speed, heading}` and expected to return a string. | see code |
-| `locateOptions` | [`Locate options`](https://leafletjs.com/reference.html#locate-options)  | The default options passed to leaflets locate method. | see code |
+| `locateOptions` | [`Locate options`](https://leafletjs.com/reference.html#locate-options)  | The default options passed to Leaflet's locate method. | see code |
 <!-- prettier-ignore-end -->
 
 For example, to customize the position and the title, you could write
@@ -192,7 +192,7 @@ You can keep the plugin active but stop following using `lc.stopFollowing()`.
 
 ### Events
 
-You can leverage the native Leaflet events `locationfound` and `locationerror` to handle when geolocation is successful or produces an error. You can find out more about these events in the [Leaflet documentation](https://leafletjs.com/examples/mobile/#geolocation).
+You can leverage the native Leaflet events `locationfound` and `locationerror` to handle when geolocation is successful or produces an error. You can find out more about these events in the [Leaflet documentation](https://leafletjs.com/examples/mobile/#geolocation). Note that the control's `onLocationError` callback (which shows a browser `alert()` by default) fires independently of the `locationerror` event — override it to suppress the alert.
 
 Additionally, the locate control fires the following events on the map object:
 
@@ -312,7 +312,7 @@ Run `npm run lint:fix` to automatically fix style and linting issues.
 
 1. Update `CHANGELOG.md` with the changes for the new version and commit: `git commit -am "chore: update changelog"`
 2. Run `npm run bump:minor` or `npm run bump:patch` (automatically bumps the version in `package.json`, runs lint, tests, and build, then stages the `dist/` files)
-3. Review what will be released: `git log $(git describe --tags --abbrev=0 HEAD~1)..HEAD --oneline`
+3. Review what will be released: `git log $(git describe --tags --abbrev=0)..HEAD --oneline`
 4. `git push && git push --tags`
 5. `npm publish`
 
@@ -327,6 +327,8 @@ To all [contributors](https://github.com/domoritz/leaflet-locatecontrol/contribu
 
 ## License
 
-MIT
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+
+## Attributions
 
 SVG icons from [Font Awesome v5.15.4](https://github.com/FortAwesome/Font-Awesome/releases/tag/5.15.4): [Creative Commons Attribution 4.0](https://fontawesome.com/license/free)
