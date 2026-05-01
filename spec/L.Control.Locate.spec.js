@@ -622,6 +622,7 @@ describe("LocateControl", () => {
 
       const control = new LocateControl({ showCompass: true });
       map.addControl(control);
+      mock.method(console, "warn", () => {});
       const spy = mock.method(control, "_onDeviceOrientation");
 
       // Should not throw
