@@ -582,15 +582,15 @@ describe("LocateControl", () => {
       assert.strictEqual(spy.mock.callCount(), 0, "_onDeviceOrientation should not be called");
     });
 
-    it("should bind deviceorientation event when supported", async () => {
+    it("should bind orientation event when supported", async () => {
       const control = new LocateControl({ showCompass: true });
       map.addControl(control);
       control._active = true;
 
       await control._activateCompass();
 
-      // Verify the handler is bound by dispatching an event
-      const event = new DeviceOrientationEvent("deviceorientation", { alpha: 90, absolute: true });
+      // Dispatch whichever event was actually registered (depends on DOM implementation)
+      const event = new DeviceOrientationEvent(control._compassEventName, { alpha: 90, absolute: true });
       window.dispatchEvent(event);
       assert.strictEqual(control._compassHeading, 270, "Should process orientation event (360 - 90)");
     });
@@ -623,7 +623,7 @@ describe("LocateControl", () => {
 
       await control._activateCompass();
 
-      const event = new DeviceOrientationEvent("deviceorientation", { alpha: 180, absolute: true });
+      const event = new DeviceOrientationEvent(control._compassEventName, { alpha: 180, absolute: true });
       window.dispatchEvent(event);
       assert.strictEqual(control._compassHeading, 180, "Should process orientation after granted permission");
     });
@@ -648,6 +648,7 @@ describe("LocateControl", () => {
 
       const control = new LocateControl({ showCompass: true });
       map.addControl(control);
+      mock.method(console, "warn", () => {});
       const spy = mock.method(control, "_onDeviceOrientation");
 
       // Should not throw
@@ -702,14 +703,17 @@ describe("LocateControl", () => {
 
       await control._activateCompass();
 
+      // Store event name before deactivate (it is cleared during deactivation)
+      const compassEventName = control._compassEventName;
+
       // Sanity check: events are received while active
-      window.dispatchEvent(new DeviceOrientationEvent("deviceorientation", { alpha: 90, absolute: true }));
+      window.dispatchEvent(new DeviceOrientationEvent(compassEventName, { alpha: 90, absolute: true }));
       assert.strictEqual(control._compassHeading, 270, "Should receive events before deactivate");
 
       control._deactivate();
 
       // Events after deactivate should not update compassHeading
-      window.dispatchEvent(new DeviceOrientationEvent("deviceorientation", { alpha: 45, absolute: true }));
+      window.dispatchEvent(new DeviceOrientationEvent(compassEventName, { alpha: 45, absolute: true }));
       assert.strictEqual(control._compassHeading, null, "Should not receive events after deactivate");
     });
 
@@ -720,7 +724,7 @@ describe("LocateControl", () => {
 
       await control._activateCompass();
 
-      window.dispatchEvent(new DeviceOrientationEvent("deviceorientation", { alpha: 90, absolute: true }));
+      window.dispatchEvent(new DeviceOrientationEvent(control._compassEventName, { alpha: 90, absolute: true }));
       assert.strictEqual(control._compassHeading, 270, "Should have a heading before deactivate");
 
       control._deactivate();

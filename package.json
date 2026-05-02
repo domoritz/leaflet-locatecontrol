@@ -57,17 +57,17 @@
     "test": "node --test spec/*.spec.js"
   },
   "devDependencies": {
-    "@eslint/css": "^0.14.1",
+    "@eslint/css": "^1.2.0",
     "@eslint/js": "^10.0.1",
     "@rollup/plugin-terser": "^1.0.0",
-    "eslint": "^10.0.3",
-    "globals": "^17.4.0",
-    "happy-dom": "^20.8.3",
+    "eslint": "^10.3.0",
+    "globals": "^17.6.0",
+    "happy-dom": "^20.9.0",
     "leaflet": "^1.9.4",
-    "lightningcss-cli": "^1.31.1",
-    "prettier": "^3.8.1",
-    "rollup": "^4.59.0",
-    "typescript": "^5.9.3"
+    "lightningcss-cli": "^1.32.0",
+    "prettier": "^3.8.3",
+    "rollup": "^4.60.2",
+    "typescript": "^6.0.3"
   },
   "peerDependencies": {
     "leaflet": "^1.9.0 || >=2.0.0-alpha.1"

@@ -907,7 +907,7 @@ const LocateControl = Control.extend({
     if (e.webkitCompassHeading) {
       // iOS
       this._setCompassHeading(e.webkitCompassHeading);
-    } else if (e.absolute && e.alpha) {
+    } else if (e.alpha !== null) {
       // Android
       this._setCompassHeading(360 - e.alpha);
     }
