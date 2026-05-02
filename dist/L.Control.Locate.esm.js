@@ -1,4 +1,4 @@
-/*! Version: 0.89.0
+/*! Version: 0.89.1
 Copyright (c) 2016 Dominik Moritz */
 
 import { Marker, Util, DivIcon, Control, Circle, DomEvent, LayerGroup } from 'leaflet';
@@ -424,12 +424,15 @@ const LocateControl = Control.extend({
     this._link = linkAndIcon.link;
     this._icon = linkAndIcon.icon;
 
-    this._link.addEventListener("click", (ev) => {
+    this._linkClickHandler = (ev) => {
       ev.stopPropagation();
       ev.preventDefault();
       this._onClick();
-    });
-    this._link.addEventListener("dblclick", (ev) => ev.stopPropagation());
+    };
+    this._linkDblClickHandler = (ev) => ev.stopPropagation();
+
+    this._link.addEventListener("click", this._linkClickHandler);
+    this._link.addEventListener("dblclick", this._linkDblClickHandler);
 
     this._resetVariables();
 
@@ -442,6 +445,19 @@ const LocateControl = Control.extend({
    * Called when control is removed from the map.
    */
   onRemove() {
+    if (this._link && this._linkClickHandler) {
+      this._link.removeEventListener("click", this._linkClickHandler);
+    }
+    if (this._link && this._linkDblClickHandler) {
+      this._link.removeEventListener("dblclick", this._linkDblClickHandler);
+    }
+    if (this._map) {
+      this._map.off("unload", this._unload, this);
+    }
+
+    this._linkClickHandler = null;
+    this._linkDblClickHandler = null;
+
     this.stop();
   },
 
@@ -895,7 +911,7 @@ const LocateControl = Control.extend({
     if (e.webkitCompassHeading) {
       // iOS
       this._setCompassHeading(e.webkitCompassHeading);
-    } else if (e.absolute && e.alpha) {
+    } else if (e.alpha !== null) {
       // Android
       this._setCompassHeading(360 - e.alpha);
     }
