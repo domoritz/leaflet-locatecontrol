@@ -420,12 +420,15 @@ const LocateControl = Control.extend({
     this._link = linkAndIcon.link;
     this._icon = linkAndIcon.icon;
 
-    this._link.addEventListener("click", (ev) => {
+    this._linkClickHandler = (ev) => {
       ev.stopPropagation();
       ev.preventDefault();
       this._onClick();
-    });
-    this._link.addEventListener("dblclick", (ev) => ev.stopPropagation());
+    };
+    this._linkDblClickHandler = (ev) => ev.stopPropagation();
+
+    this._link.addEventListener("click", this._linkClickHandler);
+    this._link.addEventListener("dblclick", this._linkDblClickHandler);
 
     this._resetVariables();
 
@@ -438,6 +441,19 @@ const LocateControl = Control.extend({
    * Called when control is removed from the map.
    */
   onRemove() {
+    if (this._link && this._linkClickHandler) {
+      this._link.removeEventListener("click", this._linkClickHandler);
+    }
+    if (this._link && this._linkDblClickHandler) {
+      this._link.removeEventListener("dblclick", this._linkDblClickHandler);
+    }
+    if (this._map) {
+      this._map.off("unload", this._unload, this);
+    }
+
+    this._linkClickHandler = null;
+    this._linkDblClickHandler = null;
+
     this.stop();
   },
 

@@ -361,6 +361,32 @@ describe("LocateControl", () => {
       // Control should be stopped
       assert.strictEqual(control._active, false);
     });
+
+    it("should not accumulate link listeners for external button callbacks", () => {
+      const link = document.createElement("a");
+      const icon = document.createElement("span");
+      link.setAttribute("href", "#");
+      link.append(icon);
+      document.body.append(link);
+
+      const control = new LocateControl({
+        createButtonCallback() {
+          return { link, icon };
+        }
+      });
+
+      map.addControl(control);
+      const clickSpy = mock.method(control, "_onClick", () => {});
+
+      link.dispatchEvent(new Event("click", { bubbles: true, cancelable: true }));
+      assert.strictEqual(clickSpy.mock.calls.length, 1);
+
+      map.removeControl(control);
+      map.addControl(control);
+
+      link.dispatchEvent(new Event("click", { bubbles: true, cancelable: true }));
+      assert.strictEqual(clickSpy.mock.calls.length, 2);
+    });
   });
 
   describe("CSS state", () => {
