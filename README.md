@@ -312,7 +312,7 @@ Run `npm run lint:fix` to automatically fix style and linting issues.
 
 1. Update `CHANGELOG.md` with the changes for the new version and commit: `git commit -am "chore: update changelog"`
 2. Run `npm run bump:minor` or `npm run bump:patch` (automatically bumps the version in `package.json`, runs lint, tests, and build, then stages the `dist/` files)
-3. Review what will be released: `git log $(git describe --tags --abbrev=0)..HEAD --oneline`
+3. Review what will be released: `git log $(git describe --tags --abbrev=0 HEAD^)..HEAD --oneline`
 4. `git push && git push --tags`
 5. `npm publish`
 
