@@ -2,6 +2,13 @@
 
 Here we document notable changes.
 
+## **0.89.1** - 2026-05-02
+
+- Fix Android compass heading (#418)
+- Fix: unbind link listeners on remove (#417)
+- Improve documentation (#411)
+- Update dependencies (#412, #413, #414, #415, #418)
+
 ## **0.89.0** - 2026-03-08
 
 - Add `{speed}` (raw m/s) and `{heading}` (degrees) placeholders to popup template data (#405)
