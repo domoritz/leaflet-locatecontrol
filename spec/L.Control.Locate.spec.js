@@ -658,6 +658,31 @@ describe("LocateControl", () => {
       assert.strictEqual(spy.mock.callCount(), 0, "_onDeviceOrientation should not be called after rejection");
     });
 
+    it("should work when DeviceOrientationEvent global is undefined", async () => {
+      const originalWindowDeviceOrientationEvent = window.DeviceOrientationEvent;
+      const originalGlobalDeviceOrientationEvent = global.DeviceOrientationEvent;
+
+      try {
+        delete window.DeviceOrientationEvent;
+        delete global.DeviceOrientationEvent;
+
+        const control = new LocateControl({ showCompass: true });
+        map.addControl(control);
+        control._active = true;
+
+        await control._activateCompass();
+        assert.ok(["deviceorientation", "deviceorientationabsolute"].includes(control._compassEventName), "Should still bind orientation listener");
+
+        const event = new Event(control._compassEventName);
+        Object.defineProperty(event, "alpha", { value: 90 });
+        window.dispatchEvent(event);
+        assert.strictEqual(control._compassHeading, 270, "Should process orientation event without global constructor");
+      } finally {
+        window.DeviceOrientationEvent = originalWindowDeviceOrientationEvent;
+        global.DeviceOrientationEvent = originalGlobalDeviceOrientationEvent;
+      }
+    });
+
     it("should call _activateCompass from _activate", () => {
       const control = new LocateControl({ showCompass: true });
       map.addControl(control);
