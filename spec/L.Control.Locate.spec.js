@@ -595,6 +595,52 @@ describe("LocateControl", () => {
       assert.strictEqual(control._compassHeading, 270, "Should process orientation event (360 - 90)");
     });
 
+    it("should process iOS heading when webkitCompassHeading is 0", () => {
+      const control = new LocateControl({ showCompass: true });
+      map.addControl(control);
+      control._active = true;
+
+      control._onDeviceOrientation({ webkitCompassHeading: 0, alpha: null });
+
+      assert.strictEqual(control._compassHeading, 0, "Should treat 0 as a valid iOS heading");
+    });
+
+    it("should compensate iOS heading with screen orientation angle", () => {
+      const control = new LocateControl({ showCompass: true });
+      map.addControl(control);
+      control._active = true;
+
+      const originalOrientation = window.screen?.orientation;
+
+      try {
+        window.screen.orientation = { angle: 90, type: "landscape-primary" };
+
+        control._onDeviceOrientation({ webkitCompassHeading: 90, alpha: null });
+
+        assert.strictEqual(control._compassHeading, 180, "Should apply screen angle compensation on iOS");
+      } finally {
+        window.screen.orientation = originalOrientation;
+      }
+    });
+
+    it("should fallback to zero screen angle when orientation is unavailable", () => {
+      const control = new LocateControl({ showCompass: true });
+      map.addControl(control);
+      control._active = true;
+
+      const originalOrientation = window.screen?.orientation;
+
+      try {
+        window.screen.orientation = undefined;
+
+        control._onDeviceOrientation({ webkitCompassHeading: 90, alpha: null });
+
+        assert.strictEqual(control._compassHeading, 90, "Should keep iOS heading unchanged without screen orientation");
+      } finally {
+        window.screen.orientation = originalOrientation;
+      }
+    });
+
     it("should prefer deviceorientationabsolute when available", async () => {
       window.ondeviceorientationabsolute = null;
 
