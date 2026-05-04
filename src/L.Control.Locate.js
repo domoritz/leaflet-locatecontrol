@@ -590,9 +590,11 @@ const LocateControl = Control.extend({
 
     const eventName = oriAbs ? "deviceorientationabsolute" : "deviceorientation";
 
-    if (DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === "function") {
+    const deviceOrientationEvent = window.DeviceOrientationEvent;
+
+    if (typeof deviceOrientationEvent !== "undefined" && typeof deviceOrientationEvent.requestPermission === "function") {
       try {
-        const permissionState = await DeviceOrientationEvent.requestPermission();
+        const permissionState = await deviceOrientationEvent.requestPermission();
         if (permissionState !== "granted") {
           return;
         }
