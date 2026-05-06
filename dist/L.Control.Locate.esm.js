@@ -1,4 +1,4 @@
-/*! Version: 0.89.1
+/*! Version: 0.90.0
 Copyright (c) 2016 Dominik Moritz */
 
 import { Marker, Util, DivIcon, Control, Circle, DomEvent, LayerGroup } from 'leaflet';
@@ -278,6 +278,13 @@ const LocateControl = Control.extend({
     drawMarker: true,
     /** If set and supported then show the compass heading */
     showCompass: true,
+    /**
+     * iOS-only compass accuracy threshold (degrees).
+     * Show compass only when `webkitCompassAccuracy <= value`.
+     * `-1` (uncalibrated) is always rejected.
+     * Set to `false` to disable filtering. No effect on Android.
+     */
+    compassAccuracyThreshold: 45,
     /** The class to be used to create the marker. For example L.CircleMarker or L.Marker */
     markerClass: LocationMarker,
     /** The class us be used to create the compass bearing arrow */
@@ -594,9 +601,11 @@ const LocateControl = Control.extend({
 
     const eventName = oriAbs ? "deviceorientationabsolute" : "deviceorientation";
 
-    if (DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === "function") {
+    const deviceOrientationEvent = window.DeviceOrientationEvent;
+
+    if (typeof deviceOrientationEvent !== "undefined" && typeof deviceOrientationEvent.requestPermission === "function") {
       try {
-        const permissionState = await DeviceOrientationEvent.requestPermission();
+        const permissionState = await deviceOrientationEvent.requestPermission();
         if (permissionState !== "granted") {
           return;
         }
@@ -901,18 +910,33 @@ const LocateControl = Control.extend({
   },
 
   /**
-   * Process and normalise compass events
+   * Process and normalise compass events.
+   *
+   * On iOS, optionally filters out inaccurate readings based on `compassAccuracyThreshold`.
+   * Android has no equivalent accuracy field and is therefore not filtered.
    */
   _onDeviceOrientation(e) {
     if (!this._active) {
       return;
     }
 
-    if (e.webkitCompassHeading) {
-      // iOS
-      this._setCompassHeading(e.webkitCompassHeading);
+    if (e.webkitCompassHeading != null) {
+      // iOS: webkitCompassHeading is relative to device top.
+      const threshold = this.options.compassAccuracyThreshold;
+      const filterEnabled = typeof threshold === "number" && e.webkitCompassAccuracy != null;
+      // -1 means uncalibrated, always reject when filtering is on.
+      const tooInaccurate = filterEnabled && (e.webkitCompassAccuracy < 0 || e.webkitCompassAccuracy > threshold);
+
+      if (tooInaccurate) {
+        this._setCompassHeading();
+        return;
+      }
+
+      // Compensate using current screen orientation when available.
+      const screenAngle = window.screen?.orientation?.angle ?? 0;
+      this._setCompassHeading((e.webkitCompassHeading + screenAngle) % 360);
     } else if (e.alpha !== null) {
-      // Android
+      // Android: no standardized accuracy field, reading is shown as-is.
       this._setCompassHeading(360 - e.alpha);
     }
   },

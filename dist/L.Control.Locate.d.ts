@@ -41,6 +41,7 @@ export interface LocateOptions extends ControlOptions {
   drawCircle?: boolean | undefined;
   drawMarker?: boolean | undefined;
   showCompass?: boolean | undefined;
+  compassAccuracyThreshold?: number | false | undefined;
   markerClass?: any;
   compassClass?: any;
   circleStyle?: PathOptions | undefined;
