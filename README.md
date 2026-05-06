@@ -104,6 +104,7 @@ Possible options are listed in the following table. More details are [in the cod
 | `returnToPrevBounds` | `boolean`  | If set, save the map bounds just before centering to the user's location. When control is disabled, set the view back to the bounds that were saved. | `false` |
 | `cacheLocation` | `boolean` | Keep a cache of the location after the user deactivates the control. If set to false, the user has to wait until the locate API returns a new location before they see where they are again. | `true` |
 | `showCompass` | `boolean` | Show the compass bearing on top of the location marker | `true` |
+| `compassAccuracyThreshold` | `number` or `false` | Maximum allowed iOS compass accuracy in degrees (`webkitCompassAccuracy`) for displaying the compass. `-1` (uncalibrated) is always rejected. Set to `false` to always show the compass when heading data is available. | `45` |
 | `drawCircle` | `boolean`  | If set, a circle that shows the location accuracy is drawn. | `true` |
 | `drawMarker` | `boolean`  | If set, the marker at the users' location is drawn. | `true` |
 | `markerClass` | `class`  | The class to be used to create the marker. | `LocationMarker` |
