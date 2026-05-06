@@ -57,6 +57,14 @@ global.DeviceOrientationEvent = class DeviceOrientationEvent extends Event {
   }
 };
 
+// Mock screen.orientation (not provided by happy-dom as a global)
+global.screen = {
+  orientation: {
+    angle: 0,
+    type: "portrait-primary"
+  }
+};
+
 // Mock requestAnimationFrame
 global.requestAnimationFrame = (callback) => {
   return setTimeout(callback, 16);

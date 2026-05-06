@@ -906,9 +906,11 @@ const LocateControl = Control.extend({
       return;
     }
 
-    if (e.webkitCompassHeading) {
-      // iOS
-      this._setCompassHeading(e.webkitCompassHeading);
+    if (e.webkitCompassHeading != null) {
+      // iOS: webkitCompassHeading is relative to device top.
+      // Compensate using current screen orientation when available.
+      const screenAngle = window.screen?.orientation?.angle ?? 0;
+      this._setCompassHeading((e.webkitCompassHeading + screenAngle) % 360);
     } else if (e.alpha !== null) {
       // Android
       this._setCompassHeading(360 - e.alpha);
