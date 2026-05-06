@@ -2,6 +2,12 @@
 
 Here we document notable changes.
 
+## **0.90.0** - 2026-05-06
+
+- fix(compass): guard DeviceOrientationEvent lookup (#420)
+- fix(compass): fix iOS heading in landscape mode (#421)
+- feat: add compass accuracy threshold for iOS (#422)
+
 ## **0.89.1** - 2026-05-02
 
 - Fix Android compass heading (#418)
