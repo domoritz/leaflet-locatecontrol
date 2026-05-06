@@ -605,6 +605,89 @@ describe("LocateControl", () => {
       assert.strictEqual(control._compassHeading, 0, "Should treat 0 as a valid iOS heading");
     });
 
+    describe("iOS compass accuracy filter (compassAccuracyThreshold)", () => {
+      it("should reject uncalibrated iOS readings (webkitCompassAccuracy === -1) with default threshold", () => {
+        const control = new LocateControl({ showCompass: true });
+        map.addControl(control);
+        control._active = true;
+        control._compassHeading = 123;
+
+        control._onDeviceOrientation({ webkitCompassHeading: 90, webkitCompassAccuracy: -1, alpha: null });
+
+        assert.strictEqual(control._compassHeading, null, "Uncalibrated reading should clear compass");
+      });
+
+      it("should reject iOS readings above default threshold (45)", () => {
+        const control = new LocateControl({ showCompass: true });
+        map.addControl(control);
+        control._active = true;
+
+        control._onDeviceOrientation({ webkitCompassHeading: 90, webkitCompassAccuracy: 50, alpha: null });
+
+        assert.strictEqual(control._compassHeading, null, "Inaccurate reading should be rejected");
+      });
+
+      it("should accept iOS readings within default threshold", () => {
+        const control = new LocateControl({ showCompass: true });
+        map.addControl(control);
+        control._active = true;
+
+        control._onDeviceOrientation({ webkitCompassHeading: 90, webkitCompassAccuracy: 10, alpha: null });
+
+        assert.strictEqual(control._compassHeading, 90, "Accurate reading should pass through");
+      });
+
+      it("should respect custom compassAccuracyThreshold", () => {
+        const control = new LocateControl({ showCompass: true, compassAccuracyThreshold: 5 });
+        map.addControl(control);
+        control._active = true;
+
+        control._onDeviceOrientation({ webkitCompassHeading: 90, webkitCompassAccuracy: 10, alpha: null });
+
+        assert.strictEqual(control._compassHeading, null, "Reading above custom threshold should be rejected");
+      });
+
+      it("should disable filter when compassAccuracyThreshold is false", () => {
+        const control = new LocateControl({ showCompass: true, compassAccuracyThreshold: false });
+        map.addControl(control);
+        control._active = true;
+
+        control._onDeviceOrientation({ webkitCompassHeading: 90, webkitCompassAccuracy: -1, alpha: null });
+
+        assert.strictEqual(control._compassHeading, 90, "Filter disabled: even uncalibrated reading passes through");
+      });
+
+      it("should disable filter when compassAccuracyThreshold is not a number", () => {
+        const control = new LocateControl({ showCompass: true, compassAccuracyThreshold: null });
+        map.addControl(control);
+        control._active = true;
+
+        control._onDeviceOrientation({ webkitCompassHeading: 90, webkitCompassAccuracy: 99, alpha: null });
+
+        assert.strictEqual(control._compassHeading, 90, "Non-numeric threshold should disable filtering, not block all readings");
+      });
+
+      it("should pass through iOS readings when webkitCompassAccuracy is missing", () => {
+        const control = new LocateControl({ showCompass: true });
+        map.addControl(control);
+        control._active = true;
+
+        control._onDeviceOrientation({ webkitCompassHeading: 45, alpha: null });
+
+        assert.strictEqual(control._compassHeading, 45, "Missing accuracy field should not block reading (backward compatible)");
+      });
+
+      it("should not affect Android readings (alpha-based)", () => {
+        const control = new LocateControl({ showCompass: true, compassAccuracyThreshold: 5 });
+        map.addControl(control);
+        control._active = true;
+
+        control._onDeviceOrientation({ alpha: 90, absolute: true });
+
+        assert.strictEqual(control._compassHeading, 270, "Android reading should not be filtered");
+      });
+    });
+
     it("should compensate iOS heading with screen orientation angle", () => {
       const control = new LocateControl({ showCompass: true });
       map.addControl(control);
