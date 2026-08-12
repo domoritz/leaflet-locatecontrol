@@ -778,6 +778,26 @@ describe("LocateControl", () => {
       assert.strictEqual(control._compassHeading, 180, "Should process orientation after granted permission");
     });
 
+    it("should not bind compass after deactivation during permission request", async () => {
+      let resolvePermission;
+      const permission = new Promise((resolve) => {
+        resolvePermission = resolve;
+      });
+      DeviceOrientationEvent.requestPermission = () => permission;
+
+      const control = new LocateControl({ showCompass: true });
+      map.addControl(control);
+      control._active = true;
+
+      const activation = control._activateCompass();
+      control._active = false;
+      control._deactivateCompass();
+      resolvePermission("granted");
+      await activation;
+
+      assert.strictEqual(control._compassEventName, null, "Compass should remain inactive after deactivation");
+    });
+
     it("should not bind compass when requestPermission denies access", async () => {
       DeviceOrientationEvent.requestPermission = async () => "denied";
 

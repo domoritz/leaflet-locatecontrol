@@ -613,6 +613,11 @@ const LocateControl = Control.extend({
       }
     }
 
+    // The permission request is async, so bail out if we were deactivated meanwhile.
+    if (!this._active) {
+      return;
+    }
+
     this._compassEventName = eventName;
     DomEvent.on(window, eventName, this._onDeviceOrientation, this);
   },
