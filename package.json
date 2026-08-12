@@ -71,5 +71,8 @@
   },
   "peerDependencies": {
     "leaflet": "^1.9.0 || >=2.0.0-alpha.1"
+  },
+  "allowScripts": {
+    "lightningcss-cli@1.33.0": true
   }
 }
