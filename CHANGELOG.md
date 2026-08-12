@@ -2,6 +2,14 @@
 
 Here we document notable changes.
 
+## **0.90.1** - 2026-08-12
+
+- chore: add allowScripts config for lightningcss-cli
+- chore: update devDependencies
+- chore: update GitHub Actions
+- fix(build): correct CSS source map paths
+- fix(compass): guard stale permission activation
+
 ## **0.90.0** - 2026-05-06
 
 - fix(compass): guard DeviceOrientationEvent lookup (#420)
