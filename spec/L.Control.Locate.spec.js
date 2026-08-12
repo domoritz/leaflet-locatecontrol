@@ -1,5 +1,6 @@
 import { describe, it, beforeEach, afterEach, mock } from "node:test";
 import assert from "node:assert";
+import fs from "node:fs";
 import "./setup.js";
 import { Map, LayerGroup } from "leaflet";
 
@@ -222,6 +223,26 @@ describe("LocateControl", () => {
     it("should accept array [minZoom, maxZoom]", () => {
       const control = new LocateControl({ keepCurrentZoomLevel: [10, 15] });
       assert.deepStrictEqual(control.options.keepCurrentZoomLevel, [10, 15]);
+    });
+  });
+
+  describe("Packaging", () => {
+    it("should reference an existing CSS source map relative to each stylesheet", () => {
+      const cssFiles = [
+        "../dist/L.Control.Locate.css",
+        "../dist/L.Control.Locate.min.css",
+        "../dist/L.Control.Locate.mapbox.css",
+        "../dist/L.Control.Locate.mapbox.min.css"
+      ];
+
+      for (const file of cssFiles) {
+        const cssUrl = new URL(file, import.meta.url);
+        const css = fs.readFileSync(cssUrl, "utf8");
+        const sourceMapUrl = css.match(/\/\*# sourceMappingURL=([^\s*]+) \*\//)?.[1];
+
+        assert.ok(sourceMapUrl, `${file} should include a CSS source map URL`);
+        assert.ok(fs.existsSync(new URL(sourceMapUrl, cssUrl)), `${file} should reference an existing CSS source map`);
+      }
     });
   });
 
