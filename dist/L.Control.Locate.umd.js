@@ -1,4 +1,4 @@
-/*! Version: 0.90.0
+/*! Version: 0.90.1
 Copyright (c) 2016 Dominik Moritz */
 
 (function (global, factory) {
@@ -619,6 +619,11 @@ Copyright (c) 2016 Dominik Moritz */
           console.warn("DeviceOrientation permission denied or unavailable:", err);
           return;
         }
+      }
+
+      // The permission request is async, so bail out if we were deactivated meanwhile.
+      if (!this._active) {
+        return;
       }
 
       this._compassEventName = eventName;
