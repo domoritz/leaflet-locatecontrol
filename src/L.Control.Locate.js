@@ -46,24 +46,27 @@ function createElement(tag, className, parent) {
 }
 
 /**
- * Shallow clone options to prevent prototype pollution.
- * Clones arrays and plain objects, keeps functions/classes as references.
- * @param {Object} options - The options object to clone.
- * @returns {Object} A shallow clone of the options object.
+ * Merge option layers into a new object, from the most general to the most specific.
+ * Nested plain objects (e.g. `strings`) are merged instead of replaced, and arrays are copied,
+ * so that instances never share (and accidentally modify) the defaults.
+ * @param {Object[]} layers - The option objects to merge. Only own properties are used.
+ * @returns {Object} The merged options.
  */
-function cloneOptions(options) {
-  const cloned = {};
-  for (const key in options) {
-    const val = options[key];
-    if (Array.isArray(val)) {
-      cloned[key] = [...val];
-    } else if (val?.constructor === Object) {
-      cloned[key] = { ...val };
-    } else {
-      cloned[key] = val;
+function mergeOptionLayers(layers) {
+  const merged = {};
+  for (const layer of layers) {
+    for (const key of Object.keys(layer)) {
+      const val = layer[key];
+      if (Array.isArray(val)) {
+        merged[key] = [...val];
+      } else if (val?.constructor === Object) {
+        merged[key] = { ...(merged[key]?.constructor === Object ? merged[key] : {}), ...val };
+      } else {
+        merged[key] = val;
+      }
     }
   }
-  return cloned;
+  return merged;
 }
 
 /**
@@ -73,9 +76,29 @@ function cloneOptions(options) {
 const isLeaflet1 = Control.prototype.options !== undefined;
 
 /**
+ * Leaflet 2 removed `extend()` and throws for classes with an `initialize()` method, so the classes below
+ * are ES classes. On Leaflet 1.x, we instead build them with `Base.extend()` from the same methods, so that
+ * they behave exactly like regular 1.x classes: their own statics (`extend`, `include`, `mergeOptions`,
+ * `addInitHook`), their own init hooks, and `initialize()` for subclasses created with `extend()`.
+ * @param {Function} Base - The Leaflet 1.x class to extend.
+ * @param {Function} EsClass - The ES class whose prototype methods to use.
+ * @param {Object} props - Additional properties, such as `initialize` and `options`.
+ * @returns {Function} The Leaflet 1.x class.
+ */
+function toLeaflet1Class(Base, EsClass, props) {
+  const methods = {};
+  for (const key of Object.getOwnPropertyNames(EsClass.prototype)) {
+    if (key !== "constructor") {
+      methods[key] = EsClass.prototype[key];
+    }
+  }
+  return Base.extend({ ...methods, ...props });
+}
+
+/**
  * Compatible with Circle but a true marker instead of a path
  */
-class LocationMarker extends Marker {
+const LocationMarkerClass = class LocationMarker extends Marker {
   constructor(latlng, options) {
     super(latlng, options);
     this.createIcon();
@@ -134,9 +157,18 @@ class LocationMarker extends Marker {
     LeafletUtil.setOptions(this, style);
     this.createIcon();
   }
-}
+};
 
-class CompassMarker extends LocationMarker {
+const LocationMarker = isLeaflet1
+  ? toLeaflet1Class(Marker, LocationMarkerClass, {
+      initialize(latlng, options) {
+        Marker.prototype.initialize.call(this, latlng, options);
+        this.createIcon();
+      }
+    })
+  : LocationMarkerClass;
+
+const CompassMarkerClass = class CompassMarker extends LocationMarkerClass {
   constructor(latlng, heading, options) {
     super(latlng, options);
     this._heading = heading;
@@ -193,7 +225,17 @@ class CompassMarker extends LocationMarker {
 
     return `M ${B1x},${B1y} L ${B2x},${B2y} L ${Tx},${Ty} Z`;
   }
-}
+};
+
+const CompassMarker = isLeaflet1
+  ? toLeaflet1Class(LocationMarker, CompassMarkerClass, {
+      initialize(latlng, heading, options) {
+        Marker.prototype.initialize.call(this, latlng, options);
+        this._heading = heading;
+        this.createIcon();
+      }
+    })
+  : CompassMarkerClass;
 
 /** Default options of the LocateControl. */
 const defaultOptions = {
@@ -394,13 +436,12 @@ const defaultOptions = {
   }
 };
 
-class LocateControl extends Control {
+const LocateControlClass = class LocateControl extends Control {
+  static defaultOptions = defaultOptions;
+
   constructor(options) {
-    // On Leaflet 1.x, the parent constructor calls `initialize()`, which runs the setup.
-    super(isLeaflet1 ? options : undefined);
-    if (!isLeaflet1) {
-      this._setOptions(options);
-    }
+    super();
+    this._setOptions(options);
   }
 
   /**
@@ -408,19 +449,13 @@ class LocateControl extends Control {
    * Unlike `Util.setOptions`, nested option objects (e.g. `strings`) are merged instead of replaced.
    */
   _setOptions(options = {}) {
-    // Clone default options to prevent prototype pollution
-    this.options = cloneOptions(this.options);
-
-    // Merge user-provided options
-    for (const key in options) {
-      const userVal = options[key];
-      const defaultVal = this.options[key];
-      if (userVal?.constructor === Object && defaultVal?.constructor === Object) {
-        Object.assign(defaultVal, userVal);
-      } else {
-        this.options[key] = userVal;
-      }
+    // `this.options` inherits from the defaults of each class in the chain (on both Leaflet 1.x and 2).
+    // Merge them from the base class down, so that nested defaults of subclasses are merged too.
+    const layers = [options];
+    for (let o = this.options; o && o !== Object.prototype; o = Object.getPrototypeOf(o)) {
+      layers.unshift(o);
     }
+    this.options = mergeOptionLayers(layers);
 
     // Follow styles inherit from base styles
     this.options.followMarkerStyle = { ...this.options.markerStyle, ...this.options.followMarkerStyle };
@@ -1200,18 +1235,16 @@ class LocateControl extends Control {
     // true if the user has zoomed the map after clicking the control
     this._userZoomed = false;
   }
-}
+};
 
-if (isLeaflet1) {
-  // Give the class its own copy of the defaults so that `mergeOptions` does not change the defaults of every Control.
-  LocateControl.prototype.options = Object.create(Control.prototype.options);
-  // Subclasses created with `LocateControl.extend({...})` on Leaflet 1.x call `initialize()` instead of the constructor.
-  // Leaflet 2 throws if a class has an `initialize()` method, so only add it on 1.x.
-  LocateControl.prototype.initialize = function (options) {
-    this._setOptions(options);
-  };
-}
-LocateControl.mergeOptions(defaultOptions);
+const LocateControl = isLeaflet1
+  ? toLeaflet1Class(Control, LocateControlClass, {
+      options: defaultOptions,
+      initialize(options) {
+        this._setOptions(options);
+      }
+    })
+  : LocateControlClass;
 
 function locate(options) {
   return new LocateControl(options);
