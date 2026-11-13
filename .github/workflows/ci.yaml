@@ -16,3 +16,5 @@ jobs:
         run: node --run test
       - name: Build (verify dist/ can be generated)
         run: node --run build
+      - name: Test against Leaflet 2 (run unit tests with the latest Leaflet 2 beta)
+        run: npm install --no-save leaflet@beta && node --run test

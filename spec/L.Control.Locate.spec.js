@@ -2,7 +2,9 @@ import { describe, it, beforeEach, afterEach, mock } from "node:test";
 import assert from "node:assert";
 import fs from "node:fs";
 import "./setup.js";
-import { Map, LayerGroup } from "leaflet";
+import { Map, LayerGroup, Control, version } from "leaflet";
+
+const isLeaflet1 = version.startsWith("1.");
 
 // Import after setup
 const { LocateControl, LocationMarker, CompassMarker, locate } = await import("../src/L.Control.Locate.js");
@@ -15,8 +17,11 @@ describe("LocateControl", () => {
     container = document.createElement("div");
     container.style.width = "800px";
     container.style.height = "600px";
+    // happy-dom does no layout, so give the map a size (Leaflet 2 animates flyTo even without CSS 3D support)
+    Object.defineProperty(container, "clientWidth", { value: 800 });
+    Object.defineProperty(container, "clientHeight", { value: 600 });
     document.body.appendChild(container);
-    map = new Map(container).setView([51.505, -0.09], 13);
+    map = new Map(container, { zoomAnimation: false }).setView([51.505, -0.09], 13);
   });
 
   afterEach(() => {
@@ -1264,6 +1269,130 @@ describe("CompassMarker", () => {
     });
     marker.setHeading(180);
     assert.strictEqual(marker._heading, 180);
+  });
+});
+
+describe("Subclassing", () => {
+  it("should support ES class subclasses", () => {
+    class MyLocate extends LocateControl {
+      constructor(options) {
+        super(options);
+        this.custom = true;
+      }
+
+      _drawMarker() {
+        return "custom";
+      }
+    }
+
+    const control = new MyLocate({ strings: { title: "Custom" } });
+    assert.ok(control instanceof LocateControl);
+    assert.ok(control instanceof Control);
+    assert.strictEqual(control.custom, true);
+    assert.strictEqual(control._drawMarker(), "custom");
+    assert.strictEqual(control.options.strings.title, "Custom");
+    assert.strictEqual(control.options.strings.metersUnit, "meters", "nested defaults should be kept");
+    assert.strictEqual(control.options.position, "topleft");
+  });
+
+  it("should not change the defaults of Control", () => {
+    new LocateControl();
+    const controlDefaults = Control.defaultOptions ?? Control.prototype.options;
+    assert.strictEqual(controlDefaults.position, "topright");
+    assert.strictEqual(controlDefaults.setView, undefined);
+  });
+
+  it("should not define initialize() on Leaflet 2", { skip: isLeaflet1 }, () => {
+    assert.strictEqual(LocateControl.prototype.initialize, undefined);
+    assert.strictEqual(LocationMarker.prototype.initialize, undefined);
+    assert.strictEqual(CompassMarker.prototype.initialize, undefined);
+  });
+
+  it("should support Leaflet 1.x extend() subclasses", { skip: !isLeaflet1 }, () => {
+    const MyLocate = LocateControl.extend({
+      options: { flyTo: true },
+      _drawMarker() {
+        return "custom";
+      }
+    });
+
+    const control = new MyLocate({ strings: { title: "Custom" } });
+    assert.ok(control instanceof LocateControl);
+    assert.strictEqual(control._drawMarker(), "custom");
+    assert.strictEqual(control.options.flyTo, true);
+    assert.strictEqual(control.options.strings.title, "Custom");
+    assert.strictEqual(control.options.strings.metersUnit, "meters", "nested defaults should be kept");
+    assert.strictEqual(control.options.position, "topleft");
+  });
+
+  it("should merge nested defaults of ES subclasses on Leaflet 2", { skip: isLeaflet1 }, () => {
+    class MyLocate extends LocateControl {
+      static defaultOptions = { strings: { title: "Custom" }, markerStyle: { radius: 5 } };
+    }
+
+    const control = new MyLocate({ strings: { feetUnit: "ft" } });
+    assert.strictEqual(control.options.strings.title, "Custom");
+    assert.strictEqual(control.options.strings.feetUnit, "ft");
+    assert.strictEqual(control.options.strings.metersUnit, "meters", "nested defaults should be kept");
+    assert.strictEqual(control.options.markerStyle.radius, 5);
+    assert.strictEqual(control.options.markerStyle.weight, 3, "nested defaults should be kept");
+    assert.strictEqual(new LocateControl().options.strings.title, "Show me where I am", "parent defaults unchanged");
+  });
+
+  it("should merge nested defaults of extend() subclasses on Leaflet 1.x", { skip: !isLeaflet1 }, () => {
+    const MyLocate = LocateControl.extend({ options: { strings: { title: "Custom" } } });
+
+    const control = new MyLocate();
+    assert.strictEqual(control.options.strings.title, "Custom");
+    assert.strictEqual(control.options.strings.metersUnit, "meters", "nested defaults should be kept");
+  });
+
+  it("should support multiple levels of extend() on Leaflet 1.x", { skip: !isLeaflet1 }, () => {
+    const Child = LocateControl.extend({ options: { flyTo: true } });
+    assert.strictEqual(typeof Child.extend, "function");
+    assert.strictEqual(typeof Child.mergeOptions, "function");
+    assert.strictEqual(typeof Child.include, "function");
+    assert.strictEqual(typeof Child.addInitHook, "function");
+
+    const GrandChild = Child.extend({ options: { metric: false } });
+    const control = new GrandChild();
+    assert.ok(control instanceof LocateControl);
+    assert.strictEqual(control.options.flyTo, true);
+    assert.strictEqual(control.options.metric, false);
+  });
+
+  it("should not run LocateControl init hooks for other controls", () => {
+    let calls = 0;
+    LocateControl.addInitHook(function () {
+      if (this instanceof LocateControl) {
+        calls++;
+      } else {
+        calls += 100;
+      }
+    });
+
+    new Control();
+    assert.strictEqual(calls, 0, "hook should not run for unrelated controls");
+    new LocateControl();
+    assert.strictEqual(calls, 1, "hook should run for LocateControl");
+  });
+
+  it("should create icons for marker subclasses created with extend() on Leaflet 1.x", { skip: !isLeaflet1 }, () => {
+    const MyMarker = LocationMarker.extend({});
+    const marker = new MyMarker([0, 0], { radius: 9, weight: 3 });
+    assert.ok(marker._locationIcon, "LocationMarker subclass should create its icon");
+    assert.strictEqual(marker.options.icon, marker._locationIcon);
+
+    const MyCompass = CompassMarker.extend({});
+    const compass = new MyCompass([0, 0], 45, { radius: 9, width: 9, depth: 6, weight: 0 });
+    assert.strictEqual(compass._heading, 45);
+    assert.strictEqual(compass.options.radius, 9);
+    assert.ok(compass._locationIcon.options.html.includes("<path"));
+  });
+
+  it("should create CompassMarker icon with the given heading", () => {
+    const marker = new CompassMarker([51.505, -0.09], 90, { radius: 9, width: 9, depth: 6, weight: 0 });
+    assert.ok(!marker._locationIcon.options.html.includes("NaN"));
   });
 });
 

@@ -71,7 +71,7 @@
     "vite": "^8.3.5"
   },
   "peerDependencies": {
-    "leaflet": "^1.9.0 || >=2.0.0-alpha.1"
+    "leaflet": "^1.9.0 || ^2.0.0-beta.1"
   },
   "allowScripts": {
     "lightningcss-cli@1.33.0": true
