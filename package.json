@@ -53,7 +53,7 @@
     "version": "npm run build && git add -A dist",
     "lint": "eslint && prettier --check .",
     "lint:fix": "eslint --fix && prettier --write .",
-    "start": "node scripts/server.js",
+    "start": "vite",
     "test": "node --test spec/*.spec.js"
   },
   "devDependencies": {
@@ -67,7 +67,8 @@
     "lightningcss-cli": "^1.33.0",
     "prettier": "^3.9.6",
     "rollup": "^4.62.4",
-    "typescript": "^7.0.2"
+    "typescript": "^7.0.2",
+    "vite": "^8.3.5"
   },
   "peerDependencies": {
     "leaflet": "^1.9.0 || >=2.0.0-alpha.1"

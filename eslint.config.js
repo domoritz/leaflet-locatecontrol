@@ -24,7 +24,7 @@ export default defineConfig([
     extends: [js.configs.recommended]
   },
   {
-    files: ["spec/**/*.js"],
+    files: ["spec/**/*.js", "vite.config.js", "rollup.config.js"],
     languageOptions: {
       globals: {
         ...globals.node

@@ -297,7 +297,7 @@ let map = new L.Map('map', {
 
 Run the demo locally with `npm start` and then open [http://localhost:9000](http://localhost:9000).
 
-The development server is a native Node.js script (`scripts/server.js`) that serves the project on port 9000. It does not require any external dependencies. Note that modern browsers treat `localhost` as a secure context, so HTTPS is not required for the Geolocation API to work.
+The development server uses [Vite](https://vite.dev/) and serves the project on port 9000. The demos reference the files in `dist/`, but the dev server serves them from `src/`, so changes show up without a rebuild and the page reloads automatically. The ESM demos still load Leaflet from the CDN with their import maps, so `demo/esm/leaflet2.html` uses Leaflet 2. Note that modern browsers treat `localhost` as a secure context, so HTTPS is not required for the Geolocation API to work.
 
 To generate the minified JS and CSS files, run `npm run build`.
 
