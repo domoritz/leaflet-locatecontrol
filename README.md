@@ -227,17 +227,21 @@ Note: When `watch: true` (the default), timeout errors don't stop the location t
 
 ### Extending
 
-To customize the behavior of the plugin, use L.extend to override `start`, `stop`, `_drawMarker` and/or `_removeMarker`. Please be aware that functions may change and customizations become incompatible.
+To customize the behavior of the plugin, extend `LocateControl` and override `start`, `stop`, `_drawMarker` and/or `_removeMarker`. Please be aware that functions may change and customizations become incompatible.
 
 ```js
-L.Control.MyLocate = L.Control.Locate.extend({
-  _drawMarker: function () {
+import { LocateControl } from "leaflet.locatecontrol";
+
+class MyLocate extends LocateControl {
+  _drawMarker() {
     // override to customize the marker
   }
-});
+}
 
-let lc = new L.Control.MyLocate();
+const lc = new MyLocate();
 ```
+
+ES classes work with both Leaflet 1.9 and Leaflet 2. On Leaflet 1.x, `LocateControl.extend({...})` is also still supported, but Leaflet 2 removed `extend()`.
 
 ### FAQ
 

@@ -46,35 +46,63 @@ function createElement(tag, className, parent) {
 }
 
 /**
- * Shallow clone options to prevent prototype pollution.
- * Clones arrays and plain objects, keeps functions/classes as references.
- * @param {Object} options - The options object to clone.
- * @returns {Object} A shallow clone of the options object.
+ * Merge option layers into a new object, from the most general to the most specific.
+ * Nested plain objects (e.g. `strings`) are merged instead of replaced, and arrays are copied,
+ * so that instances never share (and accidentally modify) the defaults.
+ * @param {Object[]} layers - The option objects to merge. Only own properties are used.
+ * @returns {Object} The merged options.
  */
-function cloneOptions(options) {
-  const cloned = {};
-  for (const key in options) {
-    const val = options[key];
-    if (Array.isArray(val)) {
-      cloned[key] = [...val];
-    } else if (val?.constructor === Object) {
-      cloned[key] = { ...val };
-    } else {
-      cloned[key] = val;
+function mergeOptionLayers(layers) {
+  const merged = {};
+  for (const layer of layers) {
+    for (const key of Object.keys(layer)) {
+      const val = layer[key];
+      if (Array.isArray(val)) {
+        merged[key] = [...val];
+      } else if (val?.constructor === Object) {
+        merged[key] = { ...(merged[key]?.constructor === Object ? merged[key] : {}), ...val };
+      } else {
+        merged[key] = val;
+      }
     }
   }
-  return cloned;
+  return merged;
+}
+
+/**
+ * Leaflet 1.x keeps default options on the class prototype, while Leaflet 2 uses `static defaultOptions`.
+ * Leaflet 2 has no `prototype.options`, so we use it to detect the version without importing `version`.
+ */
+const isLeaflet1 = Control.prototype.options !== undefined;
+
+/**
+ * Leaflet 2 removed `extend()` and throws for classes with an `initialize()` method, so the classes below
+ * are ES classes. On Leaflet 1.x, we instead build them with `Base.extend()` from the same methods, so that
+ * they behave exactly like regular 1.x classes: their own statics (`extend`, `include`, `mergeOptions`,
+ * `addInitHook`), their own init hooks, and `initialize()` for subclasses created with `extend()`.
+ * @param {Function} Base - The Leaflet 1.x class to extend.
+ * @param {Function} EsClass - The ES class whose prototype methods to use.
+ * @param {Object} props - Additional properties, such as `initialize` and `options`.
+ * @returns {Function} The Leaflet 1.x class.
+ */
+function toLeaflet1Class(Base, EsClass, props) {
+  const methods = {};
+  for (const key of Object.getOwnPropertyNames(EsClass.prototype)) {
+    if (key !== "constructor") {
+      methods[key] = EsClass.prototype[key];
+    }
+  }
+  return Base.extend({ ...methods, ...props });
 }
 
 /**
  * Compatible with Circle but a true marker instead of a path
  */
-const LocationMarker = Marker.extend({
-  initialize(latlng, options) {
-    LeafletUtil.setOptions(this, options);
-    this._latlng = latlng;
+const LocationMarkerClass = class LocationMarker extends Marker {
+  constructor(latlng, options) {
+    super(latlng, options);
     this.createIcon();
-  },
+  }
 
   /**
    * Create a styled circle location marker
@@ -102,7 +130,7 @@ const LocationMarker = Marker.extend({
     });
 
     this.setIcon(this._locationIcon);
-  },
+  }
 
   /**
    * Return the raw svg for the shape
@@ -123,25 +151,33 @@ const LocationMarker = Marker.extend({
       w: s2,
       h: s2
     };
-  },
+  }
 
   setStyle(style) {
     LeafletUtil.setOptions(this, style);
     this.createIcon();
   }
-});
+};
 
-const CompassMarker = LocationMarker.extend({
-  initialize(latlng, heading, options) {
-    LeafletUtil.setOptions(this, options);
-    this._latlng = latlng;
+const LocationMarker = isLeaflet1
+  ? toLeaflet1Class(Marker, LocationMarkerClass, {
+      initialize(latlng, options) {
+        Marker.prototype.initialize.call(this, latlng, options);
+        this.createIcon();
+      }
+    })
+  : LocationMarkerClass;
+
+const CompassMarkerClass = class CompassMarker extends LocationMarkerClass {
+  constructor(latlng, heading, options) {
+    super(latlng, options);
     this._heading = heading;
     this.createIcon();
-  },
+  }
 
   setHeading(heading) {
     this._heading = heading;
-  },
+  }
 
   /**
    * Create a styled arrow compass marker
@@ -151,7 +187,8 @@ const CompassMarker = LocationMarker.extend({
     const s = r + options.weight + options.depth;
     const s2 = s * 2;
 
-    const path = this._arrowPoints(r, options.width, options.depth, this._heading);
+    // The heading is not yet set when the parent constructor first creates the icon.
+    const path = this._arrowPoints(r, options.width, options.depth, this._heading ?? 0);
 
     const svg =
       `<svg xmlns="http://www.w3.org/2000/svg" width="${s2}" height="${s2}" version="1.1" viewBox="-${s} -${s} ${s2} ${s2}">` +
@@ -162,7 +199,7 @@ const CompassMarker = LocationMarker.extend({
       w: s2,
       h: s2
     };
-  },
+  }
 
   _arrowPoints(radius, width, depth, heading) {
     const φ = ((heading - 90) * Math.PI) / 180;
@@ -188,227 +225,243 @@ const CompassMarker = LocationMarker.extend({
 
     return `M ${B1x},${B1y} L ${B2x},${B2y} L ${Tx},${Ty} Z`;
   }
-});
+};
 
-const LocateControl = Control.extend({
-  options: {
-    /** Position of the control */
-    position: "topleft",
-    /** The layer that the user's location should be drawn on. By default creates a new layer. */
-    layer: undefined,
-    /**
-     * Automatically sets the map view (zoom and pan) to the user's location as it updates.
-     * While the map is following the user's location, the control is in the `following` state,
-     * which changes the style of the control and the circle marker.
-     *
-     * Possible values:
-     *  - false: never updates the map view when location changes.
-     *  - 'once': set the view when the location is first determined
-     *  - 'always': always updates the map view when location changes.
-     *              The map view follows the user's location.
-     *  - 'untilPan': like 'always', except stops updating the
-     *                view if the user has manually panned the map.
-     *                The map view follows the user's location until she pans.
-     *  - 'untilPanOrZoom': (default) like 'always', except stops updating the
-     *                view if the user has manually panned the map.
-     *                The map view follows the user's location until she pans.
-     */
-    setView: "untilPanOrZoom",
-    /**
-     * Keep the current map zoom level when setting the view and only pan.
-     * Can be set to:
-     * - `true`: Always keep current zoom level
-     * - `false`: Allow zooming (default)
-     * - `[minZoom, maxZoom]`: Keep zoom only when current zoom is within the specified range
-     */
-    keepCurrentZoomLevel: false,
-    /** After activating the plugin by clicking on the icon, zoom to the selected zoom level, even when keepCurrentZoomLevel is true. Set to 'false' to disable this feature. */
-    initialZoomLevel: false,
-    /**
-     * This callback can be used to override the viewport tracking
-     * This function should return a LatLngBounds object.
-     *
-     * For example to extend the viewport to ensure that a particular LatLng is visible:
-     *
-     * getLocationBounds: function(locationEvent) {
-     *    return locationEvent.bounds.extend([-33.873085, 151.219273]);
-     * },
-     */
-    getLocationBounds(locationEvent) {
-      return locationEvent.bounds;
-    },
-    /** Smooth pan and zoom to the location of the marker. Only works in Leaflet 1.0+. */
-    flyTo: false,
-    /**
-     * The user location can be inside and outside the current view when the user clicks on the
-     * control that is already active. Both cases can be configures separately.
-     * Possible values are:
-     *  - 'setView': zoom and pan to the current location
-     *  - 'stop': stop locating and remove the location marker
-     */
-    clickBehavior: {
-      /** What should happen if the user clicks on the control while the location is within the current view. */
-      inView: "stop",
-      /** What should happen if the user clicks on the control while the location is outside the current view. */
-      outOfView: "setView",
-      /**
-       * What should happen if the user clicks on the control while the location is within the current view
-       * and we could be following but are not. Defaults to a special value which inherits from 'inView';
-       */
-      inViewNotFollowing: "inView"
-    },
-    /**
-     * If set, save the map bounds just before centering to the user's
-     * location. When control is disabled, set the view back to the
-     * bounds that were saved.
-     */
-    returnToPrevBounds: false,
-    /**
-     * Keep a cache of the location after the user deactivates the control. If set to false, the user has to wait
-     * until the locate API returns a new location before they see where they are again.
-     */
-    cacheLocation: true,
-    /** If set, a circle that shows the location accuracy is drawn. */
-    drawCircle: true,
-    /** If set, the marker at the users' location is drawn. */
-    drawMarker: true,
-    /** If set and supported then show the compass heading */
-    showCompass: true,
-    /**
-     * iOS-only compass accuracy threshold (degrees).
-     * Show compass only when `webkitCompassAccuracy <= value`.
-     * `-1` (uncalibrated) is always rejected.
-     * Set to `false` to disable filtering. No effect on Android.
-     */
-    compassAccuracyThreshold: 45,
-    /** The class to be used to create the marker. For example L.CircleMarker or L.Marker */
-    markerClass: LocationMarker,
-    /** The class us be used to create the compass bearing arrow */
-    compassClass: CompassMarker,
-    /** Accuracy circle style properties. NOTE these styles should match the css animations styles */
-    circleStyle: {
-      className: "leaflet-control-locate-circle",
-      color: "#136AEC",
-      fillColor: "#136AEC",
-      fillOpacity: 0.15,
-      weight: 0
-    },
-    /** Inner marker style properties. Only works if your marker class supports `setStyle`. */
-    markerStyle: {
-      className: "leaflet-control-locate-marker",
-      color: "#fff",
-      fillColor: "#2A93EE",
-      fillOpacity: 1,
-      weight: 3,
-      opacity: 1,
-      radius: 9
-    },
-    /** Compass */
-    compassStyle: {
-      fillColor: "#2A93EE",
-      fillOpacity: 1,
-      weight: 0,
-      color: "#fff",
-      opacity: 1,
-      radius: 9, // How far is the arrow from the center of the marker
-      width: 9, // Width of the arrow
-      depth: 6 // Length of the arrow
-    },
-    /**
-     * Changes to accuracy circle and inner marker while following.
-     * It is only necessary to provide the properties that should change.
-     */
-    followCircleStyle: {},
-    followMarkerStyle: {
-      // color: '#FFA500',
-      // fillColor: '#FFB000'
-    },
-    followCompassStyle: {},
-    /** The CSS class for the icon. For example fa-location-arrow or fa-map-marker */
-    icon: "leaflet-control-locate-location-arrow",
-    iconLoading: "leaflet-control-locate-spinner",
-    /** The element to be created for icons. For example span or i */
-    iconElementTag: "span",
-    /** The element to be created for the text. For example small or span */
-    textElementTag: "small",
-    /** Padding around the accuracy circle. */
-    circlePadding: [0, 0],
-    /** Use metric units. */
-    metric: true,
-    /**
-     * This callback can be used in case you would like to override button creation behavior.
-     * This is useful for DOM manipulation frameworks such as angular etc.
-     * This function should return an object with HtmlElement for the button (link property) and the icon (icon property).
-     */
-    createButtonCallback(container, options) {
-      const link = createElement("a", "leaflet-bar-part leaflet-bar-part-single", container);
-      link.title = options.strings.title;
-      link.href = "#";
-      link.setAttribute("role", "button");
-      link.setAttribute("aria-label", options.strings.title);
-      const icon = createElement(options.iconElementTag, options.icon, link);
-      // Add common class for all icons to enable color status changes
-      icon.classList.add("leaflet-locate-icon");
-
-      if (options.strings.text !== undefined) {
-        const text = createElement(options.textElementTag, "leaflet-locate-text", link);
-        text.textContent = options.strings.text;
-        link.classList.add("leaflet-locate-text-active");
-        link.parentNode.style.display = "flex";
+const CompassMarker = isLeaflet1
+  ? toLeaflet1Class(LocationMarker, CompassMarkerClass, {
+      initialize(latlng, heading, options) {
+        Marker.prototype.initialize.call(this, latlng, options);
+        this._heading = heading;
+        this.createIcon();
       }
+    })
+  : CompassMarkerClass;
 
-      return { link, icon };
-    },
-    /** This event is called in case of any location error that is not a time out error. */
-    onLocationError(err) {
-      alert(err.message);
-    },
-    /**
-     * This event is called when the user's location is outside the bounds set on the map.
-     * The event is called repeatedly when the location changes.
-     */
-    onLocationOutsideMapBounds(control) {
-      control.stop();
-      alert(control.options.strings.outsideMapBoundsMsg);
-    },
-    /** Display a pop-up when the user click on the inner marker. */
-    showPopup: true,
-    strings: {
-      title: "Show me where I am",
-      metersUnit: "meters",
-      feetUnit: "feet",
-      popup: "You are within {distance} {unit} from this point",
-      outsideMapBoundsMsg: "You seem located outside the boundaries of the map"
-    },
-    /** The default options passed to leaflets locate method. */
-    locateOptions: {
-      maxZoom: Infinity,
-      watch: true, // if you overwrite this, visualization cannot be updated
-      setView: false // have to set this to false because we have to
-      // do setView manually
-    }
+/** Default options of the LocateControl. */
+const defaultOptions = {
+  /** Position of the control */
+  position: "topleft",
+  /** The layer that the user's location should be drawn on. By default creates a new layer. */
+  layer: undefined,
+  /**
+   * Automatically sets the map view (zoom and pan) to the user's location as it updates.
+   * While the map is following the user's location, the control is in the `following` state,
+   * which changes the style of the control and the circle marker.
+   *
+   * Possible values:
+   *  - false: never updates the map view when location changes.
+   *  - 'once': set the view when the location is first determined
+   *  - 'always': always updates the map view when location changes.
+   *              The map view follows the user's location.
+   *  - 'untilPan': like 'always', except stops updating the
+   *                view if the user has manually panned the map.
+   *                The map view follows the user's location until she pans.
+   *  - 'untilPanOrZoom': (default) like 'always', except stops updating the
+   *                view if the user has manually panned the map.
+   *                The map view follows the user's location until she pans.
+   */
+  setView: "untilPanOrZoom",
+  /**
+   * Keep the current map zoom level when setting the view and only pan.
+   * Can be set to:
+   * - `true`: Always keep current zoom level
+   * - `false`: Allow zooming (default)
+   * - `[minZoom, maxZoom]`: Keep zoom only when current zoom is within the specified range
+   */
+  keepCurrentZoomLevel: false,
+  /** After activating the plugin by clicking on the icon, zoom to the selected zoom level, even when keepCurrentZoomLevel is true. Set to 'false' to disable this feature. */
+  initialZoomLevel: false,
+  /**
+   * This callback can be used to override the viewport tracking
+   * This function should return a LatLngBounds object.
+   *
+   * For example to extend the viewport to ensure that a particular LatLng is visible:
+   *
+   * getLocationBounds: function(locationEvent) {
+   *    return locationEvent.bounds.extend([-33.873085, 151.219273]);
+   * },
+   */
+  getLocationBounds(locationEvent) {
+    return locationEvent.bounds;
   },
+  /** Smooth pan and zoom to the location of the marker. Only works in Leaflet 1.0+. */
+  flyTo: false,
+  /**
+   * The user location can be inside and outside the current view when the user clicks on the
+   * control that is already active. Both cases can be configures separately.
+   * Possible values are:
+   *  - 'setView': zoom and pan to the current location
+   *  - 'stop': stop locating and remove the location marker
+   */
+  clickBehavior: {
+    /** What should happen if the user clicks on the control while the location is within the current view. */
+    inView: "stop",
+    /** What should happen if the user clicks on the control while the location is outside the current view. */
+    outOfView: "setView",
+    /**
+     * What should happen if the user clicks on the control while the location is within the current view
+     * and we could be following but are not. Defaults to a special value which inherits from 'inView';
+     */
+    inViewNotFollowing: "inView"
+  },
+  /**
+   * If set, save the map bounds just before centering to the user's
+   * location. When control is disabled, set the view back to the
+   * bounds that were saved.
+   */
+  returnToPrevBounds: false,
+  /**
+   * Keep a cache of the location after the user deactivates the control. If set to false, the user has to wait
+   * until the locate API returns a new location before they see where they are again.
+   */
+  cacheLocation: true,
+  /** If set, a circle that shows the location accuracy is drawn. */
+  drawCircle: true,
+  /** If set, the marker at the users' location is drawn. */
+  drawMarker: true,
+  /** If set and supported then show the compass heading */
+  showCompass: true,
+  /**
+   * iOS-only compass accuracy threshold (degrees).
+   * Show compass only when `webkitCompassAccuracy <= value`.
+   * `-1` (uncalibrated) is always rejected.
+   * Set to `false` to disable filtering. No effect on Android.
+   */
+  compassAccuracyThreshold: 45,
+  /** The class to be used to create the marker. For example L.CircleMarker or L.Marker */
+  markerClass: LocationMarker,
+  /** The class us be used to create the compass bearing arrow */
+  compassClass: CompassMarker,
+  /** Accuracy circle style properties. NOTE these styles should match the css animations styles */
+  circleStyle: {
+    className: "leaflet-control-locate-circle",
+    color: "#136AEC",
+    fillColor: "#136AEC",
+    fillOpacity: 0.15,
+    weight: 0
+  },
+  /** Inner marker style properties. Only works if your marker class supports `setStyle`. */
+  markerStyle: {
+    className: "leaflet-control-locate-marker",
+    color: "#fff",
+    fillColor: "#2A93EE",
+    fillOpacity: 1,
+    weight: 3,
+    opacity: 1,
+    radius: 9
+  },
+  /** Compass */
+  compassStyle: {
+    fillColor: "#2A93EE",
+    fillOpacity: 1,
+    weight: 0,
+    color: "#fff",
+    opacity: 1,
+    radius: 9, // How far is the arrow from the center of the marker
+    width: 9, // Width of the arrow
+    depth: 6 // Length of the arrow
+  },
+  /**
+   * Changes to accuracy circle and inner marker while following.
+   * It is only necessary to provide the properties that should change.
+   */
+  followCircleStyle: {},
+  followMarkerStyle: {
+    // color: '#FFA500',
+    // fillColor: '#FFB000'
+  },
+  followCompassStyle: {},
+  /** The CSS class for the icon. For example fa-location-arrow or fa-map-marker */
+  icon: "leaflet-control-locate-location-arrow",
+  iconLoading: "leaflet-control-locate-spinner",
+  /** The element to be created for icons. For example span or i */
+  iconElementTag: "span",
+  /** The element to be created for the text. For example small or span */
+  textElementTag: "small",
+  /** Padding around the accuracy circle. */
+  circlePadding: [0, 0],
+  /** Use metric units. */
+  metric: true,
+  /**
+   * This callback can be used in case you would like to override button creation behavior.
+   * This is useful for DOM manipulation frameworks such as angular etc.
+   * This function should return an object with HtmlElement for the button (link property) and the icon (icon property).
+   */
+  createButtonCallback(container, options) {
+    const link = createElement("a", "leaflet-bar-part leaflet-bar-part-single", container);
+    link.title = options.strings.title;
+    link.href = "#";
+    link.setAttribute("role", "button");
+    link.setAttribute("aria-label", options.strings.title);
+    const icon = createElement(options.iconElementTag, options.icon, link);
+    // Add common class for all icons to enable color status changes
+    icon.classList.add("leaflet-locate-icon");
 
-  initialize(options = {}) {
-    // Clone default options to prevent prototype pollution
-    this.options = cloneOptions(this.options);
-
-    // Merge user-provided options
-    for (const key in options) {
-      const userVal = options[key];
-      const defaultVal = this.options[key];
-      if (userVal?.constructor === Object && defaultVal?.constructor === Object) {
-        Object.assign(defaultVal, userVal);
-      } else {
-        this.options[key] = userVal;
-      }
+    if (options.strings.text !== undefined) {
+      const text = createElement(options.textElementTag, "leaflet-locate-text", link);
+      text.textContent = options.strings.text;
+      link.classList.add("leaflet-locate-text-active");
+      link.parentNode.style.display = "flex";
     }
+
+    return { link, icon };
+  },
+  /** This event is called in case of any location error that is not a time out error. */
+  onLocationError(err) {
+    alert(err.message);
+  },
+  /**
+   * This event is called when the user's location is outside the bounds set on the map.
+   * The event is called repeatedly when the location changes.
+   */
+  onLocationOutsideMapBounds(control) {
+    control.stop();
+    alert(control.options.strings.outsideMapBoundsMsg);
+  },
+  /** Display a pop-up when the user click on the inner marker. */
+  showPopup: true,
+  strings: {
+    title: "Show me where I am",
+    metersUnit: "meters",
+    feetUnit: "feet",
+    popup: "You are within {distance} {unit} from this point",
+    outsideMapBoundsMsg: "You seem located outside the boundaries of the map"
+  },
+  /** The default options passed to leaflets locate method. */
+  locateOptions: {
+    maxZoom: Infinity,
+    watch: true, // if you overwrite this, visualization cannot be updated
+    setView: false // have to set this to false because we have to
+    // do setView manually
+  }
+};
+
+const LocateControlClass = class LocateControl extends Control {
+  static defaultOptions = defaultOptions;
+
+  constructor(options) {
+    super();
+    this._setOptions(options);
+  }
+
+  /**
+   * Merge user-provided options with the defaults.
+   * Unlike `Util.setOptions`, nested option objects (e.g. `strings`) are merged instead of replaced.
+   */
+  _setOptions(options = {}) {
+    // `this.options` inherits from the defaults of each class in the chain (on both Leaflet 1.x and 2).
+    // Merge them from the base class down, so that nested defaults of subclasses are merged too.
+    const layers = [options];
+    for (let o = this.options; o && o !== Object.prototype; o = Object.getPrototypeOf(o)) {
+      layers.unshift(o);
+    }
+    this.options = mergeOptionLayers(layers);
 
     // Follow styles inherit from base styles
     this.options.followMarkerStyle = { ...this.options.markerStyle, ...this.options.followMarkerStyle };
     this.options.followCircleStyle = { ...this.options.circleStyle, ...this.options.followCircleStyle };
     this.options.followCompassStyle = { ...this.options.compassStyle, ...this.options.followCompassStyle };
-  },
+  }
 
   /**
    * Add control to map. Returns the container for the control.
@@ -442,7 +495,7 @@ const LocateControl = Control.extend({
     this._map.on("unload", this._unload, this);
 
     return container;
-  },
+  }
 
   /**
    * Called when control is removed from the map.
@@ -462,7 +515,7 @@ const LocateControl = Control.extend({
     this._linkDblClickHandler = null;
 
     this.stop();
-  },
+  }
 
   /**
    * This method is called when the user clicks on the control.
@@ -508,7 +561,7 @@ const LocateControl = Control.extend({
     }
 
     this._updateContainerStyle();
-  },
+  }
 
   /**
    * Starts the plugin:
@@ -527,7 +580,7 @@ const LocateControl = Control.extend({
       }
     }
     this._updateContainerStyle();
-  },
+  }
 
   /**
    * Stops the plugin:
@@ -542,7 +595,7 @@ const LocateControl = Control.extend({
     this._resetVariables();
 
     this._removeMarker();
-  },
+  }
 
   /**
    * Keep the control active but stop following the location
@@ -551,7 +604,7 @@ const LocateControl = Control.extend({
     this._userPanned = true;
     this._updateContainerStyle();
     this._drawMarker();
-  },
+  }
 
   /**
    * This method launches the location engine.
@@ -579,7 +632,7 @@ const LocateControl = Control.extend({
     this._map.on("zoomend", this._onZoomEnd, this);
 
     this._activateCompass();
-  },
+  }
 
   /**
    * Request DeviceOrientation permission (if needed) and bind compass events.
@@ -620,7 +673,7 @@ const LocateControl = Control.extend({
 
     this._compassEventName = eventName;
     DomEvent.on(window, eventName, this._onDeviceOrientation, this);
-  },
+  }
 
   /**
    * Called to stop the location engine.
@@ -648,7 +701,7 @@ const LocateControl = Control.extend({
     this._map.off("zoomend", this._onZoomEnd, this);
 
     this._deactivateCompass();
-  },
+  }
 
   /**
    * Remove compass event listener and reset compass heading state.
@@ -662,7 +715,7 @@ const LocateControl = Control.extend({
     this._compassHeading = null;
     DomEvent.off(window, this._compassEventName, this._onDeviceOrientation, this);
     this._compassEventName = null;
-  },
+  }
 
   /**
    * Check if the current zoom level should be kept based on keepCurrentZoomLevel option.
@@ -680,7 +733,7 @@ const LocateControl = Control.extend({
 
     // Only return true if explicitly set to true
     return option === true;
-  },
+  }
 
   /**
    * Pan and/or zoom the map to the current location.
@@ -716,7 +769,7 @@ const LocateControl = Control.extend({
     }
 
     this._setViewIgnoringEvents(method, args);
-  },
+  }
 
   /**
    * Execute a map view method while ignoring zoom/pan events to prevent breaking following mode.
@@ -730,7 +783,7 @@ const LocateControl = Control.extend({
       // Wait until after the next animFrame because flyTo/flyToBounds can be async
       this._ignoreEvent = false;
     });
-  },
+  }
 
   /**
    *
@@ -760,7 +813,7 @@ const LocateControl = Control.extend({
       this._compass.removeFrom(this._layer);
       this._compass = null;
     }
-  },
+  }
 
   /**
    * Draw the marker and accuracy circle on the map.
@@ -807,7 +860,7 @@ const LocateControl = Control.extend({
 
     // Bind popup to marker and compass
     this._bindPopup(latlng, accuracy);
-  },
+  }
 
   /**
    * Bind popup with location information to marker and compass.
@@ -866,7 +919,7 @@ const LocateControl = Control.extend({
     if (this._compass) {
       this._compass.bindPopup(popupText)._popup.setLatLng(latlng);
     }
-  },
+  }
 
   /**
    * Remove the marker from map.
@@ -876,7 +929,7 @@ const LocateControl = Control.extend({
     this._marker = undefined;
     this._circle = undefined;
     this._compass = undefined;
-  },
+  }
 
   /**
    * Unload the plugin and all event listeners.
@@ -888,7 +941,7 @@ const LocateControl = Control.extend({
     if (this._map) {
       this._map.off("unload", this._unload, this);
     }
-  },
+  }
 
   /**
    * Sets the compass heading
@@ -901,14 +954,14 @@ const LocateControl = Control.extend({
       this._compassHeading = null;
       this._drawCompass();
     }
-  },
+  }
 
   /**
    * If the compass fails calibration just fail safely and remove the compass
    */
   _onCompassNeedsCalibration() {
     this._setCompassHeading();
-  },
+  }
 
   /**
    * Process and normalise compass events.
@@ -940,7 +993,7 @@ const LocateControl = Control.extend({
       // Android: no standardized accuracy field, reading is shown as-is.
       this._setCompassHeading(360 - e.alpha);
     }
-  },
+  }
 
   /**
    * Calls deactivate and dispatches an error.
@@ -969,7 +1022,7 @@ const LocateControl = Control.extend({
     this._timeoutCount = 0;
     this.stop();
     this.options.onLocationError(err, this);
-  },
+  }
 
   /**
    * Stores the received event and updates the marker.
@@ -1027,7 +1080,7 @@ const LocateControl = Control.extend({
     }
 
     this._justClicked = false;
-  },
+  }
 
   /**
    * When the user drags. Need a separate event so we can bind and unbind event listeners.
@@ -1039,7 +1092,7 @@ const LocateControl = Control.extend({
       this._updateContainerStyle();
       this._drawMarker();
     }
-  },
+  }
 
   /**
    * When the user zooms. Need a separate event so we can bind and unbind event listeners.
@@ -1051,7 +1104,7 @@ const LocateControl = Control.extend({
       this._updateContainerStyle();
       this._drawMarker();
     }
-  },
+  }
 
   /**
    * After a zoom ends update the compass and handle sideways zooms
@@ -1069,7 +1122,7 @@ const LocateControl = Control.extend({
         this._drawMarker();
       }
     }
-  },
+  }
 
   /**
    * Compute whether the map is following the user location with pan and zoom.
@@ -1088,7 +1141,7 @@ const LocateControl = Control.extend({
     }
 
     return false;
-  },
+  }
 
   /**
    * Check if location is in map bounds
@@ -1098,7 +1151,7 @@ const LocateControl = Control.extend({
       return false;
     }
     return this._map.options.maxBounds && !this._map.options.maxBounds.contains(this._event.latlng);
-  },
+  }
 
   /**
    * Toggles button class between following and active.
@@ -1118,7 +1171,7 @@ const LocateControl = Control.extend({
     } else {
       this._cleanClasses();
     }
-  },
+  }
 
   /**
    * Sets the CSS classes for the state.
@@ -1146,7 +1199,7 @@ const LocateControl = Control.extend({
         addClasses(this._icon, this.options.icon);
         break;
     }
-  },
+  }
 
   /**
    * Removes all classes from button.
@@ -1155,7 +1208,7 @@ const LocateControl = Control.extend({
     removeClasses(this._container, "requesting active following");
     removeClasses(this._icon, this.options.iconLoading);
     addClasses(this._icon, this.options.icon);
-  },
+  }
 
   /**
    * Reinitializes state variables.
@@ -1182,7 +1235,16 @@ const LocateControl = Control.extend({
     // true if the user has zoomed the map after clicking the control
     this._userZoomed = false;
   }
-});
+};
+
+const LocateControl = isLeaflet1
+  ? toLeaflet1Class(Control, LocateControlClass, {
+      options: defaultOptions,
+      initialize(options) {
+        this._setOptions(options);
+      }
+    })
+  : LocateControlClass;
 
 function locate(options) {
   return new LocateControl(options);

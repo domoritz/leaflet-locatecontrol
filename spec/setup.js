@@ -45,6 +45,17 @@ global.Element = window.Element;
 global.Node = window.Node;
 global.CustomEvent = window.CustomEvent;
 global.Event = window.Event;
+// Used by Leaflet 2
+global.getComputedStyle = window.getComputedStyle.bind(window);
+global.PointerEvent = window.PointerEvent;
+global.KeyboardEvent = window.KeyboardEvent;
+global.MouseEvent = window.MouseEvent;
+global.ResizeObserver = window.ResizeObserver;
+for (const name of Object.getOwnPropertyNames(window)) {
+  if (/^(HTML|SVG)\w*Element$/.test(name) && !(name in global)) {
+    global[name] = window[name];
+  }
+}
 
 // Mock DeviceOrientationEvent
 global.DeviceOrientationEvent = class DeviceOrientationEvent extends Event {
