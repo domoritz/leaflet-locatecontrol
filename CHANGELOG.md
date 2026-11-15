@@ -2,6 +2,12 @@
 
 Here we document notable changes.
 
+## **0.91.0** - 2026-11-15
+
+- fix: support Leaflet 2 beta by using ES classes (#430)
+- chore: use Vite as the dev server (#431)
+- chore: update devDependencies (#426, #427, #428, #429)
+
 ## **0.90.1** - 2026-08-12
 
 - chore: add allowScripts config for lightningcss-cli
